@@ -53,8 +53,8 @@ inline constexpr bool is_cell_on_heap(cell_t c) {
   return get_cell_type(c) != CELL_INT;
 }
 
-inline cell_t make_cell(Object* ptr, cell_tag tag) {
-  HSTL_ASSERT(((uintptr_t)ptr & CELL_TAG_MASK) == 0);
+inline constexpr cell_t make_cell(Object* ptr, cell_tag tag) {
+  // HSTL_ASSERT(((uintptr_t)ptr & CELL_TAG_MASK) == 0);
   return (uintptr_t)ptr | tag;
 }
 
@@ -70,7 +70,7 @@ constexpr cell_t make_cell(std::nullptr_t) {
   return T::TAG_VALUE;
 }
 
-inline cell_t make_cell(intptr_t value) {
+inline constexpr cell_t make_cell(intptr_t value) {
   // TODO we should probably assert we arent loosing any precision
   // constexpr uintptr_t value_mask = ~(UINTPTR_MAX >> CELL_TAG_BITS);
   // assert((value & value_mask) == 0);
