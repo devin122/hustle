@@ -32,8 +32,5 @@ add_executable(hustle-vm-test
 )
 
 target_link_libraries(hustle-vm-test test-main hustle-vm gc)
-#add_test(hustle-vm-test)
-add_test(NAME vm-test COMMAND hustle-vm-test)
-message(STATUS "DEBUG cxxflags ${CMAKE_CXX_FLAGS}")
 
-#target_include_directories(hustle-vm-test ${CMAKE_BINARY_DIR})
+add_test(NAME vm-test COMMAND hustle-vm-test -r junit -o vm_test.xml)

@@ -22,3 +22,7 @@ steps:
     cd build
     ctest
   displayName: 'Test'
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: JUnit
+    testResultsFiles: '**/*_test.xml'
