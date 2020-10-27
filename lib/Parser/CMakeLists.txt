@@ -25,7 +25,7 @@
 # SPDX-License-Identifier: BSD-2-Clause
 ################################################################################
 
-add_library(hustle-parser STATIC
+hustle_add_library(hustle-parser STATIC
     Lexer.cpp
     InteractiveStreamBuff.cpp
 )
