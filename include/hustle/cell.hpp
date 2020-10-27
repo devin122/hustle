@@ -80,10 +80,17 @@ inline cell_t make_cell(intptr_t value) {
 namespace cellcastimpl {
 
 template <typename T>
-static constexpr cell_tag tag_value = T::TAG_VALUE;
+struct TagHelper {
+  static constexpr cell_tag value = T::TAG_VALUE;
+};
 
 template <>
-static constexpr cell_tag tag_value<intptr_t> = CELL_INT;
+struct TagHelper<intptr_t> {
+  static constexpr cell_tag value = CELL_INT;
+};
+
+template <typename T>
+static constexpr cell_tag tag_value = TagHelper<T>::value;
 
 template <typename T>
 struct CellCastHelper {
