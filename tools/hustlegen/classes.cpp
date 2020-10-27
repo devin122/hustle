@@ -64,7 +64,7 @@ static void with_classes(F func, IndentingStream& stream,
   auto classes_node = kv_node(yaml["classes"]);
   for (auto [key, val] : classes_node) {
     Class c;
-    c.name = key.as<std::string>();
+    c.name = key.template as<std::string>();
     parse_class(c, val);
     classes.emplace_back(std::move(c));
   }
