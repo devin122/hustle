@@ -1,0 +1,17 @@
+{
+    "contributes": {
+        "languages": [
+            {
+                "id": "hustle",
+                "extensions": ".hsl"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "hustle",
+                "scopeName": "source.hustle",
+                
+            }
+        ]
+    }
+}

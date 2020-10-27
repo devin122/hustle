@@ -1,0 +1,14 @@
+{
+    "name": "hustle",
+    "version-string": "0.0.1",
+    "dependencies": [
+        "catch2",
+        "cityhash",
+        "cli11",
+        "fmt",
+        "nlohmann-json",
+        "replxx",
+        "yaml-cpp",
+        "ms-gsl"
+    ]
+}

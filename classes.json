@@ -1,0 +1,73 @@
+{
+    "tag_def_file": "cell_tags.def",
+    "class_def_file": "classes.def",
+    "classes": {
+        "Array": {
+            "methods": [
+                "Cell* data() const noexcept { return (Cell*)(((char*)this)+sizeof(Array));}",
+                "static Array* create(size_t sz);",
+                "static Array* from_list(std::initializer_list<Cell>);",
+                "size_t count() const;",
+                "Cell* begin() const { return data(); }",
+                "Cell* end() const { return data() + count();}",
+                "Array(std::initializer_list<Cell> init) noexcept;",
+                "constexpr Array(size_t ct) noexcept;",
+                "Cell& operator[](size_t);"
+            ]
+        },
+        "String": {
+            "methods": [
+                "String(size_t len): Object(this, len), length_raw(Cell::from_int(0)) { }",
+                "String(const char *c_str, size_t len);",
+                "char* data() const { return pointer_add<char>(this, sizeof(String));}",
+                "size_t capacity() const;",
+                "size_t length() const;",
+                "gsl::string_span<gsl::dynamic_extent> to_span();",
+                "operator std::string_view() const;"
+            ],
+            "fields": [
+                "Cell length_raw;"
+            ]
+        },
+        "Quotation": {
+            "tag_name": "CELL_QUOTE",
+            "methods": [
+                "using FuncType = void (*) (VM*, Quotation*);",
+                "Quotation(): Object(this){};",
+                "Quotation(FuncType primitive): Object(this), definition(), entry(primitive){}",
+                "Quotation(Array* def, FuncType ent): Object(this), definition(def), entry(ent){}"
+            ],
+            "fields": [
+                "TypedCell<Array> definition;",
+                "FuncType entry;"
+            ]
+        },
+        "Record": {
+            "methods": [
+                "Record(size_t slots) noexcept;"
+            ],
+            "fields": [
+                "cell_t slots[];"
+            ]
+        },
+        "Word": {
+            "methods": [
+                "Word(): Object(this){};"
+            ],
+            "fields": [
+                "TypedCell<String> name;",
+                "TypedCell<Quotation> definition;",
+                "Cell properties; // Hash table",
+                "bool is_parse_word = false; // hack until we get properties working properly"
+            ]
+        },
+        "Wrapper": {
+            "methods": [
+                "Wrapper(): Object(this){}"
+            ],
+            "fields": [
+                "Cell wrapped;"
+            ]
+        }
+    }
+}

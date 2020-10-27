@@ -1,0 +1,100 @@
+################################################################################
+# Copyright (c) 2020, Devin Nakamura
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# SPDX-License-Identifier: BSD-2-Clause
+################################################################################
+
+primitive_def_file: "primitives.def"
+primitives:
+  def: prim_def
+  defp: prim_defp
+  "=?": "prim_eq"
+  ">bool": "prim_bool"
+  readline: "prim_read_line"
+
+  array>quote: "prim_arr_to_quote"
+  exit: prim_exit
+  lookup: prim_lookup
+  make-record: prim_make_record
+  make-symbol: prim_make_sym
+  empty-array: prim_empty_array
+
+  set-all: prim_set_all
+  print: prim_print
+  parse-word?: prim_is_parse_word
+  mark-stack: prim_mark_stack
+  mark>array: prim_mark_to_array
+
+  # conditional / control flow
+  call: "prim_call"
+  "?": prim_ternary
+  while: prim_while
+
+  # Object manipulation
+  raw-slot: prim_raw_slot
+  set-raw-slot: prim_set_raw_slot
+  hash: "prim_hash"
+  length: prim_length
+  "str-empty?": "prim_str_empty"
+
+  # class id methods
+  "array?": prim_is_array
+  "string?": prim_is_string
+
+  # math operators
+  "+": prim_add
+  "-": prim_sub
+  "*": prim_mult
+  "&": prim_and
+  "|": prim_or
+  "%": prim_mod
+  ">": prim_gt
+  "<": prim_lt
+  #">>": prim_shr
+  #"<<": prim_shl
+
+  # misc stack operations
+  dup: prim_dup
+  swap: prim_swap
+  drop: prim_drop
+  over: prim_over
+  pick: prim_pick
+  #nip: prim_nip
+  rot: prim_rot
+  dip: prim_dip
+
+  #debugging
+  dump-stack: prim_dump_stack
+  debug-break: prim_debug_break
+  assert: prim_assert
+  backtrace: prim_backtrace
+
+  #parsing stuff
+  lex-token: prim_lex_token
+  parse-str: prim_parse_str
+  read-until: prim_read_until
+  include-stream: prim_include
+
+
+

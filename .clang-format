@@ -1,0 +1,11 @@
+---
+BasedOnStyle: LLVM
+
+AlwaysBreakTemplateDeclarations: 'true'
+AlignTrailingComments: 'true'
+BinPackArguments: 'true'
+BreakBeforeBraces : 'Attach'
+PointerAlignment: Left
+DerivePointerAlignment: 'false'
+
+...

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This will make GitHub and some editors recognize this code as XML:
+    vim: syntax=xml
+-->
+<!--
+  Copyright (c) 2020, Devin Nakamura
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+
+  1. Redistributions of source code must retain the above copyright notice,
+     this list of conditions and the following disclaimer.
+  2. Redistributions in binary form must reproduce the above copyright notice,
+     this list of conditions and the following disclaimer in the documentation
+     and/or other materials provided with the distribution.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
+
+  SPDX-License-Identifier: BSD-2-Clause
+-->
+
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+<Type Name="hustle::Cell">
+
+	<DisplayString Condition="(raw_ &amp; 0xF) != CELL_INT">{*(hustle::Object*) (raw_ &amp; ~0xF)}</DisplayString>
+	<DisplayString Condition="(raw_ &amp; 0xF) == CELL_INT">{raw_ &gt;&gt; 4,d}</DisplayString>
+  <DisplayString>Fllback</DisplayString>
+	<Expand HideRawView="false">
+		<Item Name="[Tag]" ExcludeView="simple">(cell_tag) (raw_ &amp; 0xF)</Item>
+		<ExpandedItem Condition="(raw_ &amp; 0xF) == CELL_INT">raw_ &gt;&gt; 4</ExpandedItem>
+		<ExpandedItem Condition="(raw_ &amp; 0xF) == CELL_ARRAY">(hustle::Array*) (raw_ &amp; ~0xF)</ExpandedItem>
+		<ExpandedItem Condition="(raw_ &amp; 0xF) == CELL_STRING">((hustle::String*) (raw_ &amp; ~0xF))</ExpandedItem>
+		<ExpandedItem Condition="(raw_ &amp; 0xF) == CELL_QUOTE">(hustle::Quotation*) (raw_ &amp; ~0xF)</ExpandedItem>
+		<ExpandedItem Condition="(raw_ &amp; 0xF) == CELL_WORD">(hustle::Word*) (raw_ &amp; ~0xF)</ExpandedItem>
+	</Expand>
+</Type>
+
+<Type Name="hustle::Object">
+	<MostDerivedType Condition="((header &amp; 0x1F) &gt;&gt; 1) == hustle::CELL_ARRAY">(hustle::Array *)this</MostDerivedType>
+	<MostDerivedType Condition="((header &amp; 0x1F) &gt;&gt; 1) == hustle::CELL_STRING">(hustle::String *)this</MostDerivedType>
+	<MostDerivedType Condition="((header &amp; 0x1F) &gt;&gt; 1) == hustle::CELL_QUOTE">(hustle::Quotation *)this</MostDerivedType>
+	<MostDerivedType Condition="((header &amp; 0x1F) &gt;&gt; 1) == hustle::CELL_WORD">(hustle::Word *)this</MostDerivedType>
+  <MostDerivedType Condition="((header &amp; 0x1F) &gt;&gt; 1) == hustle::CELL_WRAPPER">(hustle::Wrapper *)this</MostDerivedType>
+</Type>
+
+<Type Name="hustle::String">
+	<DisplayString>{(char*)(this+1),[length_raw.raw_ &gt;&gt; 4]}</DisplayString>
+	<Expand>
+		<!-- <Item Name="Length">3</Item> -->
+	</Expand>
+</Type>
+
+<Type Name="hustle::Array">
+	<!-- <DisplayString>Array[{((header &gt;&gt; 6) - sizeof(Array))/sizeof(cell_t),d}]</DisplayString> -->
+	<Expand>
+		<!-- <Item Name="[Length]" ExcludeView="simple">3</Item> -->
+		<ArrayItems>
+			<Size>((header &gt;&gt; 6) - sizeof(Array))/sizeof(cell_t)</Size>
+			<ValuePointer>(hustle::Cell*)(this+1)</ValuePointer>
+		</ArrayItems>
+	</Expand>
+</Type>
+
+<Type Name="hustle::Word">
+  <!--<DisplayString Condition="raw_ == hustle::False">False</DisplayString>-->
+	<DisplayString Condition="(name.raw_ &amp; 0xF) == CELL_STRING">Word&lt;{(String*) (name.raw_ &amp; ~0xF),na}&gt;</DisplayString>
+
+  <DisplayString>Word (Corrupt Name!)</DisplayString>
+</Type>
+
+  <Type Name="hustle::Stack">
+    <Expand>
+      <!-- <Item Name="[Length]" ExcludeView="simple">3</Item> -->
+      <ArrayItems>
+        <Size>top_ - sp_</Size>
+        <ValuePointer>sp_</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="hustle::CallStack">
+
+    <Expand>
+      <ArrayItems>
+        <Size>(top_ - sp_)/3</Size>
+        <ValuePointer>(StackFrame*)sp_</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="hustle::Quotation">
+    <DisplayString Condition="entry != nullptr">Primitive: {entry}</DisplayString>
+    <DisplayString> {definition}</DisplayString>
+  </Type>
+</AutoVisualizer>
