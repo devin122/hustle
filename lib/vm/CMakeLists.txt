@@ -28,7 +28,7 @@
 
 hustle_add_library(hustle-vm STATIC
     Array.cpp
-    Primitives.cpp
+    primitives.cpp
     StackDump.cpp
     Stack.cpp
     VM.cpp
