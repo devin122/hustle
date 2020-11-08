@@ -29,6 +29,7 @@
 #include "hustle/Object.hpp"
 #include "hustle/Support/Assert.hpp"
 #include "hustle/VM.hpp"
+#include "hustle/config.h"
 
 #include "CLI/App.hpp"
 #include "CLI/Config.hpp"
@@ -278,6 +279,7 @@ void repl(VM& vm) {
 int main(int argc, char** argv) {
   hustle::save_argv0(argv[0]);
   CLI::App app{"Hustle VM"};
+  app.set_version_flag("-v,--version", HUSTLE_VERSION);
 
   bool no_kernel = false;
   bool old_repl = false;

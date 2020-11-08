@@ -27,7 +27,10 @@
 
 cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
-project(hustle LANGUAGES CXX)
+set(HUSTLE_VERSION_SUFFIX "-git")
+project(hustle
+    LANGUAGES CXX
+    VERSION 0.1.0)
 
 find_package(Microsoft.GSL CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
@@ -69,6 +72,7 @@ enable_testing()
 
 add_subdirectory(extern)
 
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /w14996")
 endif()
@@ -91,6 +95,7 @@ add_hustlegen("tags" "${CMAKE_CURRENT_SOURCE_DIR}/classes.json" "${CMAKE_CURRENT
 add_hustlegen("classes" "${CMAKE_CURRENT_SOURCE_DIR}/classes.json" "${CMAKE_CURRENT_BINARY_DIR}/classes.def")
 add_hustlegen("primitives" "${CMAKE_CURRENT_SOURCE_DIR}/primitives.yaml" "${CMAKE_CURRENT_BINARY_DIR}/primitives.def")
 
+
 add_custom_target(hustle-generated
     DEPENDS
         ${CMAKE_CURRENT_BINARY_DIR}/cell_tags.def
@@ -101,7 +106,7 @@ add_custom_target(hustle-generated
 
 
 include_directories(include)
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
 
 add_subdirectory(lib)
 add_subdirectory(hustle)
@@ -127,3 +132,5 @@ target_link_libraries(hustle
 )
 
 add_subdirectory(test)
+
+configure_file(include/hustle/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/hustle/config.h)

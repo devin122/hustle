@@ -34,6 +34,7 @@
 #include <filesystem>
 #include <fmt/core.h>
 #include <fstream>
+#include <hustle/config.h>
 #include <iostream>
 #include <list>
 #include <nlohmann/json.hpp>
@@ -290,6 +291,7 @@ int main(int argc, char** argv) {
   std::string output_file = "-";
   std::string input_file;
   CLI::App app{"hustlegen"};
+  app.set_version_flag("-v,--version", HUSTLE_VERSION);
 
   app.fallthrough();
   app.add_option("-o", output_file, "Output file");
