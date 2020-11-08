@@ -65,7 +65,7 @@ std::filesystem::path hustle::get_exe_path() {
   assert(rc != 0);
   return std::filesystem::canonical(buffer);
 #elif defined(__linux__)
-  std::filesystem::canonical("/proc/self/exe");
+  return std::filesystem::canonical("/proc/self/exe");
 #elif defined(__APPLE__)
   constexpr DWORD BUFFER_SIZE = 1024;
   uint32_t buffsize = BUFFER_SIZE;
