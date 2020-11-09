@@ -46,13 +46,18 @@ find_package(cityhash CONFIG REQUIRED)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 
-set(HUSTLE_RUNTIME_OUTPUT_INTDIR ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR})
-set(HUSTLE_LIBRARY_OUTPUT_INTDIR ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR})
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
 find_package(Filesystem REQUIRED)
 
 include(AddHustle)
+
+#setup out output paths
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${HUSTLE_BUILD_CFG_DIR}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${HUSTLE_BUILD_CFG_DIR}/lib")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${HUSTLE_BUILD_CFG_DIR}/lib")
+
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GCC")
     set(CMAKE_CXX_FLAGS "-fcolor-diagnostics ${CMAKE_CXX_FLAGS}")
@@ -72,7 +77,9 @@ enable_testing()
 
 add_subdirectory(extern)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+# now that we have finished defining any external apps, we can safely pollute global options
+include_directories(include ${HUSTLE_BUILD_CFG_DIR} ${CMAKE_CURRENT_BINARY_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})
+
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /w14996")
 endif()
@@ -105,8 +112,6 @@ add_custom_target(hustle-generated
 
 
 
-include_directories(include)
-
 
 add_subdirectory(lib)
 add_subdirectory(hustle)
@@ -117,7 +122,6 @@ hustle_add_executable(hustle
 )
 add_backward(hustle)
 add_dependencies(hustle hustle-generated)
-#target_include_directories(hustle PUBLIC include)
 file(GLOB_RECURSE global_headers "${CMAKE_SOURCE_DIR}/include/hustle/*.h" "${CMAKE_SOURCE_DIR}/include/hustle/*.hpp")
 target_sources(hustle PRIVATE ${global_headers} ${CMAKE_CURRENT_SOURCE_DIR}/util/hustle.natvis)
 target_link_libraries(hustle
@@ -133,4 +137,6 @@ target_link_libraries(hustle
 
 add_subdirectory(test)
 
-configure_file(include/hustle/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/hustle/config.h)
+# configure_file does not like generator expressions so we cant put output under HUSTLE_BUILD_CFG_DIR.
+# However, the generated header shouldn't be different based on build config.
+configure_file(include/hustle/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/hustle/config.h)

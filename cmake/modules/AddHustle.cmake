@@ -25,10 +25,32 @@
 # SPDX-License-Identifier: BSD-2-Clause
 ################################################################################
 
+# set up the staging dir
+get_property(is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+if(is_multi_config)
+    set(HUSTLE_BUILD_CFG_DIR "${hustle_BINARY_DIR}/$<CONFIG>" CACHE INTERNAL "")
+else()
+    set(HUSTLE_BUILD_CFG_DIR "${hustle_BINARY_DIR}" CACHE INTERNAL "")
+endif()
+
+#[[
+macro(setup_output_paths)
+    get_property(_is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+    if(_is_multi_config)
+        foreach(build_mode ${CMAKE_CONFIGURATION_TYPES})
+            string(TOUPPER "${build_mode}" CONFIG_SUFFIX)
+            set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_SUFFIX} )
+    else()
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${hustle_BINARY_DIR}/bin")
+        set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${hustle_BINARY_DIR}/lib")
+    endif()
+endmacro()
+]]
+
 function(set_output_directory name subdir)
     set_target_properties(${name} PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${hustle_BINARY_DIR}/$<CONFIG>/${subdir}"
-        LIBRARY_OUTPUT_DIRECTORY "${hustle_BINARY_DIR}/$<CONFIG>/${subdir}"
+        RUNTIME_OUTPUT_DIRECTORY "${HUSTLE_BUILD_CFG_DIR}/${subdir}"
+        LIBRARY_OUTPUT_DIRECTORY "${HUSTLE_BUILD_CFG_DIR}/${subdir}"
     )
 endfunction(set_output_directory)
 
