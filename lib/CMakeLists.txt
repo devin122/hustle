@@ -29,6 +29,6 @@ set(CMAKE_FOLDER lib)
 
 add_subdirectory(GC)
 add_subdirectory(VM)
-add_subdirectory(serialize)
+add_subdirectory(Serialize)
 add_subdirectory(Support)
 add_subdirectory(Parser)
