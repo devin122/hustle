@@ -67,7 +67,7 @@ std::filesystem::path hustle::get_exe_path() {
 #elif defined(__linux__)
   return std::filesystem::canonical("/proc/self/exe");
 #elif defined(__APPLE__)
-  constexpr DWORD BUFFER_SIZE = 1024;
+  constexpr size_t BUFFER_SIZE = 1024;
   uint32_t buffsize = BUFFER_SIZE;
   char buffer[BUFFER_SIZE];
   auto rc = _NSGetExecutablePath(buffer, &buffsize);
