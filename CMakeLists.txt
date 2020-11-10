@@ -144,3 +144,11 @@ add_subdirectory(test)
 # configure_file does not like generator expressions so we cant put output under HUSTLE_BUILD_CFG_DIR.
 # However, the generated header shouldn't be different based on build config.
 configure_file(include/hustle/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/hustle/config.h)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/hustle
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    COMPONENT development
+    FILES_MATCHING
+    PATTERN "*.h"
+    PATTERN "*.hpp"
+)
