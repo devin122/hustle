@@ -6,8 +6,17 @@
 trigger:
 - master
 
+strategy:
+  matrix:
+    linux:
+      imageName: 'ubuntu-latest'
+      extraCmakeArgs: '-DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10'
+    mac:
+      imageName: 'macos-10.14'
+      extraCmakeArgs: ''
+
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: '$(imageName)'
 
 steps:
 - checkout: self
@@ -15,16 +24,17 @@ steps:
 - script: |
     mkdir build
     cd build
-    cmake -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 ..
+    cmake -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake $(extraCmakeArgs) ..
     make
   displayName: 'Build'
 - script: |
     cd build
-    cpack -G TGZ
+    mkdir package
+    cpack -B package -G TGZ
   displayName: 'Package'
 - task: PublishBuildArtifacts@1
   inputs:
-    pathToPublish: build/hustle-0.1.0-Linux.tar.gz
+    pathToPublish: build/package
     artifactName: test_artifact
 - script: |
     cd build
