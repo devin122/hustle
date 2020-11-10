@@ -34,6 +34,7 @@ steps:
     cd build
     mkdir package
     cpack -B package -G TGZ
+    rm -rf _CPackPackages
   displayName: 'Package'
 - task: PublishBuildArtifacts@1
   inputs:
