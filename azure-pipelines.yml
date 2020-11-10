@@ -20,5 +20,13 @@ steps:
   displayName: 'Build'
 - script: |
     cd build
+    cpack -G TGZ
+  displayName: 'Package'
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: build/hustle-0.1.0-Linux.tar.gz
+    artifactName: test_artifact
+- script: |
+    cd build
     ctest
   displayName: 'Test'
