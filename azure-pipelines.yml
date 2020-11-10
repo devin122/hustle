@@ -25,6 +25,7 @@ steps:
     mkdir build
     cd build
     echo debug "${VCPKG_INSTALLATION_ROOT}"
+    ls /usr/local/share/vcpkg
     cat ~/.bashrc
     cmake -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake $(extraCmakeArgs) ..
     make
