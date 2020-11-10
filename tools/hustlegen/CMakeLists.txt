@@ -46,3 +46,9 @@ target_link_libraries(hustlegen
         yaml-cpp
         std::filesystem
 )
+
+install(
+    TARGETS hustlegen
+    RUNTIME DESTINATION ${CMAKE_INSTALL_DIR_BINDIR}
+    COMPONENT tools
+)

@@ -29,6 +29,6 @@ add_executable(hustle_serialize_test
     BinaryReaderTest.cpp
 )
 
-target_link_libraries(hustle_serialize_test test-main serialize fmt::fmt)
+target_link_libraries(hustle_serialize_test test-main HustleSerialize fmt::fmt)
 
 add_test(NAME serialize-test COMMAND hustle_serialize_test)

@@ -25,11 +25,17 @@
 # SPDX-License-Identifier: BSD-2-Clause
 ################################################################################
 
-hustle_add_library(hustle-support STATIC
+hustle_add_library(HustleSupport STATIC
     assert.cpp
     utility.cpp
 )
 
 # TODO  check if we are doing an IDE build
 file(GLOB headers ${hustle_SOURCE_DIR}/include/hustle/Support/*.hpp)
-target_sources(hustle-support PRIVATE ${headers})
+target_sources(HustleSupport PRIVATE ${headers})
+
+install(
+    TARGETS HustleSupport
+    ARCHIVE
+    COMPONENT development
+)

@@ -50,8 +50,10 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
 find_package(Filesystem REQUIRED)
-
+include(GNUInstallDirs)
 include(AddHustle)
+include(CPack)
+
 
 #setup out output paths
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${HUSTLE_BUILD_CFG_DIR}/bin")
@@ -111,8 +113,6 @@ add_custom_target(hustle-generated
 )
 
 
-
-
 add_subdirectory(lib)
 add_subdirectory(hustle)
 
@@ -125,14 +125,18 @@ add_dependencies(hustle hustle-generated)
 file(GLOB_RECURSE global_headers "${CMAKE_SOURCE_DIR}/include/hustle/*.h" "${CMAKE_SOURCE_DIR}/include/hustle/*.hpp")
 target_sources(hustle PRIVATE ${global_headers} ${CMAKE_CURRENT_SOURCE_DIR}/util/hustle.natvis)
 target_link_libraries(hustle
-    hustle-vm
-    hustle-support
-    gc
+    HustleVM
+    HustleSupport
+    HustleGC
     fmt::fmt
     CLI11::CLI11
-    hustle-parser
+    HustleParser
     REPLXX::replxx
     std::filesystem
+)
+install(
+    TARGETS hustle
+    RUNTIME DESTINATION ${CMAKE_INSTALL_DIR_BINDIR}
 )
 
 add_subdirectory(test)

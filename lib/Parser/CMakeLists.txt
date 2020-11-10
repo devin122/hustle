@@ -25,12 +25,18 @@
 # SPDX-License-Identifier: BSD-2-Clause
 ################################################################################
 
-hustle_add_library(hustle-parser STATIC
+hustle_add_library(HustleParser STATIC
     Lexer.cpp
     InteractiveStreamBuff.cpp
 )
 
 # TODO  check if we are doing an IDE build
 file(GLOB headers ${hustle_SOURCE_DIR}/include/hustle/Parser/*.hpp)
-target_sources(hustle-parser PRIVATE ${headers})
-target_link_libraries(hustle-parser Microsoft.GSL::GSL)
+target_sources(HustleParser PRIVATE ${headers})
+target_link_libraries(HustleParser Microsoft.GSL::GSL)
+
+install(
+    TARGETS HustleParser
+    ARCHIVE
+    COMPONENT development
+)

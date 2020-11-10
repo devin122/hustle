@@ -25,7 +25,13 @@
 # SPDX-License-Identifier: BSD-2-Clause
 ################################################################################
 
-hustle_add_library(serialize STATIC
+hustle_add_library(HustleSerialize STATIC
     dummy.cpp
 )
-target_include_directories(serialize PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(HustleSerialize PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+install(
+    TARGETS HustleSerialize
+    ARCHIVE
+    COMPONENT development
+)

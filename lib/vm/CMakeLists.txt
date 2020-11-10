@@ -26,7 +26,7 @@
 ################################################################################
 
 
-hustle_add_library(hustle-vm STATIC
+hustle_add_library(HustleVM STATIC
     Array.cpp
     primitives.cpp
     StackDump.cpp
@@ -34,7 +34,12 @@ hustle_add_library(hustle-vm STATIC
     VM.cpp
     debug.cpp
 )
-target_link_libraries(hustle-vm PRIVATE Microsoft.GSL::GSL fmt::fmt cityhash hustle-parser)
-target_include_directories(hustle-vm PRIVATE ${CMAKE_BINARY_DIR})
-add_dependencies(hustle-vm hustle-generated)
+target_link_libraries(HustleVM PRIVATE Microsoft.GSL::GSL fmt::fmt cityhash HustleParser)
+target_include_directories(HustleVM PRIVATE ${CMAKE_BINARY_DIR})
+add_dependencies(HustleVM hustle-generated)
 
+install(
+    TARGETS HustleVM
+    ARCHIVE
+    COMPONENT development
+)
