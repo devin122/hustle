@@ -33,7 +33,7 @@ steps:
     echo cpack -B package -G TGZ -R "azure-git-$(Build.SourceVersion)"
     cpack -B package -v -G TGZ -R "azure-git-$(Build.SourceVersion)"
     ls package
-    rm -rf package/_CPackPackages
+    rm -rf package/_CPack_Packages
     ls package
   displayName: 'Package'
 - task: PublishBuildArtifacts@1
