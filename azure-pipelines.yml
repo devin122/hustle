@@ -22,7 +22,13 @@ steps:
 - checkout: self
   submodules: true
 - script: |
-    mkdir build
+    mkdir -p build/vcpkg_installed
+  displayName: 'Create dirs'
+- task: Cache@2
+  inputs:
+    key: vcpkg | $(Agent.OS) | vcpkg.json
+    path: build/vcpkg_installed
+- script: |
     cd build
     cmake -DHUSTLE_VERSION_SUFFIX="azure-git-$(Build.SourceVersion)" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake $(extraCmakeArgs) ..
     make
