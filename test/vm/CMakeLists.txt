@@ -32,4 +32,4 @@ add_executable(hustle-vm-test
 )
 
 target_link_libraries(hustle-vm-test test-main HustleVM HustleGC)
-add_test(NAME vm-test COMMAND hustle-vm-test)
+add_test(NAME vm-test COMMAND hustle-vm-test -r junit -o vm_test.xml)
