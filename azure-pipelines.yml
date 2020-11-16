@@ -1,7 +1,7 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+################################################################################
+# Copyright (c) Devin Nakamura
+# SPDX-License-Identifier: BSD-2-Clause
+################################################################################
 
 trigger:
 - master
@@ -22,7 +22,12 @@ steps:
 - checkout: self
   submodules: true
 - script: |
-    mkdir build
+    mkdir -p build/vcpkg_installed
+  displayName: Create Dirs
+- task: Cache@2
+  inputs:
+    key: 'vcpkg | "$(Agent.OS)" | vcpkg.json'
+- script: |
     cd build
     cmake -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake $(extraCmakeArgs) ..
     make
