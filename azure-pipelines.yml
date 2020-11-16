@@ -24,7 +24,7 @@ steps:
 - script: |
     mkdir build
     cd build
-    cmake -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake $(extraCmakeArgs) ..
+    cmake -DHUSTLE_VERSION_SUFFIX="azure-git-$(Build.SourceVersion)" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake $(extraCmakeArgs) ..
     make
   displayName: 'Build'
 - script: |
@@ -32,7 +32,9 @@ steps:
     mkdir package
     echo cpack -B package -G TGZ -R "azure-git-$(Build.SourceVersion)"
     cpack -B package -v -G TGZ -R "azure-git-$(Build.SourceVersion)"
+    ls package
     rm -rf package/_CPackPackages
+    ls pacakge
   displayName: 'Package'
 - task: PublishBuildArtifacts@1
   inputs:
