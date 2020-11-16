@@ -9,7 +9,7 @@ trigger:
 strategy:
   matrix:
     linux:
-      imageName: 'ubuntu-latest'
+      imageName: 'ubuntu-18.04'
       extraCmakeArgs: '-DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10'
     mac:
       imageName: 'macos-10.15'
