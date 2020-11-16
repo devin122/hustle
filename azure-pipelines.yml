@@ -29,6 +29,16 @@ steps:
   displayName: 'Build'
 - script: |
     cd build
+    mkdir package
+    cpack -B package -G TGZ -R "azure-git-$(Build.SourceVersion)"
+    rm -rf _CPackPackages
+  displayName: 'Package'
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: build/package
+    artifactName: pkg
+- script: |
+    cd build
     ctest
   displayName: 'Test'
 - task: PublishTestResults@2
