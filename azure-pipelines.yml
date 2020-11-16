@@ -30,8 +30,9 @@ steps:
 - script: |
     cd build
     mkdir package
-    cpack -B package -G TGZ -R "azure-git-$(Build.SourceVersion)"
-    rm -rf _CPackPackages
+    echo cpack -B package -G TGZ -R "azure-git-$(Build.SourceVersion)"
+    cpack -B package -v -G TGZ -R "azure-git-$(Build.SourceVersion)"
+    rm -rf package/_CPackPackages
   displayName: 'Package'
 - task: PublishBuildArtifacts@1
   inputs:
