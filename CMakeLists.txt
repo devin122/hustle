@@ -31,6 +31,7 @@ set(HUSTLE_VERSION_SUFFIX "-git")
 project(hustle
     LANGUAGES CXX
     VERSION 0.1.0)
+set(CPACK_PACKAGE_FILE_NAME "hustle-${hustle_VERSION}${HUSTLE_VERSION_SUFFIX}-${CMAKE_SYSTEM_NAME}")
 
 find_package(Microsoft.GSL CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
