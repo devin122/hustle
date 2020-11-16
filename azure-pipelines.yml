@@ -6,8 +6,17 @@
 trigger:
 - master
 
+strategy:
+  matrix:
+    linux:
+      imageName: 'ubuntu-latest'
+      extraCmakeArgs: '-DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10'
+    mac:
+      imageName: 'macos-10.15'
+      extraCmakeArgs: ''
+
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: '$(imageName)'
 
 steps:
 - checkout: self
@@ -15,7 +24,7 @@ steps:
 - script: |
     mkdir build
     cd build
-    cmake -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 ..
+    cmake -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake $(extraCmakeArgs) ..
     make
   displayName: 'Build'
 - script: |
