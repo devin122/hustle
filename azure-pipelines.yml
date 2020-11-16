@@ -34,7 +34,7 @@ steps:
     cpack -B package -v -G TGZ -R "azure-git-$(Build.SourceVersion)"
     ls package
     rm -rf package/_CPackPackages
-    ls pacakge
+    ls package
   displayName: 'Package'
 - task: PublishBuildArtifacts@1
   inputs:
