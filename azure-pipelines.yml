@@ -35,7 +35,8 @@ steps:
   displayName: Create Dirs
 - task: Cache@2
   inputs:
-    key: 'vcpkg | "$(Agent.OS)$(cacheTag)" | vcpkg.json'
+    key: 'vcpkg | "$(Agent.OS)$(cacheTag)" | vcpkg.json | "v2"'
+    path: 'build/vcpkg_installed'
 - script: |
     cd build
     cmake -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake $(extraCmakeArgs) ..
