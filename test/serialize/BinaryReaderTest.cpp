@@ -85,6 +85,7 @@ TEST_CASE("Round trip conversion") {
   CHECK(in_4 == out_4);
 }
 
+/*
 namespace {
 struct Foo {
   int a = 0;
@@ -101,7 +102,7 @@ template <typename T>
 void serialize(T& stream, Foo& x) {
   stream | x.a | x.b | x.c;
 }
-/*
+
 TEST_CASE("Struct serialization") {
   Foo output{-20775, 'Z', 665};
   std::stringstream ss;
