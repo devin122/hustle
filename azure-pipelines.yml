@@ -6,11 +6,20 @@
 trigger:
 - master
 
+variables:
+  - name: disable.coverage.autogenerate
+    value: 'true'
+
 strategy:
   matrix:
     linux:
       imageName: 'ubuntu-18.04'
       extraCmakeArgs: '-DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10'
+    codecov:
+      imageName: 'ubuntu-18.04'
+      cacheTage: codecov
+      extraCmakeArgs: '-DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DHUSTLE_CODE_COVERAGE=ON'
+      coverageBuild: true
     mac:
       imageName: 'macos-10.15'
       extraCmakeArgs: ''
@@ -26,7 +35,7 @@ steps:
   displayName: Create Dirs
 - task: Cache@2
   inputs:
-    key: 'vcpkg | "$(Agent.OS)" | vcpkg.json'
+    key: 'vcpkg | "$(Agent.OS)$(cacheTag)" | vcpkg.json'
 - script: |
     cd build
     cmake -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake $(extraCmakeArgs) ..
@@ -34,8 +43,29 @@ steps:
   displayName: 'Build'
 - script: |
     cd build
+    [ ! -z $(coverageBuild) ] && export LLVM_PROFILE_FILE="$PWD/profile-%p.profraw" && echo "SETTING PROFILE_FILE" && rm -f *.profraw
     ctest
+    if [ ! -z $(coverageBuild) ]; then
+      llvm-profdata-9 merge -sparse profile-*.profraw -o=test.profdata
+      llvm-cov-9 export -format=lcov -instr-profile=test.profdata bin/hustle-vm-test -object bin/hustle_serialize_test > merged.lcov
+      rm -f *.profraw
+    fi
   displayName: 'Test'
+- task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@4
+  displayName: ReportGenerator
+  condition:  eq(variables.coverageBuild, true)
+  inputs:
+    reports: build/merged.lcov
+    targetdir: build/coverage
+    reporttypes: 'HtmlInline_AzurePipelines;Cobertura'
+
+- task: PublishCodeCoverageResults@1
+  condition: eq(variables.coverageBuild, true)
+  inputs:
+    codeCoverageTool: cobertura
+    summaryFileLocation: build/coverage/Cobertura.xml
+    reportDirectory: build/coverage
+
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: JUnit
