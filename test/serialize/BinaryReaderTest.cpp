@@ -85,6 +85,7 @@ TEST_CASE("Round trip conversion") {
   CHECK(in_4 == out_4);
 }
 
+namespace {
 struct Foo {
   int a = 0;
   char b = 0;
@@ -94,6 +95,7 @@ struct Foo {
     return (a == other.a) && (b == other.b) && (c == other.c);
   }
 };
+} // namespace
 
 template <typename T>
 void serialize(T& stream, Foo& x) {
