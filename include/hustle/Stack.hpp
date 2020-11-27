@@ -65,7 +65,6 @@ public:
     HSTL_ASSERT(sp_ >= base_);
     HSTL_ASSERT(sp_ < top_);
     return sp_[idx];
-    ;
   }
 
   constexpr size_t depth() const { return top_ - sp_; }
