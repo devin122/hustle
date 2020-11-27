@@ -54,13 +54,6 @@ DebuggerInterface dbg_interface;
 } // namespace hustle
 
 static constexpr size_t MAX_CALL_FRAMES = 1024;
-/*Quotation* VM::register_primitive(const char* name, CallType handler){
-    Quotation *quote = new Quotation(handler);
-    symbol_table_.emplace(name, make_cell(quote));
-    return quote;
-}
-*/
-static bool is_called(Cell& c) { return c.is_a<Word>() | c.is_a<Wrapper>(); }
 
 static TypedCell<Word> make_symbol_no_register(VM& vm, const char* n) {
   String* name = vm.allocate<String>(n, strlen(n));
@@ -88,9 +81,6 @@ static cell_t make_symbol(VM& vm, const char* name) {
 
 thread_local VM* hustle::current_vm = nullptr;
 
-/*               "Array* definition;",
-                "FuncType entry;"*/
-
 VM::VM()
     : stack_(STACK_SIZE), call_stack_(MAX_CALL_FRAMES), heap_(this),
       lexer_(*this) {
@@ -102,7 +92,7 @@ VM::VM()
   // TODO these maybe should be better
   // TODO should make these handles in case we gc
   // right now we just roll the dice that we almost certainly wont gc
-  //TODO fixme
+  // TODO fixme
   True = Cell::from_raw(make_symbol(*this, "True"));
 
   False = Cell::from_raw(make_symbol(*this, "False"));
@@ -165,30 +155,6 @@ void VM::call(Cell cell) {
     frame.quote = cell;
     call_stack_.push(frame);
     interpreter_loop();
-    /*
-    auto state = call_stack_.get_state();
-    Quotation* quote = cast<Quotation>(cell);
-    assert(quote != nullptr);
-    // assert(quote->entry != nullptr);
-    if (quote->entry != nullptr) {
-      quote->entry(this, quote);
-    } else {
-      // TODO this isnt gc safe
-      Array* arr = quote->definition;
-
-      for (unsigned i = 0; i < arr->count(); ++i) {
-        Cell c = (*arr)[i];
-        if (is_called(c)) {
-          call_stack_.update_offset(i);
-          call(c.raw());
-        } else {
-          stack_.push(c);
-        }
-      }
-    }
-    assert(call_stack_.get_state().sp == state.sp);
-    call_stack_.pop();
-    */
     return;
   }
   default:
