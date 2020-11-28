@@ -148,10 +148,18 @@ inline String::String(const char* c_str) : Object(this, strlen(c_str)+1),
 length(strlen(c_str)) { std::copy(c_str, c_str + length + 1, data());
 };
 */
-inline String::String(const char* c_str, size_t len)
+inline String::String(const char* c_str, size_t len) noexcept
     : Object(this, len + 1), length_raw(Cell::from_int(len)) {
   std::copy(c_str, c_str + len, data());
   data()[len] = 0;
+}
+
+// TODO this should use a delegating constructor, but then we have issue with
+// calling a deleted destructor
+inline String::String(std::string_view sv) noexcept
+    : Object(this, sv.size() + 1), length_raw(Cell::from_int(sv.size())) {
+  std::copy(sv.cbegin(), sv.cend(), data());
+  data()[sv.size()] = 0;
 }
 
 inline size_t String::length() const { return cast<intptr_t>(length_raw); }

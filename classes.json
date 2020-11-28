@@ -18,7 +18,8 @@
         "String": {
             "methods": [
                 "String(size_t len): Object(this, len), length_raw(Cell::from_int(0)) { }",
-                "String(const char *c_str, size_t len);",
+                "String(const char *c_str, size_t len) noexcept;",
+                "String(std::string_view sv) noexcept;",
                 "char* data() const { return pointer_add<char>(this, sizeof(String));}",
                 "size_t capacity() const;",
                 "size_t length() const;",

@@ -27,6 +27,7 @@
 
 add_executable(hustle-vm-test
     CellTest.cpp
+    FunctionTest.cpp
     PrimitiveTest.cpp
     StackTest.cpp
 )
