@@ -269,7 +269,6 @@ void VM::interpreter_loop() {
       default:
         push(cell);
         break;
-        // case CELL_WRAPPER:
       }
     }
     call_stack_.pop();
