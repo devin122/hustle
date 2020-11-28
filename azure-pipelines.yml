@@ -49,6 +49,8 @@ steps:
     if [ ! -z $(coverageBuild) ]; then
       llvm-profdata-9 merge -sparse profile-*.profraw -o=test.profdata
       llvm-cov-9 export -format=lcov -instr-profile=test.profdata bin/hustle-vm-test -object bin/hustle_serialize_test > merged.lcov
+      echo "Uploading data to codecov.io"
+      bash <(curl -s https://codecov.io/bash) -f merged.lcov
       rm -f *.profraw
     fi
   displayName: 'Test'
