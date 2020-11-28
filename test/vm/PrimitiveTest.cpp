@@ -35,6 +35,13 @@ using namespace hustle;
 using namespace std::literals;
 void register_primitives(VM& vm); // TODO: this is a hack
 
+// Helper function for calling hustle functions
+static void call(VM& vm, const std::string& name) {
+  auto sym = vm.lookup_symbol(name);
+  REQUIRE(sym != 0);
+  vm.call(Cell::from_raw(sym));
+}
+
 TEST_CASE("Primitives are registered", "[Primitive]") {
   VM vm;
   register_primitives(vm);
@@ -59,16 +66,30 @@ TEST_CASE("Primitives are registered", "[Primitive]") {
   }
 }
 
-TEST_CASE("Primitive tests", "[Primitive]") {
+TEST_CASE("Arithmetic primitives", "[Primitive]") {
   VM vm;
   register_primitives(vm);
 
+  REQUIRE(vm.stack_.begin() == vm.stack_.end());
   SECTION("prim +") {
     vm.push(Cell::from_int(1));
     vm.push(Cell::from_int(2));
-    auto add = vm.lookup_symbol("+");
-    REQUIRE(add != 0);
-    vm.call(Cell::from_raw(add));
+    call(vm, "+");
     REQUIRE(vm.pop() == Cell::from_int(3));
   }
+
+  SECTION("prim -") {
+    vm.push(Cell::from_int(2));
+    vm.push(Cell::from_int(3));
+    call(vm, "-");
+    REQUIRE(vm.pop() == Cell::from_int(-1));
+  }
+
+  SECTION("prim *") {
+    vm.push(Cell::from_int(-4));
+    vm.push(Cell::from_int(32));
+    call(vm, "*");
+    REQUIRE(vm.pop() == Cell::from_int(-128));
+  }
+  REQUIRE(vm.stack_.begin() == vm.stack_.end());
 }
