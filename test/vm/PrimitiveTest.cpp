@@ -93,3 +93,48 @@ TEST_CASE("Arithmetic primitives", "[Primitive]") {
   }
   REQUIRE(vm.stack_.begin() == vm.stack_.end());
 }
+
+TEST_CASE("Stack primitives", "[Primitive]") {
+  VM vm;
+  register_primitives(vm);
+  REQUIRE(vm.stack_.begin() == vm.stack_.end());
+
+  SECTION("swap") {
+    vm.push(Cell::from_int(2));
+    vm.push(Cell::from_int(32));
+    call(vm, "swap");
+    REQUIRE(vm.pop() == Cell::from_int(2));
+    REQUIRE(vm.pop() == Cell::from_int(32));
+  }
+
+  SECTION("dup") {
+    vm.push(Cell::from_int(123));
+    call(vm, "dup");
+    REQUIRE(vm.pop() == Cell::from_int(123));
+    REQUIRE(vm.pop() == Cell::from_int(123));
+  }
+
+  SECTION("over") {
+    vm.push(Cell::from_int(16));
+    vm.push(Cell::from_int(-1));
+    call(vm, "over");
+
+    REQUIRE(vm.pop() == Cell::from_int(16));
+    REQUIRE(vm.pop() == Cell::from_int(-1));
+    REQUIRE(vm.pop() == Cell::from_int(16));
+  }
+
+  SECTION("rot") {
+    vm.push(Cell::from_int(-42));
+    vm.push(Cell::from_int(19));
+    vm.push(Cell::from_int(1));
+
+    call(vm, "rot");
+
+    REQUIRE(vm.pop() == Cell::from_int(19));
+    REQUIRE(vm.pop() == Cell::from_int(-42));
+    REQUIRE(vm.pop() == Cell::from_int(1));
+  }
+
+  REQUIRE(vm.stack_.begin() == vm.stack_.end());
+}
