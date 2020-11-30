@@ -69,7 +69,7 @@ public:
 
   constexpr size_t depth() const { return top_ - sp_; }
 
-  Cell peek();
+  Cell peek() const;
   Cell* begin() { return sp_; }
   const Cell* cbegin() const { return sp_; }
   Cell* end() { return top_; }

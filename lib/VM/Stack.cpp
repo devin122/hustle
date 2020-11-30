@@ -68,7 +68,7 @@ Cell Stack::pop() {
   return cell;
 }
 
-Cell Stack::peek() {
+Cell Stack::peek() const {
   if (sp_ >= top_) {
     throw Exception("stack underflow");
   }
