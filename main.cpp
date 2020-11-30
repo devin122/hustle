@@ -26,28 +26,30 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#include "hustle/Object.hpp"
-#include "hustle/Support/Assert.hpp"
-#include "hustle/VM.hpp"
-#include "hustle/config.h"
+#include <hustle/Object.hpp>
+#include <hustle/Parser/Lexer.hpp>
+#include <hustle/Support/Assert.hpp>
+#include <hustle/Support/IndentingStream.hpp>
+#include <hustle/Support/Utility.hpp>
+#include <hustle/VM.hpp>
+#include <hustle/config.h>
 
 #include "CLI/App.hpp"
 #include "CLI/Config.hpp"
 #include "CLI/Formatter.hpp"
-#include "hustle/Parser/Lexer.hpp"
+
 #include <algorithm>
 #include <cctype>
 #include <fstream>
 #include <functional>
 #include <gsl/string_span>
-#include <hustle/Support/IndentingStream.hpp>
-#include <hustle/Support/Utility.hpp>
 #include <inttypes.h>
 #include <iostream>
 #include <replxx.hxx>
 #include <sstream>
 #include <stdio.h>
 #include <string>
+
 using namespace hustle;
 using namespace std::literals;
 void register_primitives(VM& vm);
@@ -56,35 +58,6 @@ static constexpr int FLAG_ARRAY = 1;
 
 using string_span = gsl::string_span<gsl::dynamic_extent>;
 // using string_span = std::string_view;
-
-std::vector<cell_t> tokenize(std::string& str, VM& vm, int flags = 0) {
-  std::istringstream s(str);
-  std::vector<cell_t> cells;
-  while (!s.eof()) {
-    // int c = peek
-    // TODO check for string literal
-
-    std::string tok;
-    s >> tok;
-    if (isdigit(tok[0])) {
-      size_t size = 0;
-      long long ll = std::stoll(tok, &size, 0);
-      if (size == tok.length()) {
-        cells.push_back(make_cell(ll));
-        continue;
-      }
-    }
-    if (tok == "["s) {
-    }
-    cell_t word = vm.lookup_symbol(tok);
-    if (is_a<Word>(word) && get_cell_pointer(word) == nullptr) {
-      std::cerr << "Unkown word " << tok << "\n";
-      continue;
-    }
-    cells.push_back(word);
-  }
-  return cells;
-}
 
 using Iterator = string_span::iterator;
 // TODO the until thing is a hack
