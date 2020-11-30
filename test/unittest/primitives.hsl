@@ -31,3 +31,77 @@
 { T } [ T ] check
 { F } [ F ] check
 
+# Comparison operators
+{ 1 1 < } [ F ] check
+{ 3 1 < } [ F ] check
+{ 1 3 < } [ T ] check
+
+{ 1 1 > } [ F ] check
+{ 1 2 > } [ F ] check
+{ 2 1 > } [ T ] check
+
+# Math operators
+{ 7 1 + } [ 8 ] check
+{ 2 5 9 + } [ 2 14 ] check
+
+{ 18 7 - } [ 11 ] check
+
+{ 7 3 * } [ 21 ] check
+
+# { 8 2 / } [ 4 ] check
+# { 9 2 / } [ 4 ] check
+
+{ 8 2 % } [ 0 ] check
+{ 9 2 % } [ 1 ] check
+
+{ 3 2 & } [ 2 ] check
+{ 2 1 & } [ 0 ] check
+
+{ 1 1 | } [ 1 ] check
+{ 0 7 | } [ 7 ] check
+{ 1 2 | } [ 3 ] check
+
+# Stack manipulation
+{ 1 dup } [ 1 1 ] check
+{ 1 2 dup } [ 1 2 2 ] check
+
+{ 1 2 swap } [ 2 1 ] check
+{ 1 2 3 swap } [ 1 3 2 ] check
+
+{ 1 drop } [ ] check
+{ 1 2 drop } [ 1 ] check
+
+{ 1 2 over } [ 1 2 1 ] check
+{ 1 2 3 over } [ 1 2 3 2 ] check
+
+{ 1 2 3 rot } [ 3 1 2 ] check
+{ 1 2 3 4 rot } [ 1 4 2 3 ] check
+
+{ 1 5 { 2 + } dip } [ 3 5 ] check
+
+{ 1 2 3 pick } [ 1 2 3 1 ] check
+
+# Not categorized
+
+{ 1 2 "+" lookup call } [ 3 ] check
+{ "foo" hash "foo" hash  =? } [ T ] check
+{ "foo" hash "bar" hash =? } [ F ] check
+
+{ "+" lookup parse-word? } [ F ] check
+{ "{" lookup parse-word? } [ T ] check
+
+{ [ 1 2 3 ] array? } [ T ] check
+
+# broken
+#{ 1 2 array? } [ F ] check
+
+{ "+" lookup array? } [ F ] check
+
+{ 1 string? } [ F ] check
+{ [ 1 2 3 ] string? } [ F ] check
+{ "foo" string? } [ T ] check
+
+{ [ 1 2 + ] array>quote array? } [ F ] check
+{ 5 [ 4 - ] array>quote call } [ 1 ] check
+
+{ [ 1 2 3 4 ] length } [ 4 ] check
