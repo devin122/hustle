@@ -25,26 +25,27 @@
 # SPDX-License-Identifier: BSD-2-Clause
 ################################################################################
 
-'if' { ? call } def
-'mark>quote' { mark>array array>quote } def
-'"' { '"' read-until } defp
+hustle_add_executable(hustle-test
+    main.cpp
+)
+#
+#target_link_libraries(hustle-vm-test test-main HustleVM HustleGC)
+#add_test(NAME vm-test COMMAND hustle-vm-test -r junit -o vm_test.xml)
 
-'parse-token' { dup string? { lookup dup parse-word? { call } { } if } { } if } def
+target_link_libraries(hustle-test
+    PRIVATE
+    CLI11::CLI11
+    HustleVM
+    HustleGC
+    HustleSupport
+    std::filesystem
+    fmt::fmt
+)
 
-
-# 'parse-array' { mark-stack lex-token { dup ']' =?  { drop } { parse-token } }  { lex-token } while mark>array } def
-'(parse-array)' { mark-stack lex-token { dup ']' =?  { drop False } { parse-token True } if }  { lex-token } while mark>array } def
-
-# 'parse-array' { lex-token '{' =? 'expected quote' assert (parse-quote) } def
-
-#TODO this is basically the same as parse-array
-'(parse-quote)' { mark-stack lex-token { dup '}' =?  { drop False } { parse-token True } if }  { lex-token } while mark>quote } def
-
-'parse-quote' { lex-token '{' =? 'expected quote' assert (parse-quote) } def
-
-'[' { (parse-array) } defp
-'{' { (parse-quote) } defp
-
-# Todo this is a bit gross
-'T' { 1 1 =? } defp
-'F' { 1 2 =? } defp
+add_test(NAME unittests
+    COMMAND
+    hustle-test
+    ${CMAKE_CURRENT_SOURCE_DIR}/primitives.hsl
+    --name=primitives
+    --xml=test_primitives.xml
+)

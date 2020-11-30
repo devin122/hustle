@@ -83,7 +83,7 @@ struct VM {
     push(Cell(o));
   }
 
-  Quotation* register_primitive(const char* name, CallType handler);
+  Word* register_primitive(const char* name, CallType handler);
   void register_symbol(String* str, Quotation* quote, bool parseword = false);
   void register_symbol(String* string, Word* word);
 

@@ -25,26 +25,9 @@
 # SPDX-License-Identifier: BSD-2-Clause
 ################################################################################
 
-'if' { ? call } def
-'mark>quote' { mark>array array>quote } def
-'"' { '"' read-until } defp
+# Basic sanity checks
+{ 1 } [ 1 ] check
+{ } [ ] check
+{ T } [ T ] check
+{ F } [ F ] check
 
-'parse-token' { dup string? { lookup dup parse-word? { call } { } if } { } if } def
-
-
-# 'parse-array' { mark-stack lex-token { dup ']' =?  { drop } { parse-token } }  { lex-token } while mark>array } def
-'(parse-array)' { mark-stack lex-token { dup ']' =?  { drop False } { parse-token True } if }  { lex-token } while mark>array } def
-
-# 'parse-array' { lex-token '{' =? 'expected quote' assert (parse-quote) } def
-
-#TODO this is basically the same as parse-array
-'(parse-quote)' { mark-stack lex-token { dup '}' =?  { drop False } { parse-token True } if }  { lex-token } while mark>quote } def
-
-'parse-quote' { lex-token '{' =? 'expected quote' assert (parse-quote) } def
-
-'[' { (parse-array) } defp
-'{' { (parse-quote) } defp
-
-# Todo this is a bit gross
-'T' { 1 1 =? } defp
-'F' { 1 2 =? } defp

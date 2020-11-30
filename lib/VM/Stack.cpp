@@ -29,8 +29,7 @@
 #include "hustle/Support/Error.hpp"
 #include "hustle/VM.hpp"
 
-#include <assert.h>
-
+#include <algorithm>
 #include <new>
 using namespace hustle;
 
@@ -45,6 +44,11 @@ Stack::Stack(size_t sz) {
 }
 
 Stack::~Stack() { free(base_); }
+
+void Stack::clear() {
+  std::fill(begin(), end(), Cell::from_int(0));
+  sp_ = top_;
+}
 
 void Stack::push(Cell cell) {
   if (sp_ <= base_) {

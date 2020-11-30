@@ -76,6 +76,7 @@ public:
   const Cell* cend() const { return top_; }
 
   const Cell* sp() const { return sp_; }
+  void clear();
 
 protected:
   Cell* base_;

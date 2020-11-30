@@ -33,4 +33,5 @@ target_link_libraries(test-main PUBLIC Catch2::Catch2)
 
 add_subdirectory(vm)
 add_subdirectory(serialize)
+add_subdirectory(unittest)
 

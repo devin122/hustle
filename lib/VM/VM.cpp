@@ -79,6 +79,15 @@ static cell_t make_symbol(VM& vm, const char* name) {
   return word.raw();
 }
 
+Word* VM::register_primitive(const char* name, CallType handler) {
+  size_t name_len = strlen(name);
+  Word* word = allocate<Word>();
+  word->name = allocate<String>(name, name_len);
+  word->definition = allocate<Quotation>(handler);
+  symbol_table_.emplace(std::string(name), make_cell(word));
+  return word;
+}
+
 thread_local VM* hustle::current_vm = nullptr;
 
 VM::VM()
