@@ -75,14 +75,6 @@ static void prim_strhash(VM* vm, Quotation*) {
   // uint64_t hash =  CityHash64(s->data(), s->len());
 }
 
-static void prim_str_empty(VM* vm, Quotation*) {
-  auto c = vm->pop();
-  if (cast<String>(c)->length() == 0) {
-
-  } else {
-  }
-}
-
 static void prim_arr_to_quote(VM* vm, Quotation*) {
   auto quote = vm->allocate<Quotation>();
   quote->definition = vm->pop();

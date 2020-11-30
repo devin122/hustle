@@ -56,7 +56,6 @@ primitives:
   set-raw-slot: prim_set_raw_slot
   hash: "prim_hash"
   length: prim_length
-  "str-empty?": "prim_str_empty"
 
   # class id methods
   "array?": prim_is_array
