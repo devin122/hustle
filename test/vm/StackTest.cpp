@@ -121,3 +121,15 @@ TEST_CASE("const Stack::operator[]", "[Stack]") {
     CHECK(stk[3] == c4);
   }
 }
+
+TEST_CASE("Stack begin() and end()", "[Stack]") {
+  Stack stack(10);
+  CHECK(stack.begin() == stack.end());
+  CHECK(stack.begin() == stack.cbegin());
+  CHECK(stack.end() == stack.cend());
+
+  stack.push(Cell::from_int(1));
+  CHECK(stack.begin() != stack.end());
+  CHECK(stack.begin() == stack.cbegin());
+  CHECK(stack.end() == stack.cend());
+}
