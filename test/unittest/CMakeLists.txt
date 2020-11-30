@@ -47,5 +47,5 @@ add_test(NAME unittests
     hustle-test
     ${CMAKE_CURRENT_SOURCE_DIR}/primitives.hsl
     --name=primitives
-    --xml=test_primitives.xml
+    --xml=primitive_test.xml
 )
