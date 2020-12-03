@@ -26,12 +26,13 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#include "hustle/Object.hpp"
-#include "hustle/Support/Assert.hpp"
-#include "hustle/VM.hpp"
-#include "hustle/config.h"
+#include <hustle/Object.hpp>
+#include <hustle/Parser/BootstrapLexer.hpp>
+#include <hustle/Support/Assert.hpp>
 #include <hustle/Support/IndentingStream.hpp>
 #include <hustle/Support/Utility.hpp>
+#include <hustle/VM.hpp>
+#include <hustle/config.h>
 
 #include <CLI/App.hpp>
 #include <CLI/Config.hpp>
@@ -46,131 +47,11 @@
 #include <string>
 #include <vector>
 
-// TODO this is copied from the vm, it should be moved to a library
 using namespace hustle;
 using namespace std::literals;
 using string_span = gsl::string_span<gsl::dynamic_extent>;
 
 void register_primitives(VM& vm);
-
-static std::vector<cell_t> tokenize(std::string& str, VM& vm, int flags = 0) {
-  std::istringstream s(str);
-  std::vector<cell_t> cells;
-  while (!s.eof()) {
-    // int c = peek
-    // TODO check for string literal
-
-    std::string tok;
-    s >> tok;
-    if (isdigit(tok[0])) {
-      size_t size = 0;
-      long long ll = std::stoll(tok, &size, 0);
-      if (size == tok.length()) {
-        cells.push_back(make_cell(ll));
-        continue;
-      }
-    }
-    if (tok == "["s) {
-    }
-    cell_t word = vm.lookup_symbol(tok);
-    if (is_a<Word>(word) && get_cell_pointer(word) == nullptr) {
-      std::cerr << "Unkown word " << tok << "\n";
-      continue;
-    }
-    cells.push_back(word);
-  }
-  return cells;
-}
-
-using Iterator = string_span::iterator;
-// TODO the until thing is a hack
-static std::vector<Cell> tokenize(Iterator& it, const Iterator& end, VM& vm,
-                                  char until = 0) {
-  // auto it = str.begin();
-  // auto end = str.end();
-  // auto it = str.begin();
-  std::vector<Cell> result;
-  // auto x =  std::not_fn(std::isspace);
-  while (it != end) {
-    // skip ws
-    it = std::find_if_not(it, end, (int (*)(int))std::isspace);
-    if (it == end) {
-      break;
-    }
-
-    if (*it == '\'') {
-      ++it;
-
-      auto str_end = std::find(it, end, '\'');
-      if (str_end == end) {
-        std::cerr << "error unterminated string" << std::endl;
-        throw std::runtime_error("string parse failure");
-      }
-      String* vm_str = vm.allocate<String>(str_end - it + 1);
-      std::copy(it, str_end, vm_str->data());
-      vm_str->data()[str_end - it] = 0;
-      vm_str->length_raw = Cell::from_int(str_end - it);
-      result.push_back(Cell::from_raw(make_cell(vm_str)));
-      it = str_end + 1;
-    } else if (*it == '#') {
-      // Line comment, we are done
-      break;
-    } else {
-      auto token_end = std::find_if(it, end, (int (*)(int))std::isspace);
-      if ((token_end - it) == 1) {
-        if (*it == until) {
-          it = token_end;
-          return std::move(result);
-        }
-        if (*it == '{' || *it == '[') {
-          bool parse_quote = *it == '{';
-          ++it;
-          auto array_contents = tokenize(it, end, vm, parse_quote ? '}' : ']');
-          Array* arr = vm.allocate<Array>(array_contents.size());
-          std::copy(array_contents.begin(), array_contents.end(), arr->begin());
-          if (parse_quote) {
-            Quotation* quote = vm.allocate<Quotation>();
-            quote->definition = arr;
-            result.push_back(Cell::from_raw(make_cell(quote)));
-          } else {
-            result.push_back(Cell::from_raw(make_cell(arr)));
-          }
-          continue;
-        }
-      }
-
-      // string_span token(it, token_end-1);
-      std::string token_name(it, token_end);
-      it = token_end;
-
-      if (isdigit(token_name[0])) {
-        size_t size = 0;
-        long long ll = std::stoll(token_name, &size, 0);
-        if (size == token_name.length()) {
-          result.push_back(Cell::from_raw(make_cell(ll)));
-          continue;
-        }
-      }
-      if (token_name == "False") {
-        result.push_back(False);
-      } else if (token_name == "True") {
-        result.push_back(True);
-      } else {
-        try {
-          result.push_back(Cell::from_raw(vm.lookup_symbol(token_name)));
-        } catch (std::runtime_error e) {
-          std::cerr << "Unknown symbol " << token_name << std::endl;
-          throw e;
-        }
-      }
-    }
-  }
-  if (until != 0) {
-    std::cerr << "Error: expected " << until << std::endl;
-    throw std::runtime_error("parse error");
-  }
-  return std::move(result);
-}
 
 static void load_kernel(VM& vm) {
   auto path = hustle::hustle_lib_dir().append("literals.hsl");
@@ -189,7 +70,7 @@ static void load_kernel(VM& vm) {
     std::getline(kernel, line);
     string_span tokenize_span(line);
     auto it = tokenize_span.begin();
-    auto tokens = tokenize(it, tokenize_span.end(), vm);
+    auto tokens = bootstrap::tokenize(it, tokenize_span.end(), vm);
     for (auto cell : tokens) {
       vm.evaluate(cell);
     }

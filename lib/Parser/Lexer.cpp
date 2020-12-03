@@ -158,14 +158,6 @@ void Lexer::lex_token() {
   }
 }
 
-void Lexer::lex_quote() {
-  // TODO this needs to gc safe
-  std::vector<Cell> definition;
-  definition.reserve(32);
-  while (true) {
-  }
-}
-
 std::string Lexer::read_until(char term) {
   std::string buffer;
   HSTL_ASSERT(!parse_stack_.empty());

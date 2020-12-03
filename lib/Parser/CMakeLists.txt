@@ -26,6 +26,7 @@
 ################################################################################
 
 hustle_add_library(HustleParser STATIC
+    BootstrapLexer.cpp
     Lexer.cpp
     InteractiveStreamBuff.cpp
 )

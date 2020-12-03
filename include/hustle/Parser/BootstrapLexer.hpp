@@ -25,80 +25,27 @@
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
+#ifndef HUSTLE_PARSER_BOOTSTRAP_LEXER_HPP
+#define HUSTLE_PARSER_BOOTSTRAP_LEXER_HPP
 
-#ifndef HUSTLE_PARSER_LEXER_HPP
-#define HUSTLE_PARSER_LEXER_HPP
+#include <hustle/cell.hpp>
 
-#include <array>
-#include <deque>
+#include <gsl/string_span>
+#include <vector>
 
-#include <istream>
-#include <list>
-#include <memory>
-#include <optional>
-#include <string>
-#include <variant>
-namespace replxx {
-class Replxx;
-}
 namespace hustle {
+class VM;
+}
 
-struct VM;
+namespace hustle::bootstrap {
+using string_span = gsl::string_span<gsl::dynamic_extent>;
+using Iterator = string_span::iterator;
 
-using TokenVariant = std::variant<std::monostate, std::string, intptr_t>;
+/// Given a pair of iterators, parse into a list of Cells using bootstrap
+/// parsing rules eg quotes use " ' "" character, and quotes and arrays handled
+/// inside the parser. no support for parse words
+std::vector<Cell> tokenize(Iterator& it, const Iterator& end, VM& vm,
+                           char until = 0);
 
-class Lexer {
-public:
-  using StreamPtr = std::unique_ptr<std::istream>;
-  Lexer(VM& vm) : vm_(vm) {}
-
-  std::optional<std::string> token_string();
-  TokenVariant token();
-
-  std::string read_until(char ch);
-
-  // pushes either a string or an int on the stack
-  void lex_token();
-
-  void add_stream(StreamPtr p);
-
-  std::istream* current_stream() const;
-
-private:
-  VM& vm_;
-  std::list<StreamPtr> parse_stack_;
-};
-
-class InteractiveStreamBuff : public std::streambuf {
-  static constexpr size_t BUFFER_SIZE = 128;
-  // std::array<char, BUFFER_SIZE> buffer_;
-
-public:
-  InteractiveStreamBuff();
-  void soft_underflow();
-
-protected:
-  int_type underflow() override;
-
-private:
-  char buffer_[BUFFER_SIZE];
-};
-
-class ReplxxStreamBuff : public std::streambuf {
-public:
-  ReplxxStreamBuff(replxx::Replxx& repl);
-
-  void start();
-  void finish();
-  void skip_space();
-
-protected:
-  const char* readline(const std::string& prompt);
-  int_type underflow() override;
-
-private:
-  std::string buffer_;
-  replxx::Replxx& replxx_;
-};
-} // namespace hustle
+} // namespace hustle::bootstrap
 #endif
