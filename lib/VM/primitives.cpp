@@ -431,12 +431,7 @@ static void prim_raw_slot(VM* vm, Quotation*) {
 
 #pragma region Debug primitives
 
-static void prim_debug_break(VM* vm, Quotation*) {
-  // Cell cell = vm->pop();
-  std::cout << "Debug break\n";
-  debug_break();
-  // vm->push(cell);
-}
+static void prim_debug_break(VM* vm, Quotation*) { vm->interpreter_break(); }
 
 static void prim_backtrace(VM* vm, Quotation*) {
   using namespace std::literals;

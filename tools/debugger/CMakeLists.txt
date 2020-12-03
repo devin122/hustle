@@ -25,6 +25,19 @@
 # SPDX-License-Identifier: BSD-2-Clause
 ################################################################################
 
-set(CMAKE_FOLDER tools)
+hustle_add_executable(hdb 
+    main.cpp
+    CommandManager.cpp
+    Commands.cpp
+)
 
-add_subdirectory(debugger)
+target_link_libraries(hdb
+    HustleVM
+    HustleSupport
+    HustleGC
+    fmt::fmt
+    CLI11::CLI11
+    HustleParser
+    REPLXX::replxx
+    std::filesystem
+)

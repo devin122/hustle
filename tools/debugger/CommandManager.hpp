@@ -26,17 +26,26 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#if defined(_WIN32)
-#include <Windows.h>
-#include <debugapi.h>
-#endif
-
+#ifndef COMMAND_MANAGER_HPP
+#define COMMAND_MANAGER_HPP
+#include "Command.hpp"
+#include <map>
+#include <memory>
+#include <optional>
+#include <string>
 namespace hustle {
 
-void debug_break() {
-#if defined(_WIN32)
-  DebugBreak();
-#endif
-}
+class Command;
 
+class CommandManager {
+public:
+  Command* find_command(const std::string& name);
+  void add_command(std::string name, std::unique_ptr<Command> cmd) {
+    cmds_.emplace(std::move(name), std::move(cmd));
+  }
+
+private:
+  std::map<std::string, std::unique_ptr<Command>> cmds_;
+};
 } // namespace hustle
+#endif

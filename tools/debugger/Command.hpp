@@ -26,17 +26,44 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#if defined(_WIN32)
-#include <Windows.h>
-#include <debugapi.h>
-#endif
+#ifndef COMMAND_HPP
+#define COMMAND_HPP
+#include <string>
 
 namespace hustle {
 
-void debug_break() {
-#if defined(_WIN32)
-  DebugBreak();
-#endif
-}
+class VM;
+
+class CommandManager;
+class Command {
+public:
+  virtual ~Command(){};
+  virtual void exec(VM*) = 0;
+
+protected:
+  Command(std::string name) : name_(std::move(name)){};
+
+private:
+  std::string name_;
+  // TODO gross
+  friend class CommandManager;
+};
+
+#define MAKE_CMD(cls_nm, nm)                                                   \
+  class cls_nm : public Command {                                              \
+  public:                                                                      \
+    cls_nm() : Command(nm){};                                                  \
+    void exec(VM*) override;                                                   \
+  }
+
+MAKE_CMD(StackCommand, "stack");
+MAKE_CMD(StepCommand, "step");
+MAKE_CMD(OverCommand, "over");
+MAKE_CMD(ExitCommand, "exit");
+MAKE_CMD(BackTraceCommand, "backtrace");
+MAKE_CMD(ContinueCommand, "continue");
+
+#undef MAKE_CMD
 
 } // namespace hustle
+#endif

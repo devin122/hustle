@@ -26,17 +26,38 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#if defined(_WIN32)
-#include <Windows.h>
-#include <debugapi.h>
-#endif
+#include "CommandManager.hpp"
 
-namespace hustle {
+#include <limits>
 
-void debug_break() {
-#if defined(_WIN32)
-  DebugBreak();
-#endif
+using namespace hustle;
+
+Command* CommandManager::find_command(const std::string& name) {
+  // TODO: this doesn't seem locale safe
+  constexpr auto char_max = std::numeric_limits<char>::max();
+
+  // Extra allocation + copy here seems gross
+  std::string first_after = name + char_max;
+
+  auto begin_it = cmds_.lower_bound(name);
+  auto end_it = cmds_.lower_bound(first_after);
+
+  if (begin_it == cmds_.end()) {
+    return nullptr;
+  }
+
+  if (begin_it->first == name) {
+    return begin_it->second.get();
+  }
+
+  Command* partial_match = nullptr;
+  auto it = begin_it;
+  if (++it == end_it) {
+    // We have only 1 partial match
+    return begin_it->second.get();
+  } else {
+    // multiple matches
+    return nullptr;
+  }
+  return nullptr;
 }
-
-} // namespace hustle

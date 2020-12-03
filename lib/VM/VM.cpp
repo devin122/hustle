@@ -43,7 +43,6 @@ Cell hustle::FalseWord;
 TypedCell<Word> hustle::Mark;
 
 namespace hustle {
-void interpreter_break();
 struct DebuggerInterface {
   volatile char code = 0;
   enum State { DBG_NONE, DBG_STEP, DBG_OVER } state;
@@ -285,3 +284,9 @@ void VM::interpreter_loop() {
 }
 
 bool VM::is_parse_word(Word* w) const { return w->is_parse_word; }
+
+void VM::interpreter_break() {
+  if (debug_listener_ != nullptr) {
+    debug_listener_();
+  }
+}

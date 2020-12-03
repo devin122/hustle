@@ -118,6 +118,7 @@ add_custom_target(hustle-generated
 
 add_subdirectory(lib)
 add_subdirectory(hustle)
+add_subdirectory(tools)
 
 hustle_add_executable(hustle
     main.cpp

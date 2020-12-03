@@ -71,7 +71,7 @@ struct VM {
 
   void push(Cell cell) { stack_.push(cell); }
   Cell pop() { return stack_.pop(); }
-  Cell peek() { return stack_.peek(); }
+  Cell peek() const { return stack_.peek(); }
 
   // CallStackEntry enter(Word)
 
@@ -115,6 +115,18 @@ struct VM {
   bool is_parse_word(Word*) const;
 
   void dump_back_trace();
+
+  typedef void (*DebugListener)();
+
+  DebugListener set_debug_listener(DebugListener new_listener) {
+    auto old_listener = debug_listener_;
+    debug_listener_ = new_listener;
+    return old_listener;
+  }
+  void interpreter_break();
+
+private:
+  DebugListener debug_listener_ = nullptr;
 };
 
 // TODO: currently only allowed 1 per thread. should allow context switching
