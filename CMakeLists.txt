@@ -90,7 +90,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
-add_subdirectory(tools)
+add_subdirectory(utils)
 
 if(HUSTLE_CODE_COVERAGE)
     set(CMAKE_CXX_FLAGS "-fprofile-instr-generate -fcoverage-mapping ${CMAKE_CXX_FLAGS}")
@@ -126,7 +126,7 @@ hustle_add_executable(hustle
 add_backward(hustle)
 add_dependencies(hustle hustle-generated)
 file(GLOB_RECURSE global_headers "${CMAKE_SOURCE_DIR}/include/hustle/*.h" "${CMAKE_SOURCE_DIR}/include/hustle/*.hpp")
-target_sources(hustle PRIVATE ${global_headers} ${CMAKE_CURRENT_SOURCE_DIR}/util/hustle.natvis)
+target_sources(hustle PRIVATE ${global_headers} ${CMAKE_CURRENT_SOURCE_DIR}/utils/hustle.natvis)
 target_link_libraries(hustle
     HustleVM
     HustleSupport
