@@ -90,8 +90,8 @@ Word* VM::register_primitive(const char* name, CallType handler) {
 thread_local VM* hustle::current_vm = nullptr;
 
 VM::VM()
-    : stack_(STACK_SIZE), call_stack_(MAX_CALL_FRAMES), heap_(this),
-      lexer_(*this) {
+    : stack_(STACK_SIZE), call_stack_(MAX_CALL_FRAMES), lexer_(*this),
+      heap_(this) {
   HSTL_ASSERT(current_vm == nullptr);
   current_vm = this;
   // memset(stack_, 0, STACK_SIZE);
@@ -207,6 +207,8 @@ void VM::step_hook() {
       should_break = true;
     }
     break;
+  case DebuggerInterface::DBG_NONE:
+    break;
   }
 
   if (should_break) {
@@ -225,7 +227,6 @@ void VM::step_hook() {
       dbg_interface.state = DebuggerInterface::DBG_OVER;
       dbg_interface.call_stack = call_stack_.sp();
     }
-
   } else {
     if (dbg_interface.code) {
       std::cerr << "DBG:: Warning, code is non-0, ignoring\n";
@@ -254,15 +255,13 @@ void VM::interpreter_loop() {
     Array* arr = cast<Quotation>(frame.quote)->definition;
     auto size = arr->count();
     HSTL_ASSERT(size <= INTPTR_MAX);
-    for (; offset < size; ++offset) {
+    for (; (uintptr_t)offset < size; ++offset) {
       step_hook();
       auto cell = (*arr)[offset];
       switch (cell.tag()) {
       case CELL_WORD: {
         // TODO need to do tail call recursion properly
         call_stack_.update_offset(offset + 1);
-
-        auto word = cast<Word>(cell);
         StackFrame frame;
         frame.offset = Cell::from_int(0);
         frame.word = cell;

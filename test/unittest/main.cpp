@@ -99,7 +99,6 @@ static void check_handler(VM* vm, Quotation*) {
 }
 
 static void run_test(VM& vm) {
-  auto* my_stream = vm.lexer_.current_stream();
   do {
     auto tok = vm.lexer_.token();
     if (std::holds_alternative<intptr_t>(tok)) {

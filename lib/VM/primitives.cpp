@@ -68,12 +68,6 @@ static void prim_defp(VM* vm, Quotation*) {
   auto name = vm->pop();
   vm->register_symbol(cast<String>(name), cast<Quotation>(definition), true);
 }
-static void prim_strhash(VM* vm, Quotation*) {
-  auto str = vm->pop();
-  String* s = cast<String>(str);
-  HSTL_ASSERT(s != nullptr);
-  // uint64_t hash =  CityHash64(s->data(), s->len());
-}
 
 static void prim_arr_to_quote(VM* vm, Quotation*) {
   auto quote = vm->allocate<Quotation>();
@@ -414,7 +408,8 @@ static void prim_set_raw_slot(VM* vm, Quotation*) {
   intptr_t idx = cast<intptr_t>(vm->pop()) + 1;
   Object* obj = cast<Object>(vm->pop());
   size_t sz = obj->size() / sizeof(Cell);
-  HSTL_ASSERT(idx < sz);
+  HSTL_ASSERT(idx >= 0);
+  HSTL_ASSERT((uintptr_t)idx < sz);
 
   ((Cell*)obj)[idx] = value;
 }
@@ -499,8 +494,6 @@ static std::vector<Cell> tokenize(std::string& str, VM& vm) {
   }
   return cells;
 }
-
-static void prim_read_word(VM* vm, Quotation*) { assert(false); }
 
 static void prim_read_line(VM* vm, Quotation*) {
   std::cout << "(primitive-readline)> ";

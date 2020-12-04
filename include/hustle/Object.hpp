@@ -135,11 +135,13 @@ inline Record::Record(size_t count) noexcept
 }
 
 template <>
-size_t object_allocation_size<Array>(size_t s) {
+[[maybe_unused]] size_t object_allocation_size<Array>(size_t s) {
   return sizeof(cell_t) * s + sizeof(Array);
 }
+
 template <>
-size_t object_allocation_size<Array>(std::initializer_list<cell_t> init) {
+[[maybe_unused]] size_t
+object_allocation_size<Array>(std::initializer_list<cell_t> init) {
   return init.size() * sizeof(cell_t) + sizeof(Array);
 }
 
@@ -165,22 +167,23 @@ inline String::String(std::string_view sv) noexcept
 inline size_t String::length() const { return cast<intptr_t>(length_raw); }
 
 template <>
-size_t object_allocation_size<String>(size_t sz) {
+[[maybe_unused]] size_t object_allocation_size<String>(size_t sz) {
   return sz + sizeof(String);
 }
 
 template <>
-size_t object_allocation_size<String>(int64_t sz) {
+[[maybe_unused]] size_t object_allocation_size<String>(int64_t sz) {
   return sz + sizeof(String);
 }
 
 template <>
-size_t object_allocation_size<String>(const char*, size_t sz) {
+[[maybe_unused]] size_t object_allocation_size<String>(const char*, size_t sz) {
   return sz + sizeof(String) + 1;
 }
 
 template <>
-size_t object_allocation_size<String>(const char*, int64_t sz) {
+[[maybe_unused]] size_t object_allocation_size<String>(const char*,
+                                                       int64_t sz) {
   return sz + sizeof(String) + 1;
 }
 

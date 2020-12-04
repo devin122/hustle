@@ -139,7 +139,10 @@ inline CallStack::State CallStack::get_state() {
 }
 
 inline StackFrame& CallStack::operator[](uintptr_t idx) {
-  HSTL_ASSERT((sp_ - top_) >= (idx * (sizeof(StackFrame) / sizeof(Cell))));
+  HSTL_ASSERT(sp_ <= top_);
+
+  HSTL_ASSERT((uintptr_t)(top_ - sp_) >=
+              (idx * (sizeof(StackFrame) / sizeof(Cell))));
   return *(((StackFrame*)sp_) + idx);
 }
 // TODO this is really inefficient

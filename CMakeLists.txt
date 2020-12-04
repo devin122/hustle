@@ -32,6 +32,7 @@ project(hustle
     LANGUAGES CXX
     VERSION 0.1.0)
 
+include(cmake/config.cmake)
 find_package(Microsoft.GSL CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)

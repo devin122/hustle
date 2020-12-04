@@ -50,7 +50,6 @@ Command* CommandManager::find_command(const std::string& name) {
     return begin_it->second.get();
   }
 
-  Command* partial_match = nullptr;
   auto it = begin_it;
   if (++it == end_it) {
     // We have only 1 partial match

@@ -69,7 +69,7 @@ std::vector<Cell> hustle::bootstrap::tokenize(Iterator& it, const Iterator& end,
       if ((token_end - it) == 1) {
         if (*it == until) {
           it = token_end;
-          return std::move(result);
+          return result;
         }
         if (*it == '{' || *it == '[') {
           bool parse_quote = *it == '{';
@@ -107,9 +107,9 @@ std::vector<Cell> hustle::bootstrap::tokenize(Iterator& it, const Iterator& end,
       } else {
         try {
           result.push_back(Cell::from_raw(vm.lookup_symbol(token_name)));
-        } catch (std::runtime_error e) {
+        } catch (std::runtime_error& e) {
           std::cerr << "Unknown symbol " << token_name << std::endl;
-          throw e;
+          throw;
         }
       }
     }
@@ -118,5 +118,5 @@ std::vector<Cell> hustle::bootstrap::tokenize(Iterator& it, const Iterator& end,
     std::cerr << "Error: expected " << until << std::endl;
     throw std::runtime_error("parse error");
   }
-  return std::move(result);
+  return result;
 }

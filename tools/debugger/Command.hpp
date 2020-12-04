@@ -32,7 +32,7 @@
 
 namespace hustle {
 
-class VM;
+struct VM;
 
 class CommandManager;
 class Command {

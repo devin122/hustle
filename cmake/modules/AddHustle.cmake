@@ -47,6 +47,28 @@ macro(setup_output_paths)
 endmacro()
 ]]
 
+function(set_compile_flags tgt)
+    if(HUSTLE_ENABLE_WARNINGS)
+        if(HUSTLE_GNU_COMPILER)
+            target_compile_options(${tgt}
+                PRIVATE
+                    -Wall
+                    -Wextra
+                    -Wno-unused-parameter
+            )
+        endif()
+    endif()
+
+    if(HUSTLE_WARNINGS_AS_ERRORS)
+        if(HUSTLE_GNU_COMPILER)
+            target_compile_options(${tgt}
+                PRIVATE
+                    -Werror
+            )
+        endif()
+    endif()
+endfunction()
+
 function(set_output_directory name subdir)
     set_target_properties(${name} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${HUSTLE_BUILD_CFG_DIR}/${subdir}"
@@ -61,6 +83,7 @@ function(hustle_add_library name)
     if(NOT OPT_NO_GENERATED_DEPENDS)
         add_dependencies(${name} hustle-generated)
     endif()
+    set_compile_flags(${name})
 endfunction(hustle_add_library)
 
 function(hustle_add_executable name)
@@ -70,4 +93,5 @@ function(hustle_add_executable name)
     if(NOT OPT_NO_GENERATED_DEPENDS)
         add_dependencies(${name} hustle-generated)
     endif()
+    set_compile_flags(${name})
 endfunction(hustle_add_executable)

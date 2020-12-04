@@ -71,8 +71,8 @@ void HeapRegion::reset() {
 }
 
 Heap::Heap(VM* vm)
-    : region_a_(this), region_b_(this), current_heap_(&region_a_),
-      backup_heap_(&region_b_), vm_(vm) {}
+    : vm_(vm), region_a_(this), region_b_(this), current_heap_(&region_a_),
+      backup_heap_(&region_b_) {}
 
 Object* Heap::allocate(size_t sz) {
   // TODO this is dumb

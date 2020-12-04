@@ -34,7 +34,7 @@
 #include <vector>
 
 namespace hustle {
-class VM;
+struct VM;
 }
 
 namespace hustle::bootstrap {

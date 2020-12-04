@@ -58,15 +58,18 @@ template <typename T>
 T string_convert(const std::string& str, std::size_t* pos = 0, int base = 10);
 
 template <>
-int string_convert(const std::string& str, std::size_t* pos, int base) {
+[[maybe_unused]] int string_convert(const std::string& str, std::size_t* pos,
+                                    int base) {
   return std::stoi(str, pos, base);
 }
 template <>
-long string_convert(const std::string& str, std::size_t* pos, int base) {
+[[maybe_unused]] long string_convert(const std::string& str, std::size_t* pos,
+                                     int base) {
   return std::stol(str, pos, base);
 }
 template <>
-long long string_convert(const std::string& str, std::size_t* pos, int base) {
+[[maybe_unused]] long long string_convert(const std::string& str,
+                                          std::size_t* pos, int base) {
   return std::stoll(str, pos, base);
 }
 } // namespace
@@ -174,7 +177,7 @@ std::string Lexer::read_until(char term) {
     }
   }
 
-  return std::move(buffer);
+  return buffer;
 }
 
 void Lexer::add_stream(StreamPtr ptr) {

@@ -48,15 +48,7 @@ using namespace std::literals;
 namespace fs = std::filesystem;
 using std::string;
 
-static std::string read_file(const char* name) {
-  std::stringstream buff;
-  std::ifstream input(name);
-  buff << input.rdbuf();
-  return buff.str();
-}
-
 static bool file_eq(const fs::path& path, const std::string& str) {
-
   std::ifstream input(path);
   std::stringstream buff;
   buff << input.rdbuf();
@@ -202,64 +194,6 @@ static void output_cell_dispatch(IndentingStream& out,
   out.writeln("default: abort(); //TODO better error handling").outdent();
   out.writeln("}}").outdent();
   out.writeln("}}");
-}
-static void generate_output(const ClassList& classes) {
-
-  {
-    /*
-    std::string output_fname = j["class_def_file"];
-    std::ofstream outf(output_fname.c_str());
-    if (!outf.is_open()) {
-      std::cerr << "failed to open class def file\n";
-      abort();
-    }
-    IndentingStream out(outf);
-    */
-    IndentingStream out(std::cout);
-    output_class_decls(out, classes);
-    print_class_defs(out, classes);
-    out.nl();
-
-    for (auto& cl : classes) {
-      out.writeln("static_assert(std::is_standard_layout_v<TypedCell<{}>>);",
-                  cl.name);
-      out.writeln("static_assert(sizeof(TypedCell<{}>) == sizeof(cell_t));",
-                  cl.name);
-
-      // Only availible in c++20
-      // out.writeln("static_assert(std::is_layout_compatible_v<TypedCell<{}>,
-      // cell_t>);", cl.name);
-      out.nl();
-    }
-  }
-
-  {
-    // Generate primitive info
-    /*
-    std::string output_fname = j.at("primitive_def_file");
-    std::ofstream outf(output_fname.c_str());
-    if (!outf.is_open()) {
-      std::cerr << "failed to open class def file\n";
-      abort();
-    }
-    */
-    // IndentingStream out(outf);
-    /*
-    IndentingStream out(std::cout);
-    for (auto& [prim_name, func_name] : j["primitives"].items()) {
-      out.writeln("static void {}(VM *vm, Quotation*);", func_name);
-    }
-    out.nl();
-    out.writeln("static constexpr std::pair<const char *, VM::CallType> "
-                "primitives[] = {{")
-        .indent();
-    for (auto& [prim_name, func_name] : j["primitives"].items()) {
-      out.writeln("{{\"{}\", &{}}},", prim_name, func_name);
-    }
-    out.outdent();
-    out.writeln("}};");
-    */
-  }
 }
 
 static void write_class_file(IndentingStream& out, const ClassList& classes) {
