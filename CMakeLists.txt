@@ -93,16 +93,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 add_subdirectory(utils)
 
-if(HUSTLE_CODE_COVERAGE)
-    set(CMAKE_CXX_FLAGS "-fprofile-instr-generate -fcoverage-mapping ${CMAKE_CXX_FLAGS}")
-endif()
-
-if(HUSTLE_ASAN)
-    set(CMAKE_CXX_FLAGS "-fsanitize=address ${CMAKE_CXX_FLAGS}")
-endif()
-if(HUSTLE_UBSAN)
-    set(CMAKE_CXX_FLAGS "-fsanitize=undefined ${CMAKE_CXX_FLAGS}")
-endif()
 
 add_hustlegen("tags" "${CMAKE_CURRENT_SOURCE_DIR}/classes.json" "${CMAKE_CURRENT_BINARY_DIR}/cell_tags.def")
 add_hustlegen("classes" "${CMAKE_CURRENT_SOURCE_DIR}/classes.json" "${CMAKE_CURRENT_BINARY_DIR}/classes.def")

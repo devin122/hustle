@@ -67,6 +67,27 @@ function(set_compile_flags tgt)
             )
         endif()
     endif()
+
+    if(HUSTLE_CODE_COVERAGE)
+        if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+            target_compile_options(${tgt}
+                PRIVATE
+                    -fprofile-instr-generate
+                    -fcoverage-mapping
+            )
+        else()
+            message(WARNING "Unable to enable code coverage ${CMAKE_CXX_COMPILER_ID}")
+        endif()
+    endif()
+
+    if(HUSTLE_ASAN)
+        target_compile_options(${tgt} PRIVATE -fsanitize=address)
+    endif()
+
+    if(HUSTLE_UBSAN)
+        target_compile_options(${tgt} PRIVATE -fsanitize=undefined)
+    endif()
+
 endfunction()
 
 function(set_output_directory name subdir)
