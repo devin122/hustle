@@ -25,7 +25,7 @@
 # SPDX-License-Identifier: BSD-2-Clause
 ################################################################################
 
-add_executable(hustle-vm-test
+hustle_add_executable(hustle-vm-test
     CellTest.cpp
     FunctionTest.cpp
     PrimitiveTest.cpp
