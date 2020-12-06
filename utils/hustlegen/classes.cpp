@@ -115,4 +115,83 @@ static void write_tag_file_impl(IndentingStream& out, ClassList& classes) {
 void write_tag_file(IndentingStream& out, const std::string& input_file) {
   with_classes(write_tag_file_impl, out, input_file);
 }
+
 #pragma endregion
+
+static void output_class_decls(IndentingStream& out, const ClassList& classes) {
+  for (auto& cl : classes) {
+    out.writeln("struct {};", cl.name);
+  }
+  out.writeln("");
+}
+
+// TODO take output stream
+static void print_class_defs(IndentingStream& out, const ClassList& classes) {
+  for (auto& cl : classes) {
+    out.writeln("struct {} : public Object {{", cl.name).indent();
+    out.writeln("static constexpr cell_tag TAG_VALUE = {};", cl.enum_tag_name);
+    out.writeln("~{}() = delete;", cl.name);
+
+    for (auto& member : cl.members) {
+      out.writeln("{}", member);
+    }
+
+    out.outdent();
+    out.writeln("}};\n");
+  }
+}
+
+// Output the dispatch function
+static void output_dispatch(IndentingStream& out, const ClassList& classes) {
+  // out << "template"
+  out.writeln("template<typename T>");
+  out.writeln("auto dispatch(Object *obj, T fn){{").indent();
+  out.writeln("switch(obj->tag()){{").indent();
+  for (auto& cl : classes) {
+    out.writeln("case {}: return fn(({}*)obj);", cl.enum_tag_name, cl.name);
+  }
+  out.writeln("default: abort(); //TODO better error handling").outdent();
+  out.writeln("}}").outdent();
+  out.writeln("}}");
+}
+
+static void output_cell_dispatch(IndentingStream& out,
+                                 const ClassList& classes) {
+  out.writeln("template<typename T>");
+  out.writeln("auto dispatch_cell(cell_t cell, T fn){{").indent();
+  out.writeln("switch(get_cell_type(cell)){{").indent();
+  out.writeln("case CELL_INT: return fn(get_cell_int(cell));");
+  for (auto& cl : classes) {
+    out.writeln("case {}: return fn(({}*)get_cell_pointer(cell));",
+                cl.enum_tag_name, cl.name);
+  }
+  out.writeln("default: abort(); //TODO better error handling").outdent();
+  out.writeln("}}").outdent();
+  out.writeln("}}");
+}
+
+static void write_class_defs_impl(IndentingStream& out,
+                                  const ClassList& classes) {
+  output_class_decls(out, classes);
+  out.nl();
+
+  print_class_defs(out, classes);
+  for (auto& cl : classes) {
+    out.writeln("static_assert(std::is_standard_layout_v<TypedCell<{}>>);",
+                cl.name);
+    out.writeln("static_assert(sizeof(TypedCell<{}>) == sizeof(cell_t));",
+                cl.name);
+
+    // Only availible in c++20
+    // out.writeln("static_assert(std::is_layout_compatible_v<TypedCell<{}>,
+    // cell_t>);", cl.name);
+    out.nl();
+  }
+  output_dispatch(out, classes);
+  out.nl();
+  output_cell_dispatch(out, classes);
+}
+
+void write_class_defs(IndentingStream& out, const std::string& input_file) {
+  with_classes(write_class_defs_impl, out, input_file);
+}

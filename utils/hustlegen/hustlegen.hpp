@@ -48,6 +48,8 @@ void write_primitives(hustle::IndentingStream& out, ParseType data);
 void write_primitive_test_cases(hustle::IndentingStream& out, ParseType data);
 void write_tag_file(hustle::IndentingStream& out,
                     const std::string& input_file);
+void write_class_defs(hustle::IndentingStream& out,
+                      const std::string& input_file);
 
 struct KVWrapper {
   struct Iterator : public YAML::Node::iterator {
