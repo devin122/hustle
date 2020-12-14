@@ -29,8 +29,11 @@
 #ifndef HUSTLE_GC_HPP
 #define HUSTLE_GC_HPP
 
+#include <functional>
 #include <stddef.h>
 #include <stdint.h>
+
+#include <hustle/Core.hpp>
 
 namespace hustle {
 
@@ -87,8 +90,10 @@ private:
 class Heap {
 
 public:
+  using MarkFunction = std::function<void(cell_t*)>;
+  using MarkRootsFunction = std::function<void(MarkFunction)>;
   struct FreeObject;
-  Heap(VM* vm);
+  Heap(MarkRootsFunction);
   ~Heap() = default;
   // TODO: this should be inlined for perf, but for the moment we leave it this
   // way for flexibility
@@ -97,7 +102,7 @@ public:
 
 private:
   void swap_heaps();
-  VM* vm_;
+  MarkRootsFunction mark_roots_;
   HeapRegion region_a_, region_b_;
   HeapRegion *current_heap_, *backup_heap_;
 };

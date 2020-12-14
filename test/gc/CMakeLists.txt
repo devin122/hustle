@@ -25,14 +25,9 @@
 # SPDX-License-Identifier: BSD-2-Clause
 ################################################################################
 
-find_package(Catch2 CONFIG REQUIRED)
+hustle_add_executable(hustle-gc-test
+    GCTest.cpp
+)
 
-add_library(test-main OBJECT main.cpp)
-add_dependencies(test-main hustle-generated)
-target_link_libraries(test-main PUBLIC Catch2::Catch2)
-
-add_subdirectory(gc)
-add_subdirectory(vm)
-add_subdirectory(serialize)
-add_subdirectory(unittest)
-
+target_link_libraries(hustle-gc-test test-main HustleVM HustleGC)
+add_test(NAME gc-test COMMAND hustle-gc-test -r junit -o gc_test.xml)

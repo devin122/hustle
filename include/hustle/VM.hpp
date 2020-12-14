@@ -99,8 +99,7 @@ struct VM {
   Lexer lexer_;
   Heap heap_;
 
-  template <typename T>
-  void mark_roots(T fn);
+  void mark_roots(Heap::MarkFunction fn);
 
   template <typename T, typename... Args>
   // std::enable_if_t<std::is_base_of_v<Object, T>, T*>
@@ -132,27 +131,6 @@ private:
 // TODO: currently only allowed 1 per thread. should allow context switching
 // between vms
 extern thread_local VM* current_vm;
-
-template <typename T>
-inline void VM::mark_roots(T fn) {
-  HSTL_ASSERT(false); // TODO reimplement
-#if 0
-    for(cell_t* ptr = stack_base_; ptr < stack_; ++ptr){
-       /* cell_t cell = *ptr;
-        if(is_a<Object>(cell)){
-            fn(cast<Object>(cell));
-        }*/
-        fn(ptr);
-    }
-    for(auto p : symbol_table_){
-        //cell_t cell = p.second;
-        fn(&p.second);
-        /*if(is_a<Object>(cell)){
-            fn(cast<Object>(cell));
-        }*/
-    }
-#endif
-}
 
 } // namespace hustle
 #endif

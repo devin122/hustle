@@ -70,9 +70,9 @@ void HeapRegion::reset() {
   memset(start_, 0, end_ - start_);
 }
 
-Heap::Heap(VM* vm)
-    : vm_(vm), region_a_(this), region_b_(this), current_heap_(&region_a_),
-      backup_heap_(&region_b_) {}
+Heap::Heap(MarkRootsFunction mark_roots)
+    : mark_roots_(mark_roots), region_a_(this), region_b_(this),
+      current_heap_(&region_a_), backup_heap_(&region_b_) {}
 
 Object* Heap::allocate(size_t sz) {
   // TODO this is dumb
@@ -113,7 +113,7 @@ void Heap::swap_heaps() {
   };
 
   // fixup the roots
-  vm_->mark_roots(copy_object);
+  mark_roots_(copy_object);
 
   while (!work_stack.empty()) {
     Object* o = work_stack.top();

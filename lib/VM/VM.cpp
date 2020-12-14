@@ -91,7 +91,7 @@ thread_local VM* hustle::current_vm = nullptr;
 
 VM::VM()
     : stack_(STACK_SIZE), call_stack_(MAX_CALL_FRAMES), lexer_(*this),
-      heap_(this) {
+      heap_([this](Heap::MarkFunction fn) { mark_roots(fn); }) {
   HSTL_ASSERT(current_vm == nullptr);
   current_vm = this;
   // memset(stack_, 0, STACK_SIZE);
@@ -288,4 +288,24 @@ void VM::interpreter_break() {
   if (debug_listener_ != nullptr) {
     debug_listener_();
   }
+}
+
+void VM::mark_roots(Heap::MarkFunction fn) {
+  HSTL_ASSERT(false); // TODO reimplement
+#if 0
+    for(cell_t* ptr = stack_base_; ptr < stack_; ++ptr){
+       /* cell_t cell = *ptr;
+        if(is_a<Object>(cell)){
+            fn(cast<Object>(cell));
+        }*/
+        fn(ptr);
+    }
+    for(auto p : symbol_table_){
+        //cell_t cell = p.second;
+        fn(&p.second);
+        /*if(is_a<Object>(cell)){
+            fn(cast<Object>(cell));
+        }*/
+    }
+#endif
 }
