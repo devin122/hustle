@@ -75,6 +75,11 @@ function(set_compile_flags tgt)
                     -fprofile-instr-generate
                     -fcoverage-mapping
             )
+            target_link_options(${tgt}
+                PRIVATE
+                    -fprofile-instr-generate
+                    -fcoverage-mapping
+            )
         else()
             message(WARNING "Unable to enable code coverage ${CMAKE_CXX_COMPILER_ID}")
         endif()
