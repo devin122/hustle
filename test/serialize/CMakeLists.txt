@@ -25,7 +25,7 @@
 # SPDX-License-Identifier: BSD-2-Clause
 ################################################################################
 
-add_executable(hustle_serialize_test
+hustle_add_executable(hustle_serialize_test
     BinaryReaderTest.cpp
 )
 
