@@ -36,12 +36,6 @@
 
 using namespace hustle;
 
-Cell hustle::True;
-Cell hustle::False;
-cell_t hustle::Exit = 0;
-Cell hustle::FalseWord;
-TypedCell<Word> hustle::Mark;
-
 namespace hustle {
 struct DebuggerInterface {
   volatile char code = 0;
@@ -96,30 +90,30 @@ VM::VM()
   current_vm = this;
   // memset(stack_, 0, STACK_SIZE);
 
-  // Allocate our true and false values
-  // TODO these maybe should be better
-  // TODO should make these handles in case we gc
-  // right now we just roll the dice that we almost certainly wont gc
-  // TODO fixme
-  True = Cell::from_raw(make_symbol(*this, "True"));
+  // Allocate our global values
+  globals.True = make_symbol(*this, "True");
 
-  False = Cell::from_raw(make_symbol(*this, "False"));
+  globals.False = make_symbol(*this, "False");
   {
-    Array* a = allocate<Array>(1);
-    (*a)[0] = False;
-    auto* q = allocate<Quotation>();
-    q->definition = a;
+
+    auto q = allocate_handle<Quotation>();
+    q->definition = allocate<Array>(1);
+    {
+      auto definition = allocate<Array>(1);
+      (*definition)[0] = globals.False;
+      q->definition = definition;
+    }
     // register_symbol();
     auto* w = allocate<Word>();
     w->definition = q;
-    w->name = cast<Word>(False)->name;
+    w->name = globals.False->name;
     w->is_parse_word = true;
     symbol_table_["False"] = make_cell(w);
-    FalseWord = w;
+    globals.FalseWord = w;
   }
 
-  Exit = make_symbol(*this, "exit-bootstrap");
-  Mark = make_symbol_no_register(*this, "<MARK>");
+  globals.Exit = make_symbol(*this, "exit-bootstrap");
+  globals.Mark = make_symbol_no_register(*this, "<MARK>");
 }
 
 VM::~VM() {
@@ -141,7 +135,7 @@ void VM::evaluate(Cell cell) {
 
 void VM::call(Cell cell) {
   StackFrame frame;
-  frame.word = False;
+  frame.word = globals.False;
   frame.quote = TypedCell<Quotation>(nullptr);
   frame.offset = Cell::from_int(0);
   call_stack_.push(frame);

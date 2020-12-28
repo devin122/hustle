@@ -42,16 +42,9 @@
 
 namespace hustle {
 
-// TODO these should be somewhere else
-extern Cell True;
-extern Cell False;
-extern Cell FalseWord;
-extern cell_t Exit;
-
 struct Quotation;
 struct String;
 struct Word;
-extern TypedCell<Word> Mark;
 
 class Lexer;
 
@@ -63,6 +56,15 @@ struct VM {
   ~VM();
   VM(const VM&) = delete;
   VM& operator=(const VM&) = delete;
+
+  // TODO: this is pretty gross
+  struct {
+    TypedCell<Word> True;
+    TypedCell<Word> False;
+    TypedCell<Word> FalseWord;
+    TypedCell<Word> Exit;
+    TypedCell<Word> Mark;
+  } globals;
 
   void evaluate(Cell c) HUSTLE_MAY_ALLOCATE;
 

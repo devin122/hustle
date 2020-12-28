@@ -136,9 +136,9 @@ static void prim_length(VM* vm, Quotation*) {
 static void prim_is_array(VM* vm, Quotation*) {
   auto cell = vm->pop();
   if (is_a<Array>(cell)) {
-    vm->push(True);
+    vm->push(vm->globals.True);
   } else {
-    vm->push(False);
+    vm->push(vm->globals.False);
   }
 }
 
@@ -177,13 +177,13 @@ static void prim_print(VM* vm, Quotation*) {
   fmt::print("PRINT: '{}'\n", sv);
 }
 
-static void prim_mark_stack(VM* vm, Quotation*) { vm->push(Mark); }
+static void prim_mark_stack(VM* vm, Quotation*) { vm->push(vm->globals.Mark); }
 
 static void prim_mark_to_array(VM* vm, Quotation*) {
   size_t count = -1;
   auto max_depth = vm->stack_.depth();
   for (size_t i = 0; i < max_depth; ++i) {
-    if (vm->stack_[i] == Mark) {
+    if (vm->stack_[i] == vm->globals.Mark) {
       count = i;
       break;
     }
@@ -195,15 +195,15 @@ static void prim_mark_to_array(VM* vm, Quotation*) {
     arr[i - 1] = vm->stack_.pop();
   }
   Cell mark = vm->stack_.pop(); // Pop off the mark
-  HSTL_ASSERT(mark == Mark);
+  HSTL_ASSERT(mark == vm->globals.Mark);
   vm->stack_.push(TypedCell<Array>(arr_ptr));
 }
 static void prim_is_string(VM* vm, Quotation*) {
   auto arg = vm->pop();
   if (arg.is_a<String>()) {
-    vm->push(True);
+    vm->push(vm->globals.True);
   } else {
-    vm->push(False);
+    vm->push(vm->globals.False);
   }
 }
 #pragma region Control Flow Primitives
@@ -217,7 +217,7 @@ static void prim_while(VM* vm, Quotation*) {
   while (true) {
     vm->call(condition);
     auto result = vm->pop();
-    if (result == False)
+    if (result == vm->globals.False)
       break;
     vm->call(body);
   }
@@ -227,7 +227,7 @@ static void prim_ternary(VM* vm, Quotation*) {
   auto if_false = vm->pop();
   auto if_true = vm->pop();
   auto cond = vm->pop();
-  vm->push((cond == False) ? if_false : if_true);
+  vm->push((cond == vm->globals.False) ? if_false : if_true);
 }
 
 static void prim_exit(VM* vm, Quotation*) { exit(0); }
@@ -320,9 +320,9 @@ static void prim_gt(VM* vm, Quotation*) {
   intptr_t b = cast<intptr_t>(vm->pop());
   intptr_t a = cast<intptr_t>(vm->pop());
   if (a > b) {
-    vm->push(True);
+    vm->push(vm->globals.True);
   } else {
-    vm->push(False);
+    vm->push(vm->globals.False);
   }
 }
 
@@ -355,7 +355,7 @@ static void prim_eq(VM* vm, Quotation*) {
   auto b = vm->pop();
   auto a = vm->pop();
   if (a == b) {
-    vm->push(True);
+    vm->push(vm->globals.True);
     return;
   }
   // TODO we maybe want to keep these on the stack in case we gc
@@ -366,13 +366,13 @@ static void prim_eq(VM* vm, Quotation*) {
       String* str_b = cast<String>(b);
       if (str_a->length() == str_b->length()) {
         if (memcmp(str_a->data(), str_b->data(), str_a->length()) == 0) {
-          vm->push(True);
+          vm->push(vm->globals.True);
           return;
         }
       }
     }
   }
-  vm->push(False);
+  vm->push(vm->globals.False);
 }
 
 static void prim_add(VM* vm, Quotation*) {
@@ -393,10 +393,10 @@ static void prim_sub(VM* vm, Quotation*) {
 
 static void prim_bool(VM* vm, Quotation*) {
   auto a = vm->pop();
-  if (a == False) {
-    vm->push(False);
+  if (a == vm->globals.False) {
+    vm->push(vm->globals.False);
   } else {
-    vm->push(True);
+    vm->push(vm->globals.True);
   }
 }
 
@@ -450,7 +450,7 @@ static void prim_dump_stack(VM* vm, Quotation*) { dump_stack(*vm, true); }
 static void prim_assert(VM* vm, Quotation* q) {
   auto message = vm->pop();
   auto condition = vm->pop();
-  if (condition == False) {
+  if (condition == vm->globals.False) {
     if (message.is_a<String>()) {
       // TODO try to print string
     }
@@ -521,9 +521,9 @@ static void prim_is_parse_word(VM* vm, Quotation*) {
   HSTL_ASSERT(val.is_a<Word>());
 
   if (vm->is_parse_word(val.cast<Word>())) {
-    vm->push(True);
+    vm->push(vm->globals.True);
   } else {
-    vm->push(False);
+    vm->push(vm->globals.False);
   }
 }
 

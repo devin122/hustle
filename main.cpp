@@ -80,7 +80,7 @@ void shitty_repl(VM& vm) {
       auto tokens = bootstrap::tokenize(it, tokenize_span.end(), vm);
 
       for (auto cell : tokens) {
-        if (cell == Cell::from_raw(Exit)) {
+        if (cell == vm.globals.Exit) {
           std::cout << "Exiting bootstrap interpreter\n";
           return;
         }

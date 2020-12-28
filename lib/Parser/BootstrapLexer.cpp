@@ -101,9 +101,9 @@ std::vector<Cell> hustle::bootstrap::tokenize(Iterator& it, const Iterator& end,
         }
       }
       if (token_name == "False") {
-        result.push_back(False);
+        result.push_back(vm.globals.False);
       } else if (token_name == "True") {
-        result.push_back(True);
+        result.push_back(vm.globals.True);
       } else {
         try {
           result.push_back(Cell::from_raw(vm.lookup_symbol(token_name)));

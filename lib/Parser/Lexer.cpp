@@ -157,7 +157,8 @@ void Lexer::lex_token() {
   } else if (std::holds_alternative<intptr_t>(tok)) {
     vm_.push(Cell::from_int(std::get<intptr_t>(tok)));
   } else {
-    vm_.push(False);
+    // I'm not sure if this can actually happen
+    vm_.push(vm_.globals.False);
   }
 }
 
