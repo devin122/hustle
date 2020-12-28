@@ -64,7 +64,7 @@ struct VM {
   VM(const VM&) = delete;
   VM& operator=(const VM&) = delete;
 
-  void evaluate(Cell c);
+  void evaluate(Cell c) HUSTLE_MAY_ALLOCATE;
 
   void interpreter_loop();
   void step_hook();
@@ -75,7 +75,7 @@ struct VM {
 
   // CallStackEntry enter(Word)
 
-  void call(Cell c);
+  void call(Cell c) HUSTLE_MAY_ALLOCATE;
 
   // hack because im lazy
   template <typename T>
@@ -83,8 +83,10 @@ struct VM {
     push(Cell(o));
   }
 
-  Word* register_primitive(const char* name, CallType handler);
-  void register_symbol(String* str, Quotation* quote, bool parseword = false);
+  Word* register_primitive(const char* name,
+                           CallType handler) HUSTLE_MAY_ALLOCATE;
+  void register_symbol(String* str, Quotation* quote,
+                       bool parseword = false) HUSTLE_MAY_ALLOCATE;
   void register_symbol(String* string, Word* word);
 
   cell_t lookup_symbol(const std::string& name);
@@ -103,7 +105,7 @@ struct VM {
 
   template <typename T, typename... Args>
   // std::enable_if_t<std::is_base_of_v<Object, T>, T*>
-  T* allocate(Args... args) {
+  T* allocate(Args... args) HUSTLE_MAY_ALLOCATE {
     size_t allocation_size =
         hustle::object_allocation_size<T>(std::forward<Args>(args)...);
     void* memory = heap_.allocate(allocation_size);

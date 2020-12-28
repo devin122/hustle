@@ -102,7 +102,7 @@ private:
 
   // constexpr bool is_marked() const noexcept { return header.marked; }
   // constexpr void mark(bool m = true) noexcept { header.marked = m ? 1: 0;}
-};
+} HUSTLE_HEAP_ALLOCATED;
 
 #include "classes.def"
 

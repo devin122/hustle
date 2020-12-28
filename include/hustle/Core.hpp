@@ -51,4 +51,20 @@ static_assert(CELL_INT_MIN < 0);
 static_assert(CELL_INT_MAX > 0);
 } // namespace hustle
 
+// GC safety annotations.
+#if defined(HUSTLE_GC_SAFETY)
+#define GC_SAFETY(x) __attribute((annotate("gc::" #x)))
+#else
+#define GC_SAFETY(x)
+#endif
+
+/// Mark a function as pontentially triggering a GC
+#define HUSTLE_MAY_ALLOCATE GC_SAFETY(may_allocate)
+
+/// Mark a class as being allocated on the  GC'd heap
+#define HUSTLE_HEAP_ALLOCATED GC_SAFETY(heap_allocated)
+
+/// Marks a class as aliasing a heap pointer
+#define HUSTLE_HEAP_POINTER GC_SAFETY(heap_pointer)
+
 #endif

@@ -28,8 +28,8 @@
 
 #ifndef HUSTLE_CELL_HPP
 #define HUSTLE_CELL_HPP
-//#include "Object.hpp"
-#include "Core.hpp"
+
+#include <hustle/Core.hpp>
 #include <hustle/Support/Assert.hpp>
 #include <type_traits>
 
@@ -169,7 +169,7 @@ public:
 protected:
   explicit constexpr Cell(cell_t cell) noexcept : raw_(cell) {}
   cell_t raw_ = 0;
-};
+} HUSTLE_HEAP_POINTER;
 
 // constexpr TypedCell<intptr_t> operator"" _c(intptr_t x) { return
 // Cell::from_int(x); }
@@ -211,7 +211,7 @@ public:
   }
   // operator Cell() { return Cell(raw_); }
   // constexpr operator cell_t() noexcept { return raw_; }
-};
+} HUSTLE_HEAP_POINTER;
 
 } // namespace hustle
 

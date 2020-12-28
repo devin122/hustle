@@ -137,7 +137,7 @@ static void print_class_defs(IndentingStream& out, const ClassList& classes) {
     }
 
     out.outdent();
-    out.writeln("}};\n");
+    out.writeln("}} HUSTLE_HEAP_ALLOCATED;\n");
   }
 }
 

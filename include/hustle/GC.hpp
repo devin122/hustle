@@ -97,7 +97,7 @@ public:
   ~Heap() = default;
   // TODO: this should be inlined for perf, but for the moment we leave it this
   // way for flexibility
-  Object* allocate(size_t size);
+  Object* allocate(size_t size) HUSTLE_MAY_ALLOCATE;
   void gc();
 
 private:
