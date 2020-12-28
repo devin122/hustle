@@ -80,9 +80,9 @@ std::vector<Cell> hustle::bootstrap::tokenize(Iterator& it, const Iterator& end,
           if (parse_quote) {
             Quotation* quote = vm.allocate<Quotation>();
             quote->definition = arr;
-            result.push_back(Cell::from_raw(make_cell(quote)));
+            result.push_back(quote);
           } else {
-            result.push_back(Cell::from_raw(make_cell(arr)));
+            result.push_back(arr);
           }
           continue;
         }

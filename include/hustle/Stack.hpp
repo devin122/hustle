@@ -87,8 +87,8 @@ protected:
 // TODO: this should maybe be a record type?
 // TODO: make sure this is packed
 struct StackFrame {
-  Cell word;
-  Cell quote;
+  TypedCell<Word> word;
+  TypedCell<Quotation> quote;
   Cell offset;
 };
 

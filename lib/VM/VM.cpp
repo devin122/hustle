@@ -49,32 +49,35 @@ DebuggerInterface dbg_interface;
 static constexpr size_t MAX_CALL_FRAMES = 1024;
 
 static TypedCell<Word> make_symbol_no_register(VM& vm, const char* n) {
-  String* name = vm.allocate<String>(n, strlen(n));
-  Array* definition = vm.allocate<Array>(1);
+  auto definition = vm.allocate_handle<Array>(1);
+
+  auto word = vm.allocate_handle<Word>();
+  word->name = vm.allocate<String>(n, strlen(n));
+
   Quotation* quote = vm.allocate<Quotation>();
   quote->definition = definition;
   quote->entry = nullptr;
 
-  Word* word = vm.allocate<Word>();
-  word->name = name;
   word->definition = quote;
 
   Wrapper* wrapper = vm.allocate<Wrapper>();
   wrapper->wrapped = Cell::from_raw(make_cell(word));
   // TODO: this is gross
   *(definition->begin()) = Cell::from_raw(make_cell(wrapper));
-  return word;
+
+  // TODO: should this conversion be done implicitly?
+  return TypedCell<Word>(word);
 }
 
-static cell_t make_symbol(VM& vm, const char* name) {
+static TypedCell<Word> make_symbol(VM& vm, const char* name) {
   auto word = make_symbol_no_register(vm, name);
   vm.register_symbol(cast<String>(word->name), word);
-  return word.raw();
+  return word;
 }
 
 Word* VM::register_primitive(const char* name, CallType handler) {
   size_t name_len = strlen(name);
-  Word* word = allocate<Word>();
+  auto word = allocate_handle<Word>();
   word->name = allocate<String>(name, name_len);
   word->definition = allocate<Quotation>(handler);
   symbol_table_.emplace(std::string(name), make_cell(word));
@@ -176,7 +179,10 @@ cell_t VM::lookup_symbol(const std::string& name) {
   }
 }
 
-void VM::register_symbol(String* string, Quotation* quote, bool parseword) {
+void VM::register_symbol(String* string_raw, Quotation* quote_raw,
+                         bool parseword) {
+  Handle<String> string = make_handle<String>(string_raw);
+  Handle<Quotation> quote = make_handle<Quotation>(quote_raw);
   Word* word = allocate<Word>();
   word->name = string;
   word->definition = quote;

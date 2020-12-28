@@ -50,7 +50,7 @@ void register_primitives(VM& vm) {
   for (auto x : primitives) {
     // String * name = vm.allocate<String>(x.first);
     size_t name_len = strlen(x.first);
-    Word* word = vm.allocate<Word>();
+    auto word = vm.allocate_handle<Word>();
     word->name = vm.allocate<String>(x.first, name_len);
     word->definition = vm.allocate<Quotation>(x.second);
     vm.symbol_table_.emplace(std::string(x.first), make_cell(word));
@@ -143,13 +143,13 @@ static void prim_is_array(VM* vm, Quotation*) {
 }
 
 static void prim_make_sym(VM* vm, Quotation*) {
-  auto name = cast<String>(vm->pop());
-  Array* definition = vm->allocate<Array>(1);
-  Quotation* quote = vm->allocate<Quotation>();
+  auto name = vm->make_handle<String>(cast<String>(vm->pop()));
+  auto definition = vm->allocate_handle<Array>(1);
+  auto quote = vm->allocate_handle<Quotation>();
   quote->definition = definition;
   quote->entry = nullptr;
 
-  Word* word = vm->allocate<Word>();
+  auto word = vm->allocate_handle<Word>();
   word->name = name;
   word->definition = quote;
 
@@ -211,15 +211,16 @@ static void prim_is_string(VM* vm, Quotation*) {
 static void prim_while(VM* vm, Quotation*) {
   // TODO while is broken
   // HSTL_ASSERT(false);
-  Quotation* body = cast<Quotation>(vm->pop());
-  Quotation* condition = cast<Quotation>(vm->pop());
+  auto body = vm->make_handle<Quotation>(cast<Quotation>(vm->pop()));
+  auto condition = vm->make_handle<Quotation>(cast<Quotation>(vm->pop()));
+
   // HSTL_ASSERT(false);
   while (true) {
-    vm->call(condition);
+    vm->call(condition.cell());
     auto result = vm->pop();
     if (result == vm->globals.False)
       break;
-    vm->call(body);
+    vm->call(body.cell());
   }
 }
 
@@ -234,7 +235,7 @@ static void prim_exit(VM* vm, Quotation*) { exit(0); }
 
 static void prim_call(VM* vm, Quotation*) {
   StackFrame frame;
-  frame.word = Cell::from_int(0);
+  frame.word = nullptr;
   // Quotation* quote = vm->pop().cast<Quotation>();
   auto arg = vm->pop();
   if (arg.is_a<Word>()) {
@@ -296,9 +297,9 @@ static void prim_dip(VM* vm, Quotation*) {
 
   // vm->call_stack_.push(frame);
   auto quote = vm->pop();
-  auto x = vm->pop();
+  auto x = vm->make_handle(vm->pop());
   vm->call(quote);
-  vm->push(x);
+  vm->push(x.cell());
 }
 
 static void prim_drop(VM* vm, Quotation*) { vm->pop(); }
@@ -310,9 +311,9 @@ static void prim_lt(VM* vm, Quotation*) {
   intptr_t b = cast<intptr_t>(vm->pop());
   intptr_t a = cast<intptr_t>(vm->pop());
   if (a < b) {
-    vm->push(True);
+    vm->push(vm->globals.True);
   } else {
-    vm->push(False);
+    vm->push(vm->globals.False);
   }
 }
 
