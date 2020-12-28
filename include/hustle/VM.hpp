@@ -112,6 +112,11 @@ struct VM {
     return new (memory) T(std::forward<Args>(args)...);
   }
 
+  template <typename T, typename... Args>
+  Handle<T> allocate_handle(Args... args) HUSTLE_MAY_ALLOCATE {
+    return make_handle(allocate<T>(std::forward<Args>(args)...));
+  }
+
   // TODO: this doesnt need to live in the vm
   bool is_parse_word(Word*) const;
 
@@ -126,8 +131,21 @@ struct VM {
   }
   void interpreter_break();
 
+  template <typename T>
+  Handle<T> make_handle(T* ptr) {
+    return handle_manager_.make_handle(ptr);
+  }
+
+  template <typename T>
+  Handle<T> make_handle(TypedCell<T>& cell) {
+    return handle_manager_.make_handle((T*)cell);
+  }
+
+  HandleBase make_handle(Cell c) { return handle_manager_.make_handle(c); }
+
 private:
   DebugListener debug_listener_ = nullptr;
+  HandleManager handle_manager_;
 };
 
 // TODO: currently only allowed 1 per thread. should allow context switching

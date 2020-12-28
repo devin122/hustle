@@ -78,3 +78,42 @@ TEST_CASE("HeapTest", "[gc]") {
                      test_string + sizeof(test_string)));
   }
 }
+
+TEST_CASE("HandleTest", "[handle]") {
+  // Test basic handle functionality
+  HandleManager mgr;
+
+  auto mark_fn = [&](Heap::MarkFunction fn) { mgr.mark_handles(fn); };
+  Heap heap(mark_fn);
+
+  const char test_string[] = "abc";
+  auto* raw_ptr = new (heap.allocate(sizeof(String) + sizeof(test_string)))
+      String(test_string, sizeof(test_string));
+
+  Handle<String> str_handle = mgr.make_handle<String>(raw_ptr);
+
+  {
+    // Sanity check to make sure the string was allocated properly;
+    std::string_view sv = *raw_ptr;
+    CHECK(std::equal(sv.begin(), sv.end(), test_string,
+                     test_string + sizeof(test_string)));
+  }
+
+  heap.gc();
+  CHECK((String*)str_handle != raw_ptr);
+
+  {
+    std::string_view sv = *str_handle;
+    CHECK(std::equal(sv.begin(), sv.end(), test_string,
+                     test_string + sizeof(test_string)));
+  }
+}
+
+TEST_CASE("ObjectForwarding") {
+  Object o((cell_tag)0, sizeof(Object));
+  Object o2((cell_tag)0, sizeof(Object));
+  CHECK(!o.is_forwarding());
+  o.forward_to(&o2);
+  CHECK(o.is_forwarding());
+  CHECK(o.get_forwarding() == &o2);
+}

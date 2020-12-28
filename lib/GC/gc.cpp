@@ -190,3 +190,12 @@ void Heap::mark() {
         }
 }
 */
+void HandleManager::mark_handles(Heap::MarkFunction mark_fn) {
+  auto* handle = root_handle_.next_;
+  while (handle != &root_handle_) {
+    cell_t* cell_ptr = (cell_t*)&handle->cell_;
+    mark_fn(cell_ptr);
+    HSTL_ASSERT(handle->next_ != handle);
+    handle = handle->next_;
+  }
+}

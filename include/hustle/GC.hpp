@@ -105,8 +105,100 @@ private:
   MarkRootsFunction mark_roots_;
   HeapRegion region_a_, region_b_;
   HeapRegion *current_heap_, *backup_heap_;
+  bool running_gc_ = false;
 };
 
+class HandleManager;
+
+class HandleBase {
+  HandleBase* prev_;
+  HandleBase* next_;
+
+protected:
+  Cell cell_ = Cell::from_raw(0);
+
+  HandleBase() : prev_(this), next_(this) {}
+  // Insert after
+  HandleBase(HandleBase* before, Cell c) : cell_(c) {
+    HSTL_ASSERT(before != nullptr);
+    HSTL_ASSERT(before->next_ != nullptr);
+    HSTL_ASSERT(before->prev_ != nullptr);
+    prev_ = before;
+    next_ = before->next_;
+    HSTL_ASSERT(next_->prev_ == before);
+    next_->prev_ = this;
+    before->next_ = this;
+  }
+
+public:
+  HandleBase(const HandleBase&) = delete;
+  HandleBase(const HandleBase&&) = delete;
+  ~HandleBase() {
+    // unlink ourself from the list
+    if (prev_) {
+      HSTL_ASSERT(prev_->next_ == this);
+      prev_->next_ = next_;
+    }
+    if (next_) {
+      HSTL_ASSERT(next_->prev_ == this);
+      next_->prev_ = prev_;
+    }
+  }
+
+  Cell cell() { return cell_; }
+
+  bool operator==(const HandleBase& other) const {
+    return cell_ == other.cell_;
+  }
+
+  HandleBase& operator=(const HandleBase&) = delete;
+  friend class HandleManager;
+};
+
+template <typename T = Object>
+class Handle : public HandleBase {
+public:
+  explicit Handle(HandleBase* before, T* ptr) : HandleBase(before, ptr) {}
+  // TODO: should this be something more explicit?
+  // I'm worried we might silently generate a bunch of conversions when we dont
+  // want to
+  operator T*() {
+    if (cell_ == Cell::from_raw(0)) {
+      return nullptr;
+    }
+    return cell_.cast<T>();
+  }
+
+  T* operator->() {
+    HSTL_ASSERT(cell_ != Cell::from_raw(0));
+    T* ptr = cell_.cast<T>();
+    HSTL_ASSERT(ptr != nullptr);
+    return ptr;
+  }
+};
+
+template <typename T>
+inline cell_t make_cell(Handle<T>& handle) {
+  return make_cell<T>((T*)handle);
+}
+class HandleManager {
+
+  // Bogus handle which is the root of our circular linked list
+  HandleBase root_handle_;
+
+public:
+  HandleManager() = default;
+  void mark_handles(Heap::MarkFunction mark_fn);
+
+  template <typename T>
+  Handle<T> make_handle(T* ptr) {
+    return Handle<T>(&root_handle_, ptr);
+  }
+
+  HandleBase make_handle(Cell c) { return HandleBase(&root_handle_, c); }
+
+  // Handle make_handle(Cell cell) { return Handle(&root_handle_, cell); }
+};
 } // namespace hustle
 
 #endif
