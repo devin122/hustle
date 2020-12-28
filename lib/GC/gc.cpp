@@ -75,6 +75,11 @@ Heap::Heap(MarkRootsFunction mark_roots)
       current_heap_(&region_a_), backup_heap_(&region_b_) {}
 
 Object* Heap::allocate(size_t sz) {
+
+  // Force a gc for testing
+  if (debug_alloc) {
+    swap_heaps();
+  }
   // TODO this is dumb
 
   if (current_heap_->bytes_free() < 1024 * 1024 ||
@@ -89,6 +94,8 @@ void Heap::gc() { swap_heaps(); }
 
 void Heap::swap_heaps() {
   puts("Running GC");
+  HSTL_ASSERT(!running_gc_);
+  running_gc_ = true;
   std::stack<Object*> work_stack;
 
   auto copy_object = [&, current_heap = current_heap_,
@@ -132,12 +139,21 @@ void Heap::swap_heaps() {
     case CELL_QUOTE: {
       Quotation* quote = (Quotation*)(o);
       if (quote->definition != nullptr) {
-        cell_t bogus = quote->definition.raw();
-        copy_object(&bogus);
-        quote->definition = (Array*)get_cell_pointer(bogus);
+        copy_object((cell_t*)&quote->definition);
       }
       break;
     }
+    case CELL_WRAPPER: {
+      Wrapper* wrapper = (Wrapper*)(o);
+      copy_object((cell_t*)&wrapper->wrapped);
+    } break;
+
+    case CELL_WORD: {
+      Word* word = (Word*)o;
+      copy_object((cell_t*)&word->name);
+      copy_object((cell_t*)&word->definition);
+      copy_object((cell_t*)&word->properties);
+    } break;
     default:
       HSTL_ASSERT(false);
     }
@@ -147,6 +163,8 @@ void Heap::swap_heaps() {
   auto tmp = current_heap_;
   current_heap_ = backup_heap_;
   backup_heap_ = tmp;
+
+  running_gc_ = false;
 }
 
 /*

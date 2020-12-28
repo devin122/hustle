@@ -291,21 +291,27 @@ void VM::interpreter_break() {
 }
 
 void VM::mark_roots(Heap::MarkFunction fn) {
-  HSTL_ASSERT(false); // TODO reimplement
-#if 0
-    for(cell_t* ptr = stack_base_; ptr < stack_; ++ptr){
-       /* cell_t cell = *ptr;
-        if(is_a<Object>(cell)){
-            fn(cast<Object>(cell));
-        }*/
-        fn(ptr);
-    }
-    for(auto p : symbol_table_){
-        //cell_t cell = p.second;
-        fn(&p.second);
-        /*if(is_a<Object>(cell)){
-            fn(cast<Object>(cell));
-        }*/
-    }
-#endif
+
+  fn((cell_t*)&globals.True);
+  fn((cell_t*)&globals.False);
+  fn((cell_t*)&globals.FalseWord);
+  fn((cell_t*)&globals.Exit);
+  fn((cell_t*)&globals.Mark);
+
+  for (Cell& slot : stack_) {
+    fn((cell_t*)&slot);
+  }
+  for (auto& p : symbol_table_) {
+    auto old = p.second;
+    fn(&p.second);
+    HSTL_ASSERT(p.second != old);
+  }
+  for (auto& frame : call_stack_) {
+    auto old_word = frame.word;
+    auto old_quote = frame.quote;
+    fn((cell_t*)&frame.word);
+    fn((cell_t*)&frame.quote);
+    HSTL_ASSERT(old_word != frame.word);
+    HSTL_ASSERT(old_quote != frame.quote);
+  }
 }

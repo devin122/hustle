@@ -34,6 +34,8 @@
 #include <stdint.h>
 
 #include <hustle/Core.hpp>
+#include <hustle/Support/Assert.hpp>
+#include <hustle/cell.hpp>
 
 namespace hustle {
 
@@ -97,6 +99,7 @@ public:
   ~Heap() = default;
   // TODO: this should be inlined for perf, but for the moment we leave it this
   // way for flexibility
+  bool debug_alloc = false;
   Object* allocate(size_t size) HUSTLE_MAY_ALLOCATE;
   void gc();
 
