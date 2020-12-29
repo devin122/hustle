@@ -61,7 +61,6 @@ struct VM {
   struct {
     TypedCell<Word> True;
     TypedCell<Word> False;
-    TypedCell<Word> FalseWord;
     TypedCell<Word> Exit;
     TypedCell<Word> Mark;
   } globals;

@@ -95,26 +95,7 @@ VM::VM()
 
   // Allocate our global values
   globals.True = make_symbol(*this, "True");
-
   globals.False = make_symbol(*this, "False");
-  {
-
-    auto q = allocate_handle<Quotation>();
-    q->definition = allocate<Array>(1);
-    {
-      auto definition = allocate<Array>(1);
-      (*definition)[0] = globals.False;
-      q->definition = definition;
-    }
-    // register_symbol();
-    auto* w = allocate<Word>();
-    w->definition = q;
-    w->name = globals.False->name;
-    w->is_parse_word = true;
-    symbol_table_["False"] = make_cell(w);
-    globals.FalseWord = w;
-  }
-
   globals.Exit = make_symbol(*this, "exit-bootstrap");
   globals.Mark = make_symbol_no_register(*this, "<MARK>");
 }
@@ -294,7 +275,6 @@ void VM::mark_roots(Heap::MarkFunction fn) {
 
   fn((cell_t*)&globals.True);
   fn((cell_t*)&globals.False);
-  fn((cell_t*)&globals.FalseWord);
   fn((cell_t*)&globals.Exit);
   fn((cell_t*)&globals.Mark);
 
