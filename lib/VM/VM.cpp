@@ -292,8 +292,8 @@ void VM::mark_roots(Heap::MarkFunction fn) {
     auto old_quote = frame.quote;
     fn((cell_t*)&frame.word);
     fn((cell_t*)&frame.quote);
-    HSTL_ASSERT(old_word != frame.word);
-    HSTL_ASSERT(old_quote != frame.quote);
+    HSTL_ASSERT(old_word == nullptr || old_word != frame.word);
+    HSTL_ASSERT(old_quote == nullptr || old_quote != frame.quote);
   }
   handle_manager_.mark_handles(fn);
 }
