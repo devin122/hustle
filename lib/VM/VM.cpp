@@ -120,7 +120,7 @@ void VM::evaluate(Cell cell) {
 void VM::call(Cell cell) {
   current_vm = this;
   StackFrame frame;
-  frame.word = globals.False;
+  frame.word = nullptr;
   frame.quote = TypedCell<Quotation>(nullptr);
   frame.offset = Cell::from_int(0);
   call_stack_.push(frame);
