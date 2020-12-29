@@ -143,6 +143,7 @@ struct VM {
   }
 
   HandleBase make_handle(Cell c) { return handle_manager_.make_handle(c); }
+  static VM* get_current_vm();
 
 private:
   DebugListener debug_listener_ = nullptr;

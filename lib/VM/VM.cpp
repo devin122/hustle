@@ -118,6 +118,7 @@ void VM::evaluate(Cell cell) {
 }
 
 void VM::call(Cell cell) {
+  current_vm = this;
   StackFrame frame;
   frame.word = globals.False;
   frame.quote = TypedCell<Quotation>(nullptr);
@@ -295,3 +296,5 @@ void VM::mark_roots(Heap::MarkFunction fn) {
     HSTL_ASSERT(old_quote != frame.quote);
   }
 }
+
+VM* VM::get_current_vm() { return current_vm; }
