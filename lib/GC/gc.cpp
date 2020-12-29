@@ -93,7 +93,6 @@ Object* Heap::allocate(size_t sz) {
 void Heap::gc() { swap_heaps(); }
 
 void Heap::swap_heaps() {
-  puts("Running GC");
   HSTL_ASSERT(!running_gc_);
   running_gc_ = true;
   std::stack<Object*> work_stack;
