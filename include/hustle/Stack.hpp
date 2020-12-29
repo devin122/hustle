@@ -119,7 +119,10 @@ public:
   void update_offset(size_t offset);
   StackFrame pop();
 
-  StackFrame* begin() { return (StackFrame*)sp_; }
+  StackFrame* begin() {
+    HSTL_ASSERT((top_ - sp_) % 3 == 0);
+    return (StackFrame*)sp_;
+  }
   StackFrame* end() { return (StackFrame*)top_; }
 
   using Stack::sp;
