@@ -82,11 +82,13 @@ static int tests_passed = 0;
 
 static void check_handler(VM* vm, Quotation*) {
   // TODO should be a handle
-  auto expected_stack = cast<Array>(vm->stack_.pop());
+  auto expected_stack_handle =
+      vm->make_handle<Array>(cast<Array>(vm->stack_.pop()));
   ++tests_run;
 
   vm->call(vm->pop());
 
+  Array* expected_stack = expected_stack_handle;
   bool eq = std::equal(expected_stack->begin(), expected_stack->end(),
                        std::make_reverse_iterator(vm->stack_.end()),
                        std::make_reverse_iterator(vm->stack_.begin()));
@@ -157,9 +159,10 @@ int main(int argc, char** argv) {
   app.add_option("test_suite", input_file, "Input test suite to run")
       ->check(CLI::ExistingFile)
       ->required(true);
-  app.add_option("--name", suite_name, "Name of test suite")->required();
+  auto name_option = app.add_option("--name", suite_name, "Name of test suite");
 
-  app.add_option("--xml", xml_out, "File to output xml results");
+  app.add_option("--xml", xml_out, "File to output xml results")
+      ->needs(name_option);
 
   CLI11_PARSE(app, argc, argv);
 
@@ -171,6 +174,7 @@ int main(int argc, char** argv) {
   register_primitives(vm);
   load_kernel(vm);
 
+  vm.heap_.debug_alloc = true;
   vm.register_primitive("check", check_handler);
 
   // std::ifstream fstream(input_file);
@@ -181,8 +185,12 @@ int main(int argc, char** argv) {
   if (tests_passed != tests_run) {
     fmt::print("FAILED {} tests\n", tests_run - tests_passed);
   }
+  if (xml_out != "") {
+    write_xml(xml_out, suite_name);
+  }
 
-  write_xml(xml_out, suite_name);
-
+  if (tests_passed != tests_run) {
+    return 1;
+  }
   return 0;
 }
