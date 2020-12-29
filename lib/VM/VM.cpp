@@ -295,6 +295,7 @@ void VM::mark_roots(Heap::MarkFunction fn) {
     HSTL_ASSERT(old_word != frame.word);
     HSTL_ASSERT(old_quote != frame.quote);
   }
+  handle_manager_.mark_handles(fn);
 }
 
 VM* VM::get_current_vm() { return current_vm; }
