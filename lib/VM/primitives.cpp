@@ -289,13 +289,6 @@ static void prim_rot(VM* vm, Quotation*) {
 static void prim_pick(VM* vm, Quotation*) { vm->push(vm->stack_[2]); }
 
 static void prim_dip(VM* vm, Quotation*) {
-  // TODO we should be doing proper stack frames
-
-  StackFrame frame;
-  frame.offset = frame.word = Cell::from_raw(0);
-  frame.quote = TypedCell<Quotation>(nullptr);
-
-  // vm->call_stack_.push(frame);
   auto quote = vm->pop();
   auto x = vm->make_handle(vm->pop());
   vm->call(quote);
