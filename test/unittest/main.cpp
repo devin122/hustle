@@ -38,6 +38,7 @@
 #include <CLI/Config.hpp>
 #include <CLI/Formatter.hpp>
 #include <chrono>
+#include <exception>
 #include <fmt/chrono.h>
 #include <fmt/core.h>
 #include <fstream>
@@ -45,6 +46,7 @@
 #include <iostream>
 #include <iterator>
 #include <string>
+#include <string_view>
 #include <vector>
 
 using namespace hustle;
@@ -179,7 +181,35 @@ int main(int argc, char** argv) {
 
   // std::ifstream fstream(input_file);
   vm.lexer_.add_stream(std::make_unique<std::ifstream>(input_file));
-  run_test(vm);
+
+  try {
+    run_test(vm);
+  } catch (std::exception e) {
+    // bogus code to make sure that we have at least 1 failed test
+    if (tests_passed >= tests_run) {
+      tests_run = tests_passed + 1;
+    }
+    fmt::print("Exception thrown {}\n", e.what());
+
+    // Generate some debug info
+    fmt::print("======= Stack ========\n");
+    hustle::print_stack(vm, 3);
+
+    fmt::print("======= Backtrace ======\n");
+    // TODO: this code is lifted from the primitive, should be factored
+    // somewhere common
+    fmt::print("======= Backtrace ======\n");
+    const auto* end = vm.call_stack_.end();
+    for (auto* frame = vm.call_stack_.begin(); frame < end; ++frame) {
+      std::string_view word_name;
+      if (frame->word != nullptr) {
+        word_name = *cast<Word>(frame->word)->name;
+      } else {
+        word_name = "<Anonymous>"sv;
+      }
+      fmt::print("{}+{}\n", word_name, cast<intptr_t>(frame->offset));
+    }
+  }
 
   fmt::print("Passed {} out of {} tests\n", tests_passed, tests_run);
   if (tests_passed != tests_run) {
