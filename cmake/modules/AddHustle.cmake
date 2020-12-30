@@ -29,8 +29,10 @@
 get_property(is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 if(is_multi_config)
     set(HUSTLE_BUILD_CFG_DIR "${hustle_BINARY_DIR}/$<CONFIG>" CACHE INTERNAL "")
+    set(HUSTLE_MULTI_CONFIG true CACHE INTERNAL "")
 else()
     set(HUSTLE_BUILD_CFG_DIR "${hustle_BINARY_DIR}" CACHE INTERNAL "")
+    set(HUSTLE_MULTI_CONFIG false CACHE INTERNAL "")
 endif()
 
 #[[

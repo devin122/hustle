@@ -53,7 +53,7 @@ void hustle::save_argv0(const char* argv0) {
 std::filesystem::path hustle::hustle_lib_dir() {
   auto exe_path = get_exe_path();
 
-  return exe_path.parent_path().parent_path().append("hustle");
+  return exe_path.parent_path().parent_path().append("lib/hustle");
 }
 
 std::filesystem::path hustle::get_exe_path() {
