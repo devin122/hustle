@@ -39,18 +39,6 @@
 
 using namespace hustle;
 using namespace std::literals;
-#if 0
-Quotation* Parser::parse_quote(std::istream& input) {
-  // TODO enusre that old stack is rooted
-  // TODO is this re-entrant?
-  if (input.eof()) {
-    return nullptr;
-  }
-  char c = ' ';
-  while()
-}
-
-#endif
 
 namespace {
 // Helper functions because we dont know what type intptr_t is
@@ -89,12 +77,6 @@ static std::optional<intptr_t> parse_number(const std::string& s) {
   }
   return {};
 }
-
-/**
- *   std::optional<std::string> read_token();
-  // pushes either a string or an int on the stack
-  void lex_token();
-  */
 
 std::optional<std::string> Lexer::token_string() {
 restart:
