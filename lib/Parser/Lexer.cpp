@@ -122,16 +122,13 @@ restart:
   // TODO this can be optimized to be stack allocated most of the time
   std::string buffer;
   buffer.reserve(32);
-  buffer += c;
-  while (!current_stream->eof()) {
-    current_stream->get(c);
-    if (std::isspace(c)) {
-      break;
-    }
+  do {
     buffer += c;
-  }
+    current_stream->get(c);
+  } while (!current_stream->eof() && !std::isspace(c));
+
   // TODO, maybe some kind of diagnostic if there is no whitespace at EOF?
-  return std::move(buffer);
+  return buffer;
 }
 
 TokenVariant Lexer::token() {
