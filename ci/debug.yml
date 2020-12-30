@@ -1,10 +1,5 @@
 trigger:
-- master
-
-variables:
-  - name: disable.coverage.autogenerate
-    value: 'true'
-
+- debug
 
 parameters:
   - name: useCache
@@ -17,13 +12,15 @@ parameters:
       - name: linux
         imageName: 'ubuntu-18.04'
         extraCmakeArgs: '-DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10'
-      - name: mac
-        imageName: macos-10.15
-        extraCmakeArgs: ''
       - name: coverage
         imageName: 'ubuntu-18.04'
         extraCmakeArgs: '-DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DHUSTLE_CODE_COVERAGE=ON'
         coverageBuild: true
+
+
+variables:
+  - name: disable.coverage.autogenerate
+    value: 'true'
 
 jobs:
   - ${{ each build in parameters.builds }}:
@@ -31,10 +28,15 @@ jobs:
       pool:
         vmImage: ${{ build.imageName }}
       steps:
-        - template: ci/steps.yml
+        - template: steps.yml
           parameters:
-            uploadCoverage: true
+            uploadCoverage: false
             useCache: ${{parameters.useCache}}
             collectCoverage: ${{ eq(build.coverageBuild, true) }}
             cmakeArgs: ${{ build.extraCmakeArgs }}
+           # extr
+
+
+
+
 

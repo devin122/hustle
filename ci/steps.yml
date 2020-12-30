@@ -1,0 +1,84 @@
+parameters:
+- name: collectCoverage
+  displayName: 'Collect code coverage information?'
+  type: boolean
+  default: false
+- name: uploadCoverage
+  displayName: 'Upload coverage data to codecov.io'
+  type: boolean
+  default: false
+- name: useCache
+  displayName: 'cache vcpkg artifacts?'
+  type: boolean
+  default: true
+- name: cmakeArgs
+  displayName: 'Extra cmake arguments'
+  type: string
+  default: ''
+- name: cacheTag
+  displayName: 'Additional tag to add to cache key'
+  type: string
+  default: ''
+
+steps:
+  - checkout: self
+    submodules: true
+  - script: |
+      mkdir -p build/vcpkg_installed
+      mkdir -p build/coverage
+    displayName: Create build directories
+  - ${{ if eq(parameters.useCache, true) }}:
+    - task: Cache@2
+      inputs:
+        key: 'vcpkg | "$(Agent.OS)${{parameters.cacheTag}}" | vcpkg.json | "v2"'
+        path: 'build/vcpkg_installed'
+  - task: CMake@1
+    name: Configure
+    inputs:
+      workingDirectory: build
+      cmakeArgs: '-DCMAKE_TOOLCHAIN_FILE=$(VCPKG_INSTALLATION_ROOT)/scripts/buildsystems/vcpkg.cmake ${{parameters.cmakeArgs}} ..'
+  - task: CMake@1
+    name: Build
+    inputs:
+      workingDirectory: build
+      cmakeArgs: '--build . -j 3'
+
+  - script: |
+      ctest . --output-on-failure --no-compress-output
+    name: CTest
+    workingDirectory: build
+    failOnStderr: true
+    env:
+      ${{ if eq(parameters.collectCoverage, true) }}:
+        LLVM_PROFILE_FILE: $(Build.SourcesDirectory)/build/coverage/profile-%p.profraw
+
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: '**/*_test.xml'
+
+
+  - ${{ if eq(parameters.collectCoverage, true) }}:
+    - script: |
+        set -e
+        ls profile-*.profraw
+        llvm-profdata-9 merge -sparse profile-*.profraw -o=test.profdata
+        llvm-cov-9 export -format=lcov -instr-profile=test.profdata ../bin/hustle-vm-test -object ../bin/hustle_serialize_test -object ../bin/hustle-gc-test -object ../bin/hustle-test  > merged.lcov
+      workingDirectory: build/coverage
+      displayName: Process coverage data
+    - ${{ if eq(parameters.uploadCoverage, true ) }}:
+      - script: "bash <(curl -s https://codecov.io/bash) -f build/coverage/merged.lcov"
+        displayName: Upload coverage to codecov.io
+    - task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@4
+      displayName: ReportGenerator
+      inputs:
+        reports: build/coverage/merged.lcov
+        targetdir: build/coverage
+        reporttypes: 'HtmlInline_AzurePipelines;Cobertura'
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: cobertura
+        summaryFileLocation: build/coverage/Cobertura.xml
+        reportDirectory: build/coverage
+
