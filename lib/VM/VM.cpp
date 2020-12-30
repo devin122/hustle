@@ -154,7 +154,7 @@ cell_t VM::lookup_symbol(const std::string& name) {
   auto it = symbol_table_.find(name);
   if (it == symbol_table_.end()) {
     // return make_cell<Word>(nullptr);
-    std::cerr << "Symbol not found: " << name << "\n";
+    std::cerr << "Symbol not found: '" << name << "'\n";
     throw std::runtime_error("symbol not found");
   } else {
     return it->second;
