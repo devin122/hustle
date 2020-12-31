@@ -184,7 +184,7 @@ int main(int argc, char** argv) {
 
   try {
     run_test(vm);
-  } catch (std::exception e) {
+  } catch (std::exception& e) {
     // bogus code to make sure that we have at least 1 failed test
     if (tests_passed >= tests_run) {
       tests_run = tests_passed + 1;
