@@ -35,16 +35,6 @@
 
 using namespace hustle;
 
-// Helper because built in random generator from catch only supports ints
-
-#define CELL_GENERATE                                                          \
-  Catch::Generators::generate(                                                 \
-      INTERNAL_CATCH_STRINGIZE(INTERNAL_CATCH_UNIQUE_NAME(generator)),         \
-      CATCH_INTERNAL_LINEINFO, [] {                                            \
-        using namespace Catch::Generators;                                     \
-        return makeGenerators(__VA_ARGS__);                                    \
-      })
-
 TEST_CASE("Cell is initialized with default value", "[Cell]") {
   Cell c;
   REQUIRE(c.raw() == 0);
