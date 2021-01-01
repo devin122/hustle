@@ -19,32 +19,41 @@ parameters:
   displayName: 'Additional tag to add to cache key'
   type: string
   default: ''
+- name: buildType
+  displayName: CMake build type
+  default: Release
+  values:
+  - Release
+  - Debug
+  - RelWithDebInfo
 
 steps:
   - checkout: self
     submodules: true
   - script: |
-      mkdir -p build/vcpkg_installed
-      mkdir -p build/coverage
+      mkdir build
+      cd build
+      mkdir vcpkg_installed
+      mkdir coverage
     displayName: Create build directories
   - ${{ if eq(parameters.useCache, true) }}:
     - task: Cache@2
       inputs:
-        key: 'vcpkg | "$(Agent.OS)${{parameters.cacheTag}}" | vcpkg.json | "v2"'
+        key: 'vcpkg | "$(Agent.OS)${{parameters.cacheTag}}" | ${{parameters.buildType}} | vcpkg.json | "v2"'
         path: 'build/vcpkg_installed'
   - task: CMake@1
     name: Configure
     inputs:
       workingDirectory: build
-      cmakeArgs: '-DCMAKE_TOOLCHAIN_FILE=$(VCPKG_INSTALLATION_ROOT)/scripts/buildsystems/vcpkg.cmake ${{parameters.cmakeArgs}} ..'
+      cmakeArgs: '-DCMAKE_BUILD_TYPE=${{parameters.buildType}} -DCMAKE_TOOLCHAIN_FILE=$(VCPKG_INSTALLATION_ROOT)/scripts/buildsystems/vcpkg.cmake ${{parameters.cmakeArgs}} ..'
   - task: CMake@1
     name: Build
     inputs:
       workingDirectory: build
-      cmakeArgs: '--build . -j 3'
+      cmakeArgs: '--build . -j 3 --config ${{parameters.buildType}}'
 
   - script: |
-      ctest . --output-on-failure --no-compress-output
+      ctest . --output-on-failure --no-compress-output -C ${{parameters.buildType}}
     name: CTest
     workingDirectory: build
     failOnStderr: true
