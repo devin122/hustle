@@ -41,11 +41,6 @@
 namespace hustle {
 struct VM;
 
-template <typename T, typename... Us>
-static size_t object_allocation_size(Us...) {
-  return sizeof(T);
-}
-
 // TODO: split concept of object resolution from min object size
 constexpr size_t OBJECT_RESOLUTION = 8;
 static_assert(is_power_of_2(OBJECT_RESOLUTION),
@@ -105,6 +100,12 @@ private:
   // constexpr void mark(bool m = true) noexcept { header.marked = m ? 1: 0;}
 } HUSTLE_HEAP_ALLOCATED;
 
+// default object size
+template <typename T>
+inline size_t object_allocation_size(T*) {
+  return sizeof(T);
+}
+
 #include "classes.def"
 
 inline Array::Array(std::initializer_list<Cell> init) noexcept
@@ -135,14 +136,12 @@ inline Record::Record(size_t count) noexcept
   // TODO initialize slots?
 }
 
-template <>
-[[maybe_unused]] size_t object_allocation_size<Array>(size_t s) {
+inline size_t object_allocation_size(Array*, size_t s) {
   return sizeof(cell_t) * s + sizeof(Array);
 }
 
-template <>
-[[maybe_unused]] size_t
-object_allocation_size<Array>(std::initializer_list<cell_t> init) {
+inline size_t object_allocation_size(Array*,
+                                     std::initializer_list<cell_t> init) {
   return init.size() * sizeof(cell_t) + sizeof(Array);
 }
 
@@ -167,24 +166,11 @@ inline String::String(std::string_view sv) noexcept
 
 inline size_t String::length() const { return cast<intptr_t>(length_raw); }
 
-template <>
-[[maybe_unused]] size_t object_allocation_size<String>(size_t sz) {
+inline size_t object_allocation_size(String*, size_t sz) {
   return sz + sizeof(String);
 }
 
-template <>
-[[maybe_unused]] size_t object_allocation_size<String>(int64_t sz) {
-  return sz + sizeof(String);
-}
-
-template <>
-[[maybe_unused]] size_t object_allocation_size<String>(const char*, size_t sz) {
-  return sz + sizeof(String) + 1;
-}
-
-template <>
-[[maybe_unused]] size_t object_allocation_size<String>(const char*,
-                                                       int64_t sz) {
+inline size_t object_allocation_size(String*, const char*, size_t sz) {
   return sz + sizeof(String) + 1;
 }
 
@@ -193,6 +179,11 @@ inline gsl::string_span<gsl::dynamic_extent> String::to_span() {
 }
 
 inline String::operator std::string_view() const { return {data(), length()}; }
+
+inline size_t object_allocation_size(Quotation*, Quotation::FuncType) {
+  return sizeof(Quotation);
+}
+
 static_assert(sizeof(Object) == sizeof(uintptr_t),
               "Object size should be size of header");
 

@@ -107,8 +107,8 @@ struct VM {
   template <typename T, typename... Args>
   // std::enable_if_t<std::is_base_of_v<Object, T>, T*>
   T* allocate(Args... args) HUSTLE_MAY_ALLOCATE {
-    size_t allocation_size =
-        hustle::object_allocation_size<T>(std::forward<Args>(args)...);
+    size_t allocation_size = hustle::object_allocation_size(
+        (T*)nullptr, std::forward<Args>(args)...);
     void* memory = heap_.allocate(allocation_size);
     return new (memory) T(std::forward<Args>(args)...);
   }
