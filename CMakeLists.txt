@@ -42,8 +42,6 @@ find_package(replxx CONFIG REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
 find_package(cityhash CONFIG REQUIRED)
 
-
-
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 
@@ -61,6 +59,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${HUSTLE_BUILD_CFG_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${HUSTLE_BUILD_CFG_DIR}/lib")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${HUSTLE_BUILD_CFG_DIR}/lib")
 
+
+if(CMAKE_SIZEOF_VOID_P LESS 8)
+    message(SEND_ERROR "Requires 64-bit build")
+endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GCC")
     set(CMAKE_CXX_FLAGS "-fcolor-diagnostics ${CMAKE_CXX_FLAGS}")
