@@ -17,6 +17,10 @@ parameters:
         imageName: macos-10.15
         options:
           cmakeArgs: '' # need to have some kind of options or our template breaks
+      - name: windows
+        imageName: 'vs2017-win2016'
+        options:
+          cmakeArgs: '-G "Visual Studio 15 2017 Win64"'
       - name: coverage
         imageName: 'ubuntu-18.04'
         options:
