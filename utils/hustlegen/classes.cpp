@@ -71,8 +71,7 @@ static void with_classes(F func, IndentingStream& stream,
   func(stream, classes);
 }
 
-#pragma region Tag_file
-
+/* #region  Tag_file */
 /// Generate the cell_tag enum
 static void output_class_tags(IndentingStream& out, const ClassList& classes) {
   out.writeln("enum cell_tag {{");
@@ -116,7 +115,7 @@ void write_tag_file(IndentingStream& out, const std::string& input_file) {
   with_classes(write_tag_file_impl, out, input_file);
 }
 
-#pragma endregion
+/* #endregion */
 
 static void output_class_decls(IndentingStream& out, const ClassList& classes) {
   for (auto& cl : classes) {

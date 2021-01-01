@@ -206,8 +206,8 @@ static void prim_is_string(VM* vm, Quotation*) {
     vm->push(vm->globals.False);
   }
 }
-#pragma region Control Flow Primitives
 
+/* #region  Control flow primitives */
 static void prim_while(VM* vm, Quotation*) {
   // TODO while is broken
   // HSTL_ASSERT(false);
@@ -257,10 +257,9 @@ static void prim_call(VM* vm, Quotation*) {
 
   return;
 }
+/* #endregion */
 
-#pragma endregion
-
-#pragma region Stack primitives
+/* #region  Stack Primitives */
 static void prim_swap(VM* vm, Quotation*) {
   auto a = vm->pop();
   auto b = vm->pop();
@@ -297,9 +296,9 @@ static void prim_dip(VM* vm, Quotation*) {
 
 static void prim_drop(VM* vm, Quotation*) { vm->pop(); }
 
-#pragma endregion
+/* #endregion */
 
-#pragma region Arithmetic primitives
+/* #region  Arithmetic primitives */
 static void prim_lt(VM* vm, Quotation*) {
   intptr_t b = cast<intptr_t>(vm->pop());
   intptr_t a = cast<intptr_t>(vm->pop());
@@ -394,9 +393,9 @@ static void prim_bool(VM* vm, Quotation*) {
   }
 }
 
-#pragma endregion
+/* #endregion */
 
-#pragma region Raw Slot Access
+/* #region  Raw slot access */
 static void prim_set_raw_slot(VM* vm, Quotation*) {
   auto value = vm->pop();
   intptr_t idx = cast<intptr_t>(vm->pop()) + 1;
@@ -416,9 +415,9 @@ static void prim_raw_slot(VM* vm, Quotation*) {
   vm->push(((Cell*)obj)[idx]);
 }
 
-#pragma endregion
+/* #endregion */
 
-#pragma region Debug primitives
+/* #region  Debug primitives */
 
 static void prim_debug_break(VM* vm, Quotation*) { vm->interpreter_break(); }
 
@@ -457,9 +456,9 @@ static void prim_assert(VM* vm, Quotation* q) {
   }
 }
 
-#pragma endregion
+/* #endregion */
 
-#pragma region Parsing primitives
+/* #region  Parsing primitives */
 
 static std::vector<Cell> tokenize(std::string& str, VM& vm) {
   std::istringstream s(str);
@@ -543,4 +542,4 @@ static void prim_include(VM* vm, Quotation*) {
   vm->lexer_.add_stream(std::move(fstream));
 }
 
-#pragma endregion
+/* #endregion */
