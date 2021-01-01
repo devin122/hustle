@@ -52,8 +52,8 @@ public:
   using StreamPtr = std::unique_ptr<std::istream>;
   Lexer(VM& vm) : vm_(vm) {}
 
-  std::optional<std::string> token_string();
-  TokenVariant token();
+  std::optional<std::string> token_string(bool force = false);
+  TokenVariant token(bool force = false);
 
   std::string read_until(char ch);
 

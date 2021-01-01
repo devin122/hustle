@@ -143,8 +143,9 @@ void repl(VM& vm) {
         auto result = vm.lookup_symbol(str);
         vm.evaluate(Cell::from_raw(result));
       } else {
-        // Shouldnt be possible
-        HSTL_ASSERT(false);
+        // Occurs if we hit an end of stream
+        // Kinda clunky, but just continue
+        continue;
       }
     } while (vm.lexer_.current_stream() != my_stream);
     // TODO manage history

@@ -78,18 +78,22 @@ static std::optional<intptr_t> parse_number(const std::string& s) {
   return {};
 }
 
-std::optional<std::string> Lexer::token_string() {
+std::optional<std::string> Lexer::token_string(bool force) {
 restart:
   if (parse_stack_.empty()) {
     return {};
   }
   std::istream* current_stream = parse_stack_.front().get();
   char c = ' ';
+  // Skip over any whitespace characters
   while (std::isspace(c) && !current_stream->eof()) {
     current_stream->get(c);
   }
   if (current_stream->eof()) {
     parse_stack_.pop_front();
+    if (!force) {
+      return {};
+    }
     goto restart;
   }
   if (c == '"') {
@@ -113,8 +117,8 @@ restart:
   return buffer;
 }
 
-TokenVariant Lexer::token() {
-  auto tok_str = token_string();
+TokenVariant Lexer::token(bool force) {
+  auto tok_str = token_string(force);
   if (!tok_str) {
     return TokenVariant();
   }
@@ -129,7 +133,7 @@ TokenVariant Lexer::token() {
 }
 
 void Lexer::lex_token() {
-  const auto tok = token();
+  const auto tok = token(true);
   if (std::holds_alternative<std::string>(tok)) {
     const std::string& str = std::get<std::string>(tok);
     vm_.push(vm_.allocate<String>(str.c_str(), str.length()));
