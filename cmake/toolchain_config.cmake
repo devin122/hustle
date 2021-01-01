@@ -27,8 +27,14 @@
 
 include(CheckCXXCompilerFlag)
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_GENERATOR STREQUAL "Ninja")
-    set(CMAKE_CXX_FLAGS "-fcolor-diagnostics ${CMAKE_CXX_FAGS}")
+if(CMAKE_GENERATOR STREQUAL "Ninja")
+
+    # Ninja breaks color diagnostics
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        set(CMAKE_CXX_FLAGS "-fcolor-diagnostics ${CMAKE_CXX_FAGS}")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        set(CMAKE_CXX_FLAGS "-fdiagnostics-color=always ${CMAKE_CXX_FLAGS}")
+    endif()
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
