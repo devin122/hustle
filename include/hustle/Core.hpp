@@ -38,7 +38,7 @@ using cell_t = uintptr_t;
 
 #include "cell_tags.def"
 
-constexpr uintptr_t CELL_TAG_BITS = 4;
+constexpr uintptr_t CELL_TAG_BITS = 3;
 constexpr uintptr_t CELL_TAG_MASK = (1 << CELL_TAG_BITS) - 1;
 static_assert(CELL_TAG_MAX <= (1 << CELL_TAG_BITS), "Too many cell tag types");
 

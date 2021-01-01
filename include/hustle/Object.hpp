@@ -47,10 +47,11 @@ static size_t object_allocation_size(Us...) {
 }
 
 // TODO: split concept of object resolution from min object size
-constexpr size_t OBJECT_RESOLUTION = 16;
+constexpr size_t OBJECT_RESOLUTION = 8;
 static_assert(is_power_of_2(OBJECT_RESOLUTION),
               "Object resolution needs to be power of 2");
-
+static_assert((1 << CELL_TAG_BITS) <= OBJECT_RESOLUTION,
+              "Not enough bits for pointer resolution with given tag bits");
 struct Object {
   // 0: forwarding bits;
   // 63:1 - forwarding ptr (if forwarding bit set)
