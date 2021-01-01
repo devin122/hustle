@@ -31,6 +31,7 @@
 #include <hustle/Parser/BootstrapLexer.hpp>
 #include <hustle/VM.hpp>
 
+#include <cctype>
 #include <iostream>
 using namespace hustle::bootstrap;
 using namespace hustle;
