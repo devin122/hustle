@@ -53,6 +53,7 @@ include(GNUInstallDirs)
 include(AddHustle)
 include(CPack)
 
+include(cmake/toolchain_config.cmake)
 
 #setup out output paths
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${HUSTLE_BUILD_CFG_DIR}/bin")
@@ -64,10 +65,7 @@ if(CMAKE_SIZEOF_VOID_P LESS 8)
     message(SEND_ERROR "Requires 64-bit build")
 endif()
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GCC")
-    set(CMAKE_CXX_FLAGS "-fcolor-diagnostics ${CMAKE_CXX_FLAGS}")
-    set(CMAKE_C_FLAGS "-fcolor-diagnostics ${CMAKE_C_FLAGS}")
-endif()
+
 function(add_hustlegen func input output)
     add_custom_command(
         OUTPUT ${output}
