@@ -37,7 +37,7 @@ void register_primitives(VM& vm); // TODO: this is a hack
 
 // Hack to work with broken string allocation code
 static String* allocate_string(VM& vm, std::string_view sv) {
-  const char* data = sv.cbegin();
+  const char* data = sv.data();
   size_t sz = sv.size();
   return vm.allocate<String>(data, sz);
 }
