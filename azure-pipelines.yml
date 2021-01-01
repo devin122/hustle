@@ -1,11 +1,6 @@
 trigger:
 - master
 
-variables:
-  - name: disable.coverage.autogenerate
-    value: 'true'
-
-
 parameters:
   - name: useCache
     displayName: 'cache vcpkg artifacts?'
@@ -16,25 +11,25 @@ parameters:
     default:
       - name: linux
         imageName: 'ubuntu-18.04'
-        extraCmakeArgs: '-DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10'
+        options:
+          cmakeArgs: '-DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10'
       - name: mac
         imageName: macos-10.15
-        extraCmakeArgs: ''
+        options:
+          cmakeArgs: '' # need to have some kind of options or our template breaks
       - name: coverage
         imageName: 'ubuntu-18.04'
-        extraCmakeArgs: '-DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DHUSTLE_CODE_COVERAGE=ON'
-        coverageBuild: true
+        options:
+          collectCoverage: true
+          buildType: Debug
+          cmakeArgs: '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DHUSTLE_CODE_COVERAGE=ON'
+  - name: defaults
+    type: object
+    default:
+      buildType: Release
 
 jobs:
-  - ${{ each build in parameters.builds }}:
-    - job: ${{ build.name }}
-      pool:
-        vmImage: ${{ build.imageName }}
-      steps:
-        - template: ci/steps.yml
-          parameters:
-            uploadCoverage: true
-            useCache: ${{parameters.useCache}}
-            collectCoverage: ${{ eq(build.coverageBuild, true) }}
-            cmakeArgs: ${{ build.extraCmakeArgs }}
-
+  - template: ci/build_jobs.yml
+    parameters:
+      builds: ${{ parameters.builds }}
+      defaultOptions: ${{ parameters.defaults }}

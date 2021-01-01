@@ -1,0 +1,39 @@
+# This file takes an object describing a set of builds to generate, and an mapping of default objects
+# and instantiates the build jobs
+
+parameters:
+  # List of builds to instantiate. each build object has the following structure:
+  # name: <name-of-build>
+  # imageName: <value to pass to vmImage>
+  # options: key-value mapping of parameters to pass to yaml template
+  - name: builds
+    type: object
+    default:
+
+  # key-value map of parameters to pass to the yaml template if they are not provided in a
+  # build object
+  - name: defaultOptions
+    type: object
+    default:
+
+
+
+# TODO: we should probably check that the builds object is not empty
+jobs:
+
+  - ${{ each build in parameters.builds }}:
+    - job: ${{ build.name }}
+      variables:
+        # I think this disables some report generation in the upload coverage task
+        # We don't need it since we manually call report generator anyway
+        - name: disable.coverage.autogenerate
+          value: 'true'
+      pool:
+        vmImage: ${{ build.imageName }}
+      steps:
+        - template: steps.yml
+          parameters:
+            ${{ insert }}: ${{ build.options }}
+            ${{ each pair in parameters.defaultParams }}:
+              ${{ if not(build.options[pair.key])}}:
+                ${{pair.key}}: ${{pair.value}}
