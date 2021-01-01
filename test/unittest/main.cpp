@@ -139,8 +139,21 @@ static void write_xml(const std::string& fname,
       "hostname='tbd' time='{}' timestamp='{:%Y-%m-%dT%H:%M:%SZ}'>",
       failures, num_tests, duration, fmt::gmtime(std::time(NULL)));
   os.indent();
-  os.writeln("<testcase classname='hustle-test.{}' name='{}' time='1'/>",
-             suite_name, suite_name);
+
+  // TODO we should really be making 1 entry for each test case
+  if (failures == 0) {
+    os.writeln("<testcase classname='hustle-test.{}' name='{}' time='1'/>",
+               suite_name, suite_name);
+  } else {
+    os.writeln("<testcase classname='hustle-test.{}' name='{}' time='1'>",
+               suite_name, suite_name);
+    os.indent();
+    os.writeln("<failure>").indent();
+    os.writeln("dummy failure message").outdent();
+    os.writeln("</failure>").outdent();
+    os.writeln("</testcase>");
+  }
+
   os.writeln("<system-out/>");
   os.writeln("<system-err/>");
 
