@@ -27,10 +27,10 @@
 
 cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
-#set(HUSTLE_VERSION_SUFFIX "-git")
+set(HUSTLE_VERSION_SUFFIX "-git")
 project(hustle
     LANGUAGES CXX
-    VERSION 0.1.0)
+    VERSION 0.2.0)
 
 include(cmake/config.cmake)
 find_package(Microsoft.GSL CONFIG REQUIRED)
