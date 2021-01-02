@@ -33,7 +33,8 @@ stages:
           defaultOptions: ${{ parameters.defaults }}
   - stage: Publish
     jobs:
-      - job: Create Github Release
+      - job: github
+        displayName: Publish Github Release
         steps:
           - task: DownloadBuildArtifacts@0
             inputs:
