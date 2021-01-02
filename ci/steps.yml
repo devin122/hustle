@@ -26,6 +26,14 @@ parameters:
   - Release
   - Debug
   - RelWithDebInfo
+- name: packageArtifacts
+  displayName: Package the build artifacts
+  type: boolean
+  default: false
+- name: cpackGenerator
+  displayName: CPack generator to use
+  type: string
+  default: TGZ
 
 steps:
   - checkout: self
@@ -91,3 +99,14 @@ steps:
         summaryFileLocation: build/coverage/Cobertura.xml
         reportDirectory: build/coverage
 
+  - ${{ if eq(parameters.packageArtifacts, true ) }}:
+    # Note: for whatever reason windows needs -B to be an absoulte directory
+    - script: |
+        mkdir package
+        cpack -C ${{parameters.buildType}} -B $(Build.SourcesDirectory)/build/package -G ${{parameters.cpackGenerator}}
+      workingDirectory: build
+      displayName: Package Binaries
+      failOnStderr: true
+    - task: PublishBuildArtifacts@1
+      inputs:
+          pathToPublish: build/package/hustle-*
