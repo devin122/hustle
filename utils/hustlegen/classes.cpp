@@ -124,9 +124,19 @@ static void output_class_decls(IndentingStream& out, const ClassList& classes) {
   out.writeln("");
 }
 
-// TODO take output stream
+/**
+ * Write out the definitions for the given set of classes.
+ *
+ * \note no definition is written if a class has no members, as
+ * we take that as a sign that the user is handling the defintion.
+ */
 static void print_class_defs(IndentingStream& out, const ClassList& classes) {
   for (auto& cl : classes) {
+    if (cl.members.empty()) {
+      // If the class has no members, assume that that someone else is handling
+      // the definition.
+      continue;
+    }
     out.writeln("struct {} : public Object {{", cl.name).indent();
     out.writeln("static constexpr cell_tag TAG_VALUE = {};", cl.enum_tag_name);
     out.writeln("~{}() = delete;", cl.name);
