@@ -34,6 +34,6 @@ jobs:
         - template: steps.yml
           parameters:
             ${{ insert }}: ${{ build.options }}
-            ${{ each pair in parameters.defaultParams }}:
+            ${{ each pair in parameters.defaultOptions }}:
               ${{ if not(build.options[pair.key])}}:
                 ${{pair.key}}: ${{pair.value}}

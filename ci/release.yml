@@ -1,0 +1,52 @@
+trigger: none
+pr: none
+
+parameters:
+  - name: releaseName
+    type: string
+    default: bogus
+  - name: defaults
+    type: object
+    default:
+      buildType: Release
+      packageArtifacts: true
+
+stages:
+  - stage: Validate
+    jobs:
+      - template: build_jobs.yml
+        parameters:
+          builds:
+            - name: linux
+              imageName: 'ubuntu-18.04'
+              options:
+                cmakeArgs: '-DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10'
+            - name: mac
+              imageName: macos-10.15
+              options:
+                cmakeArgs: '' # need to have some kind of options or our template breaks
+            - name: windows
+              imageName: 'vs2017-win2016'
+              options:
+                cmakeArgs: '-G "Visual Studio 15 2017 Win64"'
+                cpackGenerator: ZIP
+          defaultOptions: ${{ parameters.defaults }}
+  - stage: Publish
+    jobs:
+      - job: github
+        displayName: Publish Github Release
+        steps:
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: current
+              artifactName: binaries
+          - task: GitHubRelease@1
+            inputs:
+              gitHubConnection:
+              repositoryName: $(Build.RepositoryName)
+              action: create
+              isDraft: true
+              tagSource: userSpecifiedTag
+              tag: ${{ parameters.ReleaseName }}
+              addChangeLog: false
+              assets: $(System.ArtifactsDirectory)/binaries/*
