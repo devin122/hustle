@@ -33,6 +33,10 @@
 #include <ostream>
 
 namespace hustle {
+
+/**
+ * Simple stream which manages indenting
+ */
 class IndentingStream {
 public:
   IndentingStream(std::ostream& os) : out_(os) {}
@@ -47,21 +51,43 @@ public:
     return *this;
   }
 
+  /**
+   * Increase indent level of the stream
+   *
+   * \returns this stream
+   */
   IndentingStream& indent() {
     ++indent_level_;
     return *this;
   }
+
+  /**
+   * Decrease indent level of the stream
+   *
+   * If indent level is already 0, do nothing
+   * \returns this stream
+   */
   IndentingStream& outdent() {
     if (indent_level_ != 0) {
       --indent_level_;
     }
     return *this;
   }
+
+  /**
+   * Write a new line to the stream.
+   *
+   * New line will not have any indentation
+   * \returns this stream
+   */
   IndentingStream& nl() {
     out_ << "\n";
     return *this;
   }
 
+  /**
+   * Get the current indentation level
+   */
   constexpr unsigned depth() const noexcept { return indent_level_; }
 
 private:

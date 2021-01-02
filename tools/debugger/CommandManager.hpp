@@ -37,9 +37,21 @@ namespace hustle {
 
 class Command;
 
+/***
+ * Track set of commands which are registered to the debugger
+ */
 class CommandManager {
 public:
+  /***
+   * Find a command which starts with the given prefix.
+   *
+   * \returns null if there are no matches, or multiple matches
+   */
   Command* find_command(const std::string& name);
+
+  /***
+   * Add a command to this manager
+   */
   void add_command(std::string name, std::unique_ptr<Command> cmd) {
     cmds_.emplace(std::move(name), std::move(cmd));
   }

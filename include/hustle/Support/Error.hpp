@@ -26,6 +26,11 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+/*
+ * \file
+ * Misc functionality for dealing with various errors
+ */
+
 #ifndef HUSTLE_SUPPORT_ERROR_HPP
 #define HUSTLE_SUPPORT_ERROR_HPP
 

@@ -26,6 +26,10 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+/**
+ * \file
+ * Assertion macro and helpers
+ */
 #ifndef HUSTLE_SUPPORT_ASSERT_HPP
 #define HUSTLE_SUPPORT_ASSERT_HPP
 
@@ -37,7 +41,12 @@ namespace hustle {
 [[noreturn]] void assertion_failure();
 } // namespace hustle
 
-// TODO: properly implement
+/**
+ * Simple assertion macro.
+ *
+ * Currently simply does a c assert(), but eventually this should have
+ * additional logic
+ */
 #define HSTL_ASSERT(EXPR) assert(EXPR)
 
 #endif

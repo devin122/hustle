@@ -26,17 +26,42 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+/**
+ * \file
+ * miscelaneous support utilities
+ */
+
 #ifndef HUSTLE_SUPPORT_UTILITY_HPP
 #define HUSTLE_SUPPORT_UTILITY_HPP
 
 #include <filesystem>
 namespace hustle {
 
-// Save argv[0], call before changing CWD
+/**
+ * Save the value of argv0.
+ *
+ * This should be called in main() at the start of the program, before changing
+ * the working directory. Calling this function is required for
+ * hustle_lib_dir() and get_exe_path() to work.
+ *
+ */
 void save_argv0(const char* argv0);
 
+/**
+ * Get the path to the the hustle std library files.
+ *
+ * \note requires call to save_argv0() first.
+ */
 std::filesystem::path hustle_lib_dir();
+
+/// Get the path to the currently running executable
+/**
+ * Get the path to the currently running executable.
+ *
+ * \note requires call to save_argv0() first.
+ */
 std::filesystem::path get_exe_path();
+
 } // namespace hustle
 
 #endif

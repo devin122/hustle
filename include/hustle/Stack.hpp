@@ -33,8 +33,13 @@
 
 namespace hustle {
 
+/// Repesent stacks in the hustle language
+/// The data stack uses this class directly, while the call stack uses this as a
+/// base class
 class Stack {
 public:
+  /// Create stack with a given size
+  /// \param sz Size of the stack in slots
   Stack(size_t sz);
   Stack(const Stack&) = delete;
   Stack& operator=(const Stack&) = delete;
@@ -86,13 +91,22 @@ protected:
 
 // TODO: this should maybe be a record type?
 // TODO: make sure this is packed
+/***
+ * Frame in hustle the call stack
+ */
 struct StackFrame {
+  /// calling/called word, or null if anonymous quote
   TypedCell<Word> word;
+
+  /// calling/called quote, or null for an interpreter entry frame
   TypedCell<Quotation> quote;
+
+  /// Offset in the quote definition
   Cell offset;
 };
 
 class CallStack;
+
 class CallStackEntry {
 public:
   CallStackEntry(CallStack& call_stack);
@@ -104,8 +118,12 @@ private:
   Cell* entry_sp_;
 };
 
+/***
+ * Track the call stack of hustle
+ *
+ * \todo This should probaly be moved to a hustle-native datastructure
+ */
 class CallStack : private Stack {
-
 public:
   CallStack(size_t frame_ct)
       : Stack(frame_ct * (sizeof(StackFrame) / sizeof(Cell))) {}
@@ -148,6 +166,7 @@ inline StackFrame& CallStack::operator[](uintptr_t idx) {
               (idx * (sizeof(StackFrame) / sizeof(Cell))));
   return *(((StackFrame*)sp_) + idx);
 }
+
 // TODO this is really inefficient
 inline void CallStack::update_offset(size_t offset) {
   StackFrame frame = pop();

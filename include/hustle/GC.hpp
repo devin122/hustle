@@ -113,6 +113,11 @@ private:
 
 class HandleManager;
 
+/**
+ * Common functionality of registering handles to be marked.
+ *
+ * This is exposed via Handle or TypedHandle.
+ */
 class HandleBase {
   HandleBase* prev_;
   HandleBase* next_;

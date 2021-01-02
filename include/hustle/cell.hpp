@@ -123,13 +123,31 @@ inline typename cellcastimpl::CellCastHelper<T>::CastType cast(cell_t cell) {
   return cellcastimpl::CellCastHelper<T>::cast(cell);
 }
 
-// Strongly typed alias for a cell_t
-// Largely for the benefit of natvis, since we cant have custom visualizations
-// on primitives
+/***
+ * Main datatype in hustle.
+ *
+ * Represent a single cell of data. Essentially acts as a strongly typed alias
+ * for cell_t.
+ */
 class Cell {
 public:
+  /**
+   * Create Cell with value (int)0.
+   */
   constexpr Cell() = default;
+
+  /**
+   * Obtain the "raw" value of this cell.
+   *
+   * This should probably be avoided in most code.
+   */
   constexpr cell_t raw() const noexcept { return raw_; } // gross
+
+  /**
+   * Set the raw value of this cell.
+   *
+   * This should probably be avoided in most code.
+   */
   constexpr void set_raw(cell_t value) noexcept { raw_ = value; }
 
   static constexpr Cell from_int(intptr_t intval) noexcept {
@@ -152,13 +170,26 @@ public:
     return ::hustle::is_a<T>(raw_);
   }
 
+  /**
+   * Identity comparison.
+   *
+   * \note also checks equivilence of type, even for nullptr. So
+   * (String*)nullptr != (Array*)nullptr
+   */
   constexpr bool operator==(const Cell& other) const noexcept {
     return other.raw_ == raw_;
   }
 
+  /**
+   * \sa operator==
+   */
   constexpr bool operator!=(const Cell& other) const noexcept {
     return other.raw_ != raw_;
   }
+
+  /**
+   * Get the tag value of this Cell.
+   */
   constexpr cell_tag tag() const noexcept { return get_cell_type(raw_); }
   /*
     constexpr Cell operator=(const Cell other) noexcept {
@@ -186,7 +217,15 @@ inline constexpr bool is_a(Cell cell) {
   return is_a<T>(cell.raw());
 }
 
-// TODO: assert that this is a std layout type
+/**
+ * Type checked Cell.
+ *
+ * Behaves like a Cell, but assume it holds a value of a given type. For types
+ * other than intptr_t, this objects of this class can be treated as a pointer
+ * to the type.
+ *
+ * \todo should be asserting that this class lays out as we would expect.
+ */
 template <typename T>
 class TypedCell : public Cell {
 public:
