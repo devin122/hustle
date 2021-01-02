@@ -42,7 +42,7 @@ stages:
               artifactName: binaries
           - task: GitHubRelease@1
             inputs:
-              gitHubConnection: hustle
+              gitHubConnection: hustle-release
               repositoryName: $(Build.RepositoryName)
               action: create
               isDraft: true
