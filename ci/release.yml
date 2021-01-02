@@ -43,7 +43,7 @@ stages:
           - task: GitHubRelease@1
             inputs:
               gitHubConnection: hustle-release
-              repositoryName: $(Build.RepositoryName)
+              repositoryName: $(Build.Repository.Name)
               action: create
               isDraft: true
               tagSource: userSpecifiedTag
