@@ -39,8 +39,8 @@ stages:
             inputs:
               buildType: current
               artifactName: binaries
-      - script: |
-          ls $(System.ArtifactsDirectory)
+          - script: |
+              ls $(System.ArtifactsDirectory)
 
 #  - task: GitHubRelease@0
 #    inputs:
