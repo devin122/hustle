@@ -109,7 +109,8 @@ steps:
       failOnStderr: true
     - task: CopyFiles@2
       inputs:
-        contents: 'build/package/hustle-[0-9]*'
+        contents: 'hustle-[0-9]*'
+        sourceFolder: build/package
         targetFolder: $(Build.ArtifactStagingDirectory)
     - task: PublishBuildArtifacts@1
       inputs:
