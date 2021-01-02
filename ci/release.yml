@@ -7,7 +7,7 @@ parameters:
     default: bogus
   - name: defaults
     type: object
-    value:
+    default:
       buildType: Release
       packageArtifacts: true
 
@@ -34,12 +34,12 @@ stages:
   - stage: Publish
     jobs:
       - job: Create Github Release
-      - steps:
-        - task: DownloadBuildArtifacts@0
-          inputs:
-            buildType: current
-            artifactName: binaries
-        - script: |
+        steps:
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: current
+              artifactName: binaries
+      - script: |
           ls $(System.ArtifactsDirectory)
 
 #  - task: GitHubRelease@0
