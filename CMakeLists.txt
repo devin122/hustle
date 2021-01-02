@@ -83,12 +83,6 @@ add_subdirectory(extern)
 # now that we have finished defining any external apps, we can safely pollute global options
 include_directories(include ${HUSTLE_BUILD_CFG_DIR} ${CMAKE_CURRENT_BINARY_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /w14996")
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    # TODO: this is a bodge to work arround broken code
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-constexpr")
-endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 

@@ -95,6 +95,14 @@ function(set_compile_flags tgt)
         target_compile_options(${tgt} PRIVATE -fsanitize=undefined)
     endif()
 
+    if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+        # generate warnings for use of deprecated functions
+        target_compile_options(${tgt} "/w14996")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        # TODO: this is a bodge to work arround broken code
+        target_compile_options(${tgt} "${CMAKE_CXX_FLAGS} -Wno-invalid-constexpr")
+    endif()
+
 endfunction()
 
 function(set_output_directory name subdir)
