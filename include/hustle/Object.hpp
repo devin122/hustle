@@ -106,36 +106,42 @@ inline size_t object_allocation_size(T*) {
   return sizeof(T);
 }
 
-#include "classes.def"
+struct Wrapper : public Object {
+  static constexpr cell_tag TAG_VALUE = CELL_WRAPPER;
 
-inline Array::Array(std::initializer_list<Cell> init) noexcept
-    : Object(this, init.size() * sizeof(Cell)) {
-  std::copy(init.begin(), init.end(), data());
-}
+  Wrapper() : Object(this) {}
+  ~Wrapper() = delete;
 
-constexpr Array::Array(size_t ct) noexcept
-    : Object(this, sizeof(cell_t) * ct) {}
-inline size_t Array::count() const {
-  HSTL_ASSERT((size() - sizeof(Array)) % sizeof(Cell) == 0);
-  return (size() - sizeof(Array)) / sizeof(Cell);
-}
+  Cell wrapped;
+} HUSTLE_HEAP_ALLOCATED;
 
-inline Array* Array::from_list(std::initializer_list<Cell> init) {
-  Array* arr = Array::create(init.size());
-  std::copy(init.begin(), init.end(), arr->data());
-  return arr;
-}
+struct Array : public Object {
+  static constexpr cell_tag TAG_VALUE = CELL_ARRAY;
 
-inline Cell& Array::operator[](size_t idx) {
-  HSTL_ASSERT(idx < count());
-  return data()[idx];
-}
+  Array(std::initializer_list<Cell> init) noexcept
+      : Object(this, init.size() * sizeof(Cell)) {
+    std::copy(init.begin(), init.end(), data());
+  }
+  Array(size_t ct) noexcept : Object(this, sizeof(cell_t) * ct) {}
 
-inline Record::Record(size_t count) noexcept
-    : Object(this, sizeof(cell_t) * count) {
-  // TODO initialize slots?
-}
+  ~Array() = delete;
 
+  Cell* data() const noexcept { return (Cell*)(((char*)this) + sizeof(Array)); }
+  static Array* create(size_t sz);
+
+  inline size_t count() const {
+    HSTL_ASSERT((size() - sizeof(Array)) % sizeof(Cell) == 0);
+    return (size() - sizeof(Array)) / sizeof(Cell);
+  }
+
+  Cell* begin() const { return data(); }
+  Cell* end() const { return data() + count(); }
+
+  Cell& operator[](size_t idx) {
+    HSTL_ASSERT(idx < count());
+    return data()[idx];
+  }
+} HUSTLE_HEAP_ALLOCATED;
 inline size_t object_allocation_size(Array*, size_t s) {
   return sizeof(cell_t) * s + sizeof(Array);
 }
@@ -145,26 +151,32 @@ inline size_t object_allocation_size(Array*,
   return init.size() * sizeof(cell_t) + sizeof(Array);
 }
 
-/*
-inline String::String(const char* c_str) : Object(this, strlen(c_str)+1),
-length(strlen(c_str)) { std::copy(c_str, c_str + length + 1, data());
-};
-*/
-inline String::String(const char* c_str, size_t len) noexcept
-    : Object(this, len + 1), length_raw(Cell::from_int(len)) {
-  std::copy(c_str, c_str + len, data());
-  data()[len] = 0;
-}
+struct String : public Object {
+  static constexpr cell_tag TAG_VALUE = CELL_STRING;
+  ~String() = delete;
+  String(size_t len) : Object(this, len), length_raw(Cell::from_int(0)) {}
+  String(const char* c_str, size_t len) noexcept
+      : Object(this, len + 1), length_raw(Cell::from_int(len)) {
+    std::copy(c_str, c_str + len, data());
+    data()[len] = 0;
+  }
+  // TODO this should use a delegating constructor, but then we have issue with
+  // calling a deleted destructor
+  String(std::string_view sv) noexcept
+      : Object(this, sv.size() + 1), length_raw(Cell::from_int(sv.size())) {
+    std::copy(sv.cbegin(), sv.cend(), data());
+    data()[sv.size()] = 0;
+  }
 
-// TODO this should use a delegating constructor, but then we have issue with
-// calling a deleted destructor
-inline String::String(std::string_view sv) noexcept
-    : Object(this, sv.size() + 1), length_raw(Cell::from_int(sv.size())) {
-  std::copy(sv.cbegin(), sv.cend(), data());
-  data()[sv.size()] = 0;
-}
+  char* data() const { return pointer_add<char>(this, sizeof(String)); }
+  size_t capacity() const;
+  size_t length() const { return cast<intptr_t>(length_raw); }
 
-inline size_t String::length() const { return cast<intptr_t>(length_raw); }
+  gsl::string_span<gsl::dynamic_extent> to_span() { return {data(), length()}; }
+  operator std::string_view() const { return {data(), length()}; }
+
+  Cell length_raw;
+} HUSTLE_HEAP_ALLOCATED;
 
 inline size_t object_allocation_size(String*, size_t sz) {
   return sz + sizeof(String);
@@ -174,15 +186,44 @@ inline size_t object_allocation_size(String*, const char*, size_t sz) {
   return sz + sizeof(String) + 1;
 }
 
-inline gsl::string_span<gsl::dynamic_extent> String::to_span() {
-  return {data(), length()};
-}
-
-inline String::operator std::string_view() const { return {data(), length()}; }
+struct Quotation : public Object {
+  static constexpr cell_tag TAG_VALUE = CELL_QUOTE;
+  ~Quotation() = delete;
+  using FuncType = void (*)(VM*, Quotation*);
+  Quotation() : Object(this){};
+  Quotation(FuncType primitive)
+      : Object(this), definition(), entry(primitive) {}
+  Quotation(Array* def, FuncType ent)
+      : Object(this), definition(def), entry(ent) {}
+  TypedCell<Array> definition;
+  FuncType entry;
+} HUSTLE_HEAP_ALLOCATED;
 
 inline size_t object_allocation_size(Quotation*, Quotation::FuncType) {
   return sizeof(Quotation);
 }
+
+struct Record : public Object {
+  static constexpr cell_tag TAG_VALUE = CELL_RECORD;
+  ~Record() = delete;
+  Record(size_t count) noexcept : Object(this, sizeof(cell_t) * count) {
+    // TODO initialize slots?
+  }
+
+  cell_t slots[];
+} HUSTLE_HEAP_ALLOCATED;
+
+struct Word : public Object {
+  static constexpr cell_tag TAG_VALUE = CELL_WORD;
+  ~Word() = delete;
+  Word() : Object(this){};
+  TypedCell<String> name;
+  TypedCell<Quotation> definition;
+  Cell properties;            // Hash table
+  bool is_parse_word = false; // hack until we get properties working properly
+} HUSTLE_HEAP_ALLOCATED;
+
+#include "classes.def"
 
 static_assert(sizeof(Object) == sizeof(uintptr_t),
               "Object size should be size of header");
