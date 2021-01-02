@@ -33,9 +33,7 @@
 #include <memory>
 #include <optional>
 #include <string>
-namespace hustle {
-
-class Command;
+namespace hustle::debugger {
 
 /***
  * Track set of commands which are registered to the debugger
@@ -59,5 +57,6 @@ public:
 private:
   std::map<std::string, std::unique_ptr<Command>> cmds_;
 };
-} // namespace hustle
+
+} // namespace hustle::debugger
 #endif

@@ -55,15 +55,16 @@
 #include <stdio.h>
 #include <string>
 
+using namespace hustle::debugger;
 using namespace hustle;
 using namespace std::literals;
 using replxx::Replxx;
-void register_primitives(VM& vm);
 
 Replxx rx;
-
+void register_primitives(VM& vm);
 // hack
 namespace hustle {
+
 struct DebuggerInterface {
   volatile char code = 0;
   enum State { DBG_NONE, DBG_STEP, DBG_OVER } state;

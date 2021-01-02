@@ -30,7 +30,7 @@
 
 #include <limits>
 
-using namespace hustle;
+using namespace hustle::debugger;
 
 Command* CommandManager::find_command(const std::string& name) {
   // TODO: this doesn't seem locale safe

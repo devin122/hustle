@@ -33,7 +33,7 @@
 namespace hustle {
 
 struct VM;
-
+namespace debugger {
 class CommandManager;
 class Command {
 public:
@@ -64,6 +64,6 @@ MAKE_CMD(BackTraceCommand, "backtrace");
 MAKE_CMD(ContinueCommand, "continue");
 
 #undef MAKE_CMD
-
+} // namespace debugger
 } // namespace hustle
 #endif
