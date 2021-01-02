@@ -71,7 +71,6 @@ T* pointer_add(F* ptr, uintptr_t offset) {
   return (T*)(rc + offset);
 }
 
-// constexpr inline
 struct VM;
 void dump_stack(const VM& vm, bool recurse = true);
 void print_stack(const VM& vm, unsigned max_depth = -1);

@@ -42,28 +42,6 @@ namespace hustle {
 struct Object;
 struct VM;
 
-/*
-class Heap {
-
-public:
-    struct FreeObject;
-    Heap(VM *vm);
-    ~Heap();
-    // TODO: this should be inlined for perf, but for the moment we leave it
-this way for flexibility Object* allocate(size_t size); void gc(); private: void
-mark(); void mark_free_objects(); void sweep(); void clear(); //TODO this can be
-optimized out
-
-    //Its lame, but at the moment we have a fixed size heap
-    VM* const vm_;
-    static constexpr size_t HEAP_SIZE = 16 * 1024 * 1024;
-    void *memory_block_ = nullptr;
-    FreeObject *free_obj_;
-    size_t free_bytes_;
-    bool has_marked = false;
-};
-*/
-
 class Heap;
 
 class HeapRegion {
@@ -90,7 +68,6 @@ private:
 };
 
 class Heap {
-
 public:
   using MarkFunction = std::function<void(cell_t*)>;
   using MarkRootsFunction = std::function<void(MarkFunction)>;
@@ -189,6 +166,7 @@ template <typename T>
 inline cell_t make_cell(Handle<T>& handle) {
   return make_cell<T>((T*)handle);
 }
+
 class HandleManager {
 
   // Bogus handle which is the root of our circular linked list
