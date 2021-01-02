@@ -32,5 +32,7 @@ using namespace hustle;
 
 Array* Array::create(size_t elements) {
   // return new(elements, 0) Array(elements);
+  // Not implemented
+  HSTL_ASSERT(false);
   return nullptr;
 }
