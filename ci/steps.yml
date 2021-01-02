@@ -107,6 +107,11 @@ steps:
       workingDirectory: build
       displayName: Package Binaries
       failOnStderr: true
+    - task: CopyFiles@2
+      inputs:
+        contents: 'build/package/hustle-[0-9]*'
+        targetFolder: $(Build.ArtifactStagingDirectory)
     - task: PublishBuildArtifacts@1
       inputs:
-          pathToPublish: build/package/hustle-*
+          pathToPublish: $(Build.ArtifactStagingDirectory)
+          artifactName: binaries
