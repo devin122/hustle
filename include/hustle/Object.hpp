@@ -31,11 +31,11 @@
 
 #include "Core.hpp"
 #include "cell.hpp"
-#include "hustle/Utility.hpp"
 #include <algorithm>
 #include <assert.h>
 #include <atomic>
 #include <gsl/gsl>
+#include <hustle/Support/Utility.hpp>
 #include <initializer_list>
 
 namespace hustle {

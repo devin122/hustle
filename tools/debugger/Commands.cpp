@@ -28,7 +28,7 @@
 
 #include "Command.hpp"
 #include <fmt/core.h>
-#include <hustle/Utility.hpp>
+#include <hustle/Support/Utility.hpp>
 #include <hustle/VM.hpp>
 #include <stdlib.h>
 using namespace hustle;

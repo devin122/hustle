@@ -28,7 +28,7 @@
 
 #include "hustle/Object.hpp"
 #include "hustle/VM.hpp"
-#include <hustle/Utility.hpp>
+#include <hustle/Support/Utility.hpp>
 #include <utility>
 
 #include <city.h>
