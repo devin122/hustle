@@ -90,8 +90,8 @@ add_subdirectory(docs)
 add_subdirectory(utils)
 
 
-add_hustlegen("tags" "${CMAKE_CURRENT_SOURCE_DIR}/classes.json" "${CMAKE_CURRENT_BINARY_DIR}/cell_tags.def")
-add_hustlegen("classes" "${CMAKE_CURRENT_SOURCE_DIR}/classes.json" "${CMAKE_CURRENT_BINARY_DIR}/classes.def")
+add_hustlegen("tags" "${CMAKE_CURRENT_SOURCE_DIR}/classes.yml" "${CMAKE_CURRENT_BINARY_DIR}/cell_tags.def")
+add_hustlegen("classes" "${CMAKE_CURRENT_SOURCE_DIR}/classes.yml" "${CMAKE_CURRENT_BINARY_DIR}/classes.def")
 add_hustlegen("primitives" "${CMAKE_CURRENT_SOURCE_DIR}/primitives.yaml" "${CMAKE_CURRENT_BINARY_DIR}/primitives.def")
 
 
