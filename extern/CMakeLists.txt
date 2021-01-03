@@ -31,6 +31,8 @@ set(CMAKE_FOLDER extern)
 set(CMAKE_SKIP_INSTALL_RULES true)
 # since CMAKE_SKIP_INSTALL_RULES is designed to be a global, we need to make a stub
 # file so the global install rule works
-file(CONFIGURE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake" CONTENT "")
+if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake")
+    file(TOUCH "${CMAKE_CURRENT_BINARY_DIR}/cmake_install.cmake")
+endif()
 
 add_subdirectory(backward-cpp)
