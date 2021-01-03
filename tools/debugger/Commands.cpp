@@ -32,6 +32,7 @@
 #include <hustle/VM.hpp>
 #include <stdlib.h>
 using namespace hustle::debugger;
+using namespace hustle;
 using namespace std::literals;
 
 namespace hustle {
