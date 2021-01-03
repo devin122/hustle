@@ -31,7 +31,7 @@ hustle_add_library(HustleSupport STATIC
 )
 
 # TODO  check if we are doing an IDE build
-file(GLOB headers ${hustle_SOURCE_DIR}/include/hustle/Support/*.hpp)
+file(GLOB headers ${Hustle_SOURCE_DIR}/include/hustle/Support/*.hpp)
 target_sources(HustleSupport PRIVATE ${headers})
 
 install(

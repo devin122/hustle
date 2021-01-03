@@ -34,9 +34,9 @@ set(stdlib_files
 set(out_files)
 foreach(f ${stdlib_files})
     set(src ${CMAKE_CURRENT_SOURCE_DIR}/${f})
-    set(dst ${hustle_BINARY_DIR}/hustle/${f})
+    set(dst ${Hustle_BINARY_DIR}/hustle/${f})
     set(dst "lib/hustle/${f}")
-    set(output "${hustle_BINARY_DIR}/${dst}")
+    set(output "${Hustle_BINARY_DIR}/${dst}")
     add_custom_command(
         OUTPUT "${output}"
         DEPENDS ${src}

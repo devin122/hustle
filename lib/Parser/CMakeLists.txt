@@ -32,7 +32,7 @@ hustle_add_library(HustleParser STATIC
 )
 
 # TODO  check if we are doing an IDE build
-file(GLOB headers ${hustle_SOURCE_DIR}/include/hustle/Parser/*.hpp)
+file(GLOB headers ${Hustle_SOURCE_DIR}/include/hustle/Parser/*.hpp)
 target_sources(HustleParser PRIVATE ${headers})
 target_link_libraries(HustleParser Microsoft.GSL::GSL)
 

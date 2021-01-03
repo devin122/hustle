@@ -28,7 +28,7 @@
 cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 set(HUSTLE_VERSION_SUFFIX "-git")
-project(hustle
+project(Hustle
     LANGUAGES CXX
     VERSION 0.2.0)
 

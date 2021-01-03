@@ -32,14 +32,14 @@ if(HUSTLE_DOXYGEN)
 
     set(DOXYGEN_EXCLUDE_PATTERNS
         "*/vcpkg_installed/*"
-        "${hustle_SOURCE_DIR}/extern/*"
+        "${Hustle_SOURCE_DIR}/extern/*"
     )
     set(DOXYGEN_INCLUDE_PATH
        # ${hustle_SOURCE_DIR}/include
-        ${hustle_BINARY_DIR}
+        ${Hustle_BINARY_DIR}
     )
     set(DOXYGEN_STRIP_FROM_PATH
-        ${hustle_SOURCE_DIR}
+        ${Hustle_SOURCE_DIR}
     )
     set(DOXYGEN_FILE_PATTERNS
         "*.cpp"
@@ -57,7 +57,7 @@ if(HUSTLE_DOXYGEN)
     )
     doxygen_add_docs(
         doxygen
-        ${hustle_SOURCE_DIR}
+        ${Hustle_SOURCE_DIR}
         COMMENT "Generate Doxygen documentation"
     )
 endif()
