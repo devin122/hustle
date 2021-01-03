@@ -89,10 +89,12 @@ function(set_compile_flags tgt)
 
     if(HUSTLE_ASAN)
         target_compile_options(${tgt} PRIVATE -fsanitize=address)
+        target_link_options(${tgt} PRIVATE -fsanitize=address)
     endif()
 
     if(HUSTLE_UBSAN)
         target_compile_options(${tgt} PRIVATE -fsanitize=undefined)
+        target_link_options(${tgt} PRIVATE -fsanitize=undefined)
     endif()
 
     if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
