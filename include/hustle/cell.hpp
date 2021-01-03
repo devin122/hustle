@@ -150,11 +150,19 @@ public:
    */
   constexpr void set_raw(cell_t value) noexcept { raw_ = value; }
 
+  /**
+   * Create a Cell representing a given integer value
+   */
   static constexpr Cell from_int(intptr_t intval) noexcept {
     return Cell(make_cell(intval));
   }
   static constexpr Cell from_raw(cell_t cell) noexcept { return Cell(cell); }
 
+  /**
+   * Dummy function
+   *
+   * This is a bogus function to aid in migrating code from cell_t to Cell
+   */
   [[deprecated]] static constexpr Cell from_raw(Cell c) noexcept { return c; }
 
   template <typename T>
@@ -191,6 +199,7 @@ public:
    * Get the tag value of this Cell.
    */
   constexpr cell_tag tag() const noexcept { return get_cell_type(raw_); }
+
   /*
     constexpr Cell operator=(const Cell other) noexcept {
       raw_ = other.raw_;

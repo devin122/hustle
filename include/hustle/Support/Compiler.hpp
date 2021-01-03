@@ -26,6 +26,11 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+/**
+ * \file
+ * Provide misc support for detecting / adapting to different compilers
+ */
+
 #ifndef HUSTLE_SUPPORT_COMPILER_HPP
 #define HUSTLE_SUPPORT_COMPILER_HPP
 

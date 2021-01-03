@@ -106,6 +106,14 @@ inline size_t object_allocation_size(T*) {
   return sizeof(T);
 }
 
+/**
+ * Wrap another object to prevent execution.
+ *
+ * When the interpreter encounters a wrapper object during execution, it pushes
+ * the wrapped value on the stack. This is useful when you want to use a value
+ * which would otherwise be executed (such as a Word)
+ *
+ */
 struct Wrapper : public Object {
   static constexpr cell_tag TAG_VALUE = CELL_WRAPPER;
 
@@ -115,6 +123,12 @@ struct Wrapper : public Object {
   Cell wrapped;
 } HUSTLE_HEAP_ALLOCATED;
 
+/**
+ * Fixed size array of Cell values.
+ *
+ * \note Since we rely on the Object size, this class only works if the object
+ * resolution is the same as the Cell size
+ */
 struct Array : public Object {
   static constexpr cell_tag TAG_VALUE = CELL_ARRAY;
 
@@ -142,15 +156,28 @@ struct Array : public Object {
     return data()[idx];
   }
 } HUSTLE_HEAP_ALLOCATED;
+
+/**
+ * \related Array
+ */
 inline size_t object_allocation_size(Array*, size_t s) {
   return sizeof(cell_t) * s + sizeof(Array);
 }
 
+/**
+ * \related Array
+ */
 inline size_t object_allocation_size(Array*,
                                      std::initializer_list<cell_t> init) {
   return init.size() * sizeof(cell_t) + sizeof(Array);
 }
 
+/**
+ * Semi-fixed length string value.
+ *
+ * The maximum size that a String can hold is dictated by the initial object
+ * allocation size, and remains constant through the strings life.
+ */
 struct String : public Object {
   static constexpr cell_tag TAG_VALUE = CELL_STRING;
   ~String() = delete;
@@ -168,37 +195,83 @@ struct String : public Object {
     data()[sv.size()] = 0;
   }
 
+  /**
+   * Get a pointer to the stored string value.
+   *
+   * \warning The raw string is not guaranteed to be null terminated.
+   * Ensure that you limit access to lenght() characters
+   */
   char* data() const { return pointer_add<char>(this, sizeof(String)); }
+
+  /**
+   * Get the maximum size which can be stored in this string.
+   */
   size_t capacity() const;
+
+  /**
+   * Get the current length of the stored string
+   */
   size_t length() const { return cast<intptr_t>(length_raw); }
 
   gsl::string_span<gsl::dynamic_extent> to_span() { return {data(), length()}; }
   operator std::string_view() const { return {data(), length()}; }
 
+  /// Current length of the string
   Cell length_raw;
 } HUSTLE_HEAP_ALLOCATED;
 
+/**
+ * \related String
+ */
 inline size_t object_allocation_size(String*, size_t sz) {
   return sz + sizeof(String);
 }
 
+/**
+ * \related String
+ */
 inline size_t object_allocation_size(String*, const char*, size_t sz) {
   return sz + sizeof(String) + 1;
 }
 
+/**
+ * Basic "code" block of the language.
+ *
+ * A Quotation is essentially a lambda.
+ */
 struct Quotation : public Object {
   static constexpr cell_tag TAG_VALUE = CELL_QUOTE;
   ~Quotation() = delete;
   using FuncType = void (*)(VM*, Quotation*);
   Quotation() : Object(this){};
+
+  /**
+   * Create a quote for a given primitive function
+   */
   Quotation(FuncType primitive)
       : Object(this), definition(), entry(primitive) {}
   Quotation(Array* def, FuncType ent)
       : Object(this), definition(def), entry(ent) {}
+
+  /**
+   * The array used to define this Quotation
+   *
+   * \note This value will be null for primitives
+   */
   TypedCell<Array> definition;
+
+  /**
+   * An optional native entry point for this quote.
+   *
+   * Currently this is only provided for primitives, however this would
+   * also be set once we start jit compiling quotes
+   */
   FuncType entry;
 } HUSTLE_HEAP_ALLOCATED;
 
+/**
+ * \related Quotation
+ */
 inline size_t object_allocation_size(Quotation*, Quotation::FuncType) {
   return sizeof(Quotation);
 }
@@ -213,14 +286,25 @@ struct Record : public Object {
   cell_t slots[];
 } HUSTLE_HEAP_ALLOCATED;
 
+/**
+ * A Word is a named Quotation.
+ */
 struct Word : public Object {
   static constexpr cell_tag TAG_VALUE = CELL_WORD;
   ~Word() = delete;
   Word() : Object(this){};
   TypedCell<String> name;
   TypedCell<Quotation> definition;
-  Cell properties;            // Hash table
-  bool is_parse_word = false; // hack until we get properties working properly
+  Cell properties; // Hash table
+
+  /**
+   * Indicate if this is a parseword (eg if it is evaluated immediately at parse
+   * time).
+   *
+   * \todo this should be stored in the properties hash table when it is
+   * implemented
+   */
+  bool is_parse_word = false;
 } HUSTLE_HEAP_ALLOCATED;
 
 #include "classes.def"
