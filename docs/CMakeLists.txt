@@ -55,6 +55,7 @@ if(HUSTLE_DOXYGEN)
     set(DOXYGEN_EXPAND_AS_DEFINED
         MAKE_CMD
     )
+    set(DOXYGEN_PROJECT_NUMBER "${Hustle_VERSION}${HUSTLE_VERSION_SUFFIX}")
     doxygen_add_docs(
         doxygen
         ${Hustle_SOURCE_DIR}
