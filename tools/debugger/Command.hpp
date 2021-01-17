@@ -45,7 +45,6 @@ protected:
 
 private:
   std::string name_;
-  // TODO gross
   friend class CommandManager;
 };
 
@@ -56,11 +55,22 @@ private:
     void exec(VM*) override;                                                   \
   }
 
+/// Print out the current huslte stack
 MAKE_CMD(StackCommand, "stack");
+
+/// Step into next instruction
 MAKE_CMD(StepCommand, "step");
+
+/// Step over next instruction
 MAKE_CMD(OverCommand, "over");
+
+/// Exit the debugger
 MAKE_CMD(ExitCommand, "exit");
+
+/// Print a backtrace of the current hustle call stack
 MAKE_CMD(BackTraceCommand, "backtrace");
+
+/// Resume execution
 MAKE_CMD(ContinueCommand, "continue");
 
 #undef MAKE_CMD
