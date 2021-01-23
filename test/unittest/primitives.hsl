@@ -91,10 +91,7 @@
 { "{" lookup parse-word? } [ T ] check
 
 { [ 1 2 3 ] array? } [ T ] check
-
-# broken
-#{ 1 2 array? } [ F ] check
-
+{ 1 2 array? } [ 1 F ] check
 { "+" lookup array? } [ F ] check
 
 { 1 string? } [ F ] check
