@@ -34,7 +34,16 @@ hustle_add_library(HustleVM STATIC
     VM.cpp
     debug.cpp
 )
-target_link_libraries(HustleVM PRIVATE Microsoft.GSL::GSL fmt::fmt cityhash HustleParser)
+target_link_libraries(HustleVM
+    PRIVATE
+        Microsoft.GSL::GSL
+        fmt::fmt
+        cityhash
+        HustleParser
+        HustleSupport
+    PUBLIC
+        std::filesystem
+    )
 target_include_directories(HustleVM PRIVATE ${CMAKE_BINARY_DIR})
 add_dependencies(HustleVM hustle-generated)
 

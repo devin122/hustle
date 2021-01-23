@@ -101,31 +101,6 @@ static void init_cmds() {
   cmd_mgr.add_command("s", std::make_unique<StepCommand>());
 }
 
-void load_kernel(VM& vm) {
-  auto path = hustle::hustle_lib_dir().append("literals.hsl");
-  std::cout << "debug kernel path = " << path << "\n";
-  std::ifstream kernel(hustle::hustle_lib_dir() / "literals.hsl");
-
-  if (!kernel) {
-    std::cerr << "Failed to load kernel\n";
-    abort();
-  }
-
-  std::string line;
-  while (!kernel.eof()) {
-    HSTL_ASSERT(!kernel.fail());
-    HSTL_ASSERT(!kernel.bad());
-    line = ""s;
-    std::getline(kernel, line);
-    string_span tokenize_span(line);
-    auto it = tokenize_span.begin();
-    auto tokens = bootstrap::tokenize(it, tokenize_span.end(), vm);
-    for (auto cell : tokens) {
-      vm.evaluate(cell);
-    }
-  }
-}
-
 static void bp_handler() {
 
   while (true) {
@@ -179,7 +154,7 @@ int main(int argc, char** argv) {
   global_vm = &vm;
   register_primitives(vm);
   vm.set_debug_listener(bp_handler);
-  load_kernel(vm);
+  vm.load_kernel();
 
   // shitty_repl(vm);
   vm.lexer_.add_stream(std::make_unique<std::ifstream>(input_file));

@@ -94,6 +94,9 @@ struct VM {
   // private:
   // TODO do these really need to be functions?
 
+  // TODO: this should probably be called automatically
+  void load_kernel();
+
   Stack stack_;
   CallStack call_stack_;
 

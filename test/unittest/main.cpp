@@ -55,30 +55,6 @@ using string_span = gsl::string_span<gsl::dynamic_extent>;
 
 void register_primitives(VM& vm);
 
-static void load_kernel(VM& vm) {
-  auto path = hustle::hustle_lib_dir().append("literals.hsl");
-  std::ifstream kernel(hustle::hustle_lib_dir() / "literals.hsl");
-
-  if (!kernel) {
-    std::cerr << "Failed to load kernel\n";
-    abort();
-  }
-
-  std::string line;
-  while (!kernel.eof()) {
-    HSTL_ASSERT(!kernel.fail());
-    HSTL_ASSERT(!kernel.bad());
-    line = ""s;
-    std::getline(kernel, line);
-    string_span tokenize_span(line);
-    auto it = tokenize_span.begin();
-    auto tokens = bootstrap::tokenize(it, tokenize_span.end(), vm);
-    for (auto cell : tokens) {
-      vm.evaluate(cell);
-    }
-  }
-}
-
 static int tests_run = 0;
 static int tests_passed = 0;
 
@@ -187,7 +163,7 @@ int main(int argc, char** argv) {
 
   VM vm;
   register_primitives(vm);
-  load_kernel(vm);
+  vm.load_kernel();
 
   vm.heap_.debug_alloc = true;
   vm.register_primitive("check", check_handler);

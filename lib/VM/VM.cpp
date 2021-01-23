@@ -29,12 +29,15 @@
 #include "hustle/VM.hpp"
 #include "city.h"
 #include "hustle/Object.hpp"
+#include "hustle/Parser/BootstrapLexer.hpp"
+#include <fstream>
 #include <iostream>
 #include <stdexcept>
 #include <stdio.h>
 #include <stdlib.h>
 
 using namespace hustle;
+using namespace std::literals;
 
 namespace hustle {
 struct DebuggerInterface {
@@ -296,6 +299,31 @@ void VM::mark_roots(Heap::MarkFunction fn) {
     HSTL_ASSERT(old_quote == nullptr || old_quote != frame.quote);
   }
   handle_manager_.mark_handles(fn);
+}
+
+void VM::load_kernel() {
+  using string_span = gsl::string_span<gsl::dynamic_extent>;
+  auto path = hustle::hustle_lib_dir().append("literals.hsl");
+  std::ifstream kernel(hustle::hustle_lib_dir() / "literals.hsl");
+
+  if (!kernel) {
+    std::cerr << "Failed to load kernel\n";
+    abort();
+  }
+
+  std::string line;
+  while (!kernel.eof()) {
+    HSTL_ASSERT(!kernel.fail());
+    HSTL_ASSERT(!kernel.bad());
+    line = ""s;
+    std::getline(kernel, line);
+    string_span tokenize_span(line);
+    auto it = tokenize_span.begin();
+    auto tokens = bootstrap::tokenize(it, tokenize_span.end(), *this);
+    for (auto cell : tokens) {
+      evaluate(cell);
+    }
+  }
 }
 
 VM* VM::get_current_vm() { return current_vm; }
