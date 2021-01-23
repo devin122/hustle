@@ -61,7 +61,6 @@ using namespace std::literals;
 using replxx::Replxx;
 
 Replxx rx;
-void register_primitives(VM& vm);
 // hack
 namespace hustle {
 
@@ -152,7 +151,6 @@ int main(int argc, char** argv) {
 
   VM vm;
   global_vm = &vm;
-  register_primitives(vm);
   vm.set_debug_listener(bp_handler);
   vm.load_kernel();
 

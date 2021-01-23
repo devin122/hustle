@@ -53,7 +53,6 @@
 
 using namespace hustle;
 using namespace std::literals;
-void register_primitives(VM& vm);
 
 using string_span = gsl::string_span<gsl::dynamic_extent>;
 
@@ -148,7 +147,6 @@ int main(int argc, char** argv) {
   CLI11_PARSE(app, argc, argv);
 
   VM vm;
-  register_primitives(vm);
   if (!no_kernel) {
     vm.load_kernel();
   }

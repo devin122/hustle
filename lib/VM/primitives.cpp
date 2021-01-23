@@ -44,7 +44,6 @@ using namespace hustle;
 // TODO move to a header
 namespace hustle {
 void debug_break();
-} // namespace hustle
 
 void register_primitives(VM& vm) {
   for (auto x : primitives) {
@@ -56,6 +55,7 @@ void register_primitives(VM& vm) {
     vm.symbol_table_.emplace(std::string(x.first), make_cell(word));
   }
 }
+} // namespace hustle
 
 static void prim_def(VM* vm, Quotation*) {
   auto definition = vm->pop();

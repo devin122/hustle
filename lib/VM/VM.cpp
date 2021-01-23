@@ -40,6 +40,7 @@ using namespace hustle;
 using namespace std::literals;
 
 namespace hustle {
+void register_primitives(VM& vm);
 struct DebuggerInterface {
   volatile char code = 0;
   enum State { DBG_NONE, DBG_STEP, DBG_OVER } state;
@@ -101,6 +102,8 @@ VM::VM()
   globals.False = make_symbol(*this, "False");
   globals.Exit = make_symbol(*this, "exit-bootstrap");
   globals.Mark = make_symbol_no_register(*this, "<MARK>");
+
+  register_primitives(*this);
 }
 
 VM::~VM() {

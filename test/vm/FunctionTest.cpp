@@ -33,7 +33,6 @@
 
 using namespace hustle;
 using namespace std::literals;
-void register_primitives(VM& vm); // TODO: this is a hack
 
 // Hack to work with broken string allocation code
 static String* allocate_string(VM& vm, std::string_view sv) {
@@ -44,7 +43,6 @@ static String* allocate_string(VM& vm, std::string_view sv) {
 
 TEST_CASE("Can define function", "[function]") {
   VM vm;
-  register_primitives(vm);
 
   auto def_func = vm.lookup_symbol("def");
   REQUIRE(def_func != 0);

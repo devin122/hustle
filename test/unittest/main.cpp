@@ -53,8 +53,6 @@ using namespace hustle;
 using namespace std::literals;
 using string_span = gsl::string_span<gsl::dynamic_extent>;
 
-void register_primitives(VM& vm);
-
 static int tests_run = 0;
 static int tests_passed = 0;
 
@@ -162,7 +160,6 @@ int main(int argc, char** argv) {
   }
 
   VM vm;
-  register_primitives(vm);
   vm.load_kernel();
 
   vm.heap_.debug_alloc = true;

@@ -33,7 +33,6 @@
 
 using namespace hustle;
 using namespace std::literals;
-void register_primitives(VM& vm); // TODO: this is a hack
 
 // Helper function for calling hustle functions
 static void call(VM& vm, const std::string& name) {
@@ -44,7 +43,6 @@ static void call(VM& vm, const std::string& name) {
 
 TEST_CASE("Primitives are registered", "[Primitive]") {
   VM vm;
-  register_primitives(vm);
 
   auto prim_names = {"+"s, "-"s, "?"s, "def"s};
 
@@ -68,7 +66,6 @@ TEST_CASE("Primitives are registered", "[Primitive]") {
 
 TEST_CASE("Arithmetic primitives", "[Primitive]") {
   VM vm;
-  register_primitives(vm);
 
   REQUIRE(vm.stack_.begin() == vm.stack_.end());
   SECTION("prim +") {
@@ -96,7 +93,6 @@ TEST_CASE("Arithmetic primitives", "[Primitive]") {
 
 TEST_CASE("Stack primitives", "[Primitive]") {
   VM vm;
-  register_primitives(vm);
   REQUIRE(vm.stack_.begin() == vm.stack_.end());
 
   SECTION("swap") {
