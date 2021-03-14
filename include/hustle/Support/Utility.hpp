@@ -28,7 +28,7 @@
 
 /**
  * \file
- * miscelaneous support utilities
+ * miscellaneous support utilities
  */
 
 #ifndef HUSTLE_SUPPORT_UTILITY_HPP

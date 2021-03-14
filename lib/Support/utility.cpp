@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Devin Nakamura
+ * Copyright (c) 2021, Devin Nakamura
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,13 +41,16 @@
 namespace {
 const char* saved_argv0 = nullptr;
 std::filesystem::path init_cwd;
-std::filesystem::path self;
+// Removed for now as currently unused.
+// std::filesystem::path self;
 } // namespace
 
 void hustle::save_argv0(const char* argv0) {
   saved_argv0 = argv0;
   init_cwd = std::filesystem::current_path();
-  self = std::filesystem::canonical(argv0);
+  // This is broken when exe is invoked via $PATH.
+  // Since it is currently not used, just disable it for now
+  // self = std::filesystem::canonical(argv0);
 }
 
 std::filesystem::path hustle::hustle_lib_dir() {
