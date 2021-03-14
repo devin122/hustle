@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Devin Nakamura
+ * Copyright (c) 2021, Devin Nakamura
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -180,7 +180,7 @@ void VM::register_symbol(String* string_raw, Quotation* quote_raw,
 
 void VM::register_symbol(String* string, Word* word) {
   std::string sys_name(string->data(), string->data() + string->length());
-  symbol_table_.emplace(std::move(sys_name), make_cell(word));
+  symbol_table_[std::move(sys_name)] = make_cell(word);
 }
 
 void VM::step_hook() {
