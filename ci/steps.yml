@@ -100,7 +100,7 @@ steps:
         reportDirectory: build/coverage
 
   - ${{ if eq(parameters.packageArtifacts, true ) }}:
-    # Note: for whatever reason windows needs -B to be an absoulte directory
+    # Note: for whatever reason windows needs -B to be an absolute directory
     - script: |
         mkdir package
         cpack -C ${{parameters.buildType}} -B $(Build.SourcesDirectory)/build/package -G ${{parameters.cpackGenerator}}
@@ -109,7 +109,7 @@ steps:
       failOnStderr: true
     - task: CopyFiles@2
       inputs:
-        contents: 'hustle-[0-9]*'
+        contents: '[hH]ustle-[0-9]*'
         sourceFolder: build/package
         targetFolder: $(Build.ArtifactStagingDirectory)
     - task: PublishBuildArtifacts@1
