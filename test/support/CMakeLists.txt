@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2020, Devin Nakamura
+# Copyright (c) 2021, Devin Nakamura
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,16 +25,9 @@
 # SPDX-License-Identifier: BSD-2-Clause
 ################################################################################
 
-find_package(Catch2 CONFIG REQUIRED)
+hustle_add_executable(hustle-support-test
+    MemoryTest.cpp
+)
 
-set(CMAKE_FOLDER test)
-
-add_library(test-main OBJECT main.cpp)
-add_dependencies(test-main hustle-generated)
-target_link_libraries(test-main PUBLIC Catch2::Catch2)
-
-add_subdirectory(gc)
-add_subdirectory(vm)
-add_subdirectory(serialize)
-add_subdirectory(unittest)
-add_subdirectory(support)
+target_link_libraries(hustle-support-test test-main HustleSupport)
+add_test(NAME support-test COMMAND hustle-support-test -r junit -o support_test.xml)
