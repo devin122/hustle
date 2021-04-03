@@ -27,7 +27,6 @@
 
 set(stdlib_files
     kernel.hsl
-    literals.hsl
 )
 
 
