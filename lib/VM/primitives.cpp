@@ -38,7 +38,7 @@
 #include <sstream>
 #include <vector>
 using namespace hustle;
-
+using namespace std::literals;
 #include "primitives.def"
 
 // TODO move to a header
@@ -47,12 +47,10 @@ void debug_break();
 
 void register_primitives(VM& vm) {
   for (auto x : primitives) {
-    // String * name = vm.allocate<String>(x.first);
-    size_t name_len = strlen(x.first);
-    auto word = vm.allocate_handle<Word>();
-    word->name = vm.allocate<String>(x.first, name_len);
-    word->definition = vm.allocate<Quotation>(x.second);
-    vm.symbol_table_.emplace(std::string(x.first), make_cell(word));
+    vm.register_primitive(x.first, x.second, false);
+  }
+  for (auto x : parse_primitives) {
+    vm.register_primitive(x.first, x.second, true);
   }
 }
 } // namespace hustle
@@ -209,12 +207,8 @@ static void prim_is_string(VM* vm, Quotation*) {
 
 /* #region  Control flow primitives */
 static void prim_while(VM* vm, Quotation*) {
-  // TODO while is broken
-  // HSTL_ASSERT(false);
   auto body = vm->make_handle<Quotation>(cast<Quotation>(vm->pop()));
   auto condition = vm->make_handle<Quotation>(cast<Quotation>(vm->pop()));
-
-  // HSTL_ASSERT(false);
   while (true) {
     vm->call(condition.cell());
     auto result = vm->pop();
@@ -542,4 +536,62 @@ static void prim_include(VM* vm, Quotation*) {
   vm->lexer_.add_stream(std::move(fstream));
 }
 
+/* #endregion */
+
+/* #region  Bootstrap primitives */
+
+/*
+static void prim_lookup(VM* vm, Quotation*) {
+  auto c = vm->pop();
+  String* vm_str = cast<String>(c);
+  // auto span = cast<String>(vm->pop())->to_span();
+  std::string str(vm_str->data(), vm_str->length());
+  vm->push(Cell::from_raw(vm->lookup_symbol(str)));
+}*/
+static void parse_until(VM* vm, Quotation* q, std::string_view term) {
+  while (true) {
+    prim_lex_token(vm, q);
+    auto token = vm->stack_.peek();
+    if (token.is_a<String>()) {
+      String* vm_str = cast<String>(vm->pop());
+      if (term == *vm_str) {
+        return;
+      }
+
+      std::string str(vm_str->data(), vm_str->length());
+      TypedCell<Word> word = cast<Word>(vm->lookup_symbol(str));
+      HSTL_ASSERT(word != nullptr);
+      if (word->is_parse_word) {
+        vm->call(word);
+      } else {
+        vm->push(word);
+      }
+    }
+  }
+}
+
+static void prim_array_bootstrap(VM* vm, Quotation* q) {
+  prim_mark_stack(vm, q);
+  parse_until(vm, q, "]"sv);
+  prim_mark_to_array(vm, q);
+}
+
+static void prim_quote_bootstrap(VM* vm, Quotation* q) {
+  prim_mark_stack(vm, q);
+  parse_until(vm, q, "}"sv);
+  prim_mark_to_array(vm, q);
+  prim_arr_to_quote(vm, q);
+}
+
+static void prim_parse_string(VM* vm, Quotation* q) {
+  std::string s = vm->lexer_.read_until('"');
+  auto vm_str = vm->allocate<String>(s.length() + 1);
+  std::copy(s.begin(), s.end(), vm_str->data());
+  vm_str->length_raw = Cell::from_int(s.length());
+  vm->push(vm_str);
+}
+
+static void prim_true(VM* vm, Quotation* q) { vm->push(vm->globals.True); }
+
+static void prim_false(VM* vm, Quotation* q) { vm->push(vm->globals.False); }
 /* #endregion */

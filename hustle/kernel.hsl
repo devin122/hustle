@@ -25,13 +25,13 @@
 # SPDX-License-Identifier: BSD-2-Clause
 ################################################################################
 
-"DEF:" { lex-token  parse-quote def } defp
-"PARSEWORD:" { lex-token parse-quote defp } defp
+#"DEF:" { lex-token  parse-quote def } defp
+#"PARSEWORD:" { lex-token parse-quote defp } defp
 
 # Misc stack manipulators
-DEF: nip { swap drop }
-DEF: 2dup { over over }
-DEF: 2dip { swap { dip } dip }
+#DEF: nip { swap drop }
+#DEF: 2dup { over over }
+#DEF: 2dip { swap { dip } dip }
 
-DEF: keep { over { call } dip } def
-DEF: 2keep { debug-break { 2dup } dip 2dip } def
+#DEF: keep { over { call } dip } def
+#DEF: 2keep { { 2dup } dip 2dip } def

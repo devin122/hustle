@@ -79,11 +79,13 @@ static TypedCell<Word> make_symbol(VM& vm, const char* name) {
   return word;
 }
 
-Word* VM::register_primitive(const char* name, CallType handler) {
+Word* VM::register_primitive(const char* name, CallType handler,
+                             bool is_parse) {
   size_t name_len = strlen(name);
   auto word = allocate_handle<Word>();
   word->name = allocate<String>(name, name_len);
   word->definition = allocate<Quotation>(handler);
+  word->is_parse_word = is_parse;
   symbol_table_.emplace(std::string(name), make_cell(word));
   return word;
 }
@@ -306,27 +308,33 @@ void VM::mark_roots(Heap::MarkFunction fn) {
 
 void VM::load_kernel() {
   using string_span = gsl::string_span<gsl::dynamic_extent>;
-  auto path = hustle::hustle_lib_dir().append("literals.hsl");
-  std::ifstream kernel(hustle::hustle_lib_dir() / "literals.hsl");
-
+  auto kernel =
+      std::make_unique<std::ifstream>(hustle::hustle_lib_dir() / "kernel.hsl");
   if (!kernel) {
     std::cerr << "Failed to load kernel\n";
     abort();
   }
 
-  std::string line;
-  while (!kernel.eof()) {
-    HSTL_ASSERT(!kernel.fail());
-    HSTL_ASSERT(!kernel.bad());
-    line = ""s;
-    std::getline(kernel, line);
-    string_span tokenize_span(line);
-    auto it = tokenize_span.begin();
-    auto tokens = bootstrap::tokenize(it, tokenize_span.end(), *this);
-    for (auto cell : tokens) {
-      evaluate(cell);
-    }
-  }
+  lexer_.add_stream(std::move(kernel));
+  run();
+  HSTL_ASSERT(stack_.depth() == 0);
 }
 
 VM* VM::get_current_vm() { return current_vm; }
+
+void VM::run() {
+  while (lexer_.current_stream()) {
+    auto tok = lexer_.token();
+    if (std::holds_alternative<intptr_t>(tok)) {
+      push(Cell::from_int(std::get<intptr_t>(tok)));
+    } else if (std::holds_alternative<std::string>(tok)) {
+      std::string& str = std::get<std::string>(tok);
+      auto result = lookup_symbol(str);
+      evaluate(Cell::from_raw(result));
+    } else {
+      // Occurs if we hit an end of stream
+      // Kinda clunky, but just continue
+      continue;
+    }
+  }
+}

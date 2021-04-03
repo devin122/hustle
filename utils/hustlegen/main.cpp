@@ -96,7 +96,7 @@ int main(int argc, char** argv) {
 
   app.add_subcommand("primitives", "Generate primitves.def")->callback([&] {
     auto yaml = YAML::LoadFile(input_file);
-    generate_file(output_file, write_primitives, yaml["primitives"]);
+    generate_file(output_file, write_primitives, yaml);
   });
 
   app.add_subcommand("classes", "Generate class defintions")->callback([&] {

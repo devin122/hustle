@@ -84,8 +84,8 @@ struct VM {
     push(Cell(o));
   }
 
-  Word* register_primitive(const char* name,
-                           CallType handler) HUSTLE_MAY_ALLOCATE;
+  Word* register_primitive(const char* name, CallType handler,
+                           bool is_parse = false) HUSTLE_MAY_ALLOCATE;
   void register_symbol(String* str, Quotation* quote,
                        bool parseword = false) HUSTLE_MAY_ALLOCATE;
   void register_symbol(String* string, Word* word);
@@ -96,6 +96,8 @@ struct VM {
 
   // TODO: this should probably be called automatically
   void load_kernel();
+
+  void run();
 
   Stack stack_;
   CallStack call_stack_;
