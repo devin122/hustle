@@ -81,6 +81,10 @@
 
 { 1 2 3 pick } [ 1 2 3 1 ] check
 
+# Control flow
+
+{ 1 { dup 5 < } { dup 1 + } while } [ 1 2 3 4 5 ] check
+
 # Not categorized
 
 { 1 2 "+" lookup call } [ 3 ] check
