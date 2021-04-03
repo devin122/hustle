@@ -75,6 +75,7 @@ void seg_protect(MemorySegment& segment, T body) {
   body();
 }
 #else
+typedef void (*SignalHandlerPointer)(int);
 template <unsigned new_flags, typename T>
 void seg_protect(MemorySegment& segment, T body) {
 
@@ -82,13 +83,12 @@ void seg_protect(MemorySegment& segment, T body) {
   addr = segment.base();
   size = segment.size();
   previous_handler = signal(SIGSEGV, [](int signal) {
+    handler_triggered = true;
     Memory::protect(addr, size, new_flags);
-    puts("handler!");
   });
   body();
 
   signal(SIGSEGV, previous_handler);
-  CHECK(handler_triggered == true);
 }
 #endif
 
