@@ -421,7 +421,7 @@ static void prim_backtrace(VM* vm, Quotation*) {
   const auto* end = vm->call_stack_.end();
   for (auto* frame = vm->call_stack_.begin(); frame < end; ++frame) {
     std::string_view word_name;
-    if (frame->word.is_a<Word>()) {
+    if (frame->word != nullptr) {
       word_name = *cast<Word>(frame->word)->name;
     } else {
       word_name = "<Anonymous>"sv;
