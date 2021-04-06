@@ -79,10 +79,17 @@ typedef void (*SignalHandlerPointer)(int);
 template <unsigned new_flags, typename T>
 void seg_protect(MemorySegment& segment, T body) {
 
+// OSX throws a SIGBUS rather than a SIGSEGV
+#if defined(__APPLE__)
+  constexpr int SIGNAL_NUM = SIGBUS;
+#else
+  constexpr int SIGNAL_NUM = SIGSEGV;
+#endif
+
   SignalHandlerPointer previous_handler;
   addr = segment.base();
   size = segment.size();
-  previous_handler = signal(SIGSEGV, [](int signal) {
+  previous_handler = signal(SIGNAL_NUM, [](int signal) {
     handler_triggered = true;
     Memory::protect(addr, size, new_flags);
   });
