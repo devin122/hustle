@@ -65,6 +65,7 @@ words:
   "+": prim_add
   "-": prim_sub
   "*": prim_mult
+  "/": prim_div
   "&": prim_and
   "|": prim_or
   "%": prim_mod

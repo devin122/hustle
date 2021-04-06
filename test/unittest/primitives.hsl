@@ -48,8 +48,9 @@
 
 { 7 3 * } [ 21 ] check
 
-# { 8 2 / } [ 4 ] check
-# { 9 2 / } [ 4 ] check
+{ 1 2 / } [ 0 ] check
+{ 8 2 / } [ 4 ] check
+{ 9 2 / } [ 4 ] check
 
 { 8 2 % } [ 0 ] check
 { 9 2 % } [ 1 ] check

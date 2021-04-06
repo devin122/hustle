@@ -319,6 +319,12 @@ static void prim_mult(VM* vm, Quotation*) {
   vm->push(Cell::from_int(a * b));
 }
 
+static void prim_div(VM* vm, Quotation*) {
+  auto b = cast<intptr_t>(vm->pop());
+  auto a = cast<intptr_t>(vm->pop());
+  vm->push(Cell::from_int(a / b));
+}
+
 static void prim_and(VM* vm, Quotation*) {
   auto a = cast<intptr_t>(vm->pop());
   auto b = cast<intptr_t>(vm->pop());
