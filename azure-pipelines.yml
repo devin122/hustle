@@ -25,6 +25,7 @@ parameters:
         imageName: 'ubuntu-18.04'
         options:
           collectCoverage: true
+          uploadCoverage: true
           buildType: Debug
           cmakeArgs: '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DHUSTLE_CODE_COVERAGE=ON'
   - name: defaults
