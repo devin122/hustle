@@ -40,6 +40,13 @@
 { 1 2 > } [ F ] check
 { 2 1 > } [ T ] check
 
+{ 1 1 =? } [ T ] check
+{ 1 2 =? } [ F ] check
+{ "foo" 1 =? } [ F ] check
+{ "foo" "foo" =? } [ T ] check
+{ "foo" "bar" =? } [ F ] check
+{ "foo" "foobar" =? } [ F ] check
+
 # Math operators
 { 7 1 + } [ 8 ] check
 { 2 5 9 + } [ 2 14 ] check
@@ -86,11 +93,26 @@
 
 { 1 { dup 5 < } { dup 1 + } while } [ 1 2 3 4 5 ] check
 
+{ T F 1 ? } [ F ] check
+{ F 1 T ? } [ T ] check
+#{ 1 T F ? } [ T ] check
+
+# bool operator
+{ F >bool } [ F ] check
+{ T >bool } [ T ] check
+{ 123 >bool } [ T ] check
+{ "hello" >bool } [ T ] check
+
+
 # Not categorized
 
 { 1 2 "+" lookup call } [ 3 ] check
 { "foo" hash "foo" hash  =? } [ T ] check
 { "foo" hash "bar" hash =? } [ F ] check
+
+{ 1 hash 1 hash =? } [ T ] check
+{ 1 hash 2 hash =? } [ F ] check
+
 
 { "+" lookup parse-word? } [ F ] check
 { "{" lookup parse-word? } [ T ] check
@@ -107,3 +129,10 @@
 { 5 [ 4 - ] array>quote call } [ 1 ] check
 
 { [ 1 2 3 4 ] length } [ 4 ] check
+
+# Check arrays
+# Check that we can parse nested values.
+# note that we just discard the result since we don't have proper value comparison
+{ [ 123 ] drop } [ ] check
+{ [ [ 1 ] [ 2 ] { 3 } 4 ] drop } [ ] check
+{ { { 1 } [ 2 ] 3 [ [ 4 ] ] } drop } [ ] check
