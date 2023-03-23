@@ -1,6 +1,7 @@
 {
     "name": "hustle",
     "version-string": "0.0.1",
+    "builtin-baseline": "ad06b4e8699074cc1867e8ca154bf7ad3c9a6f34",
     "dependencies": [
         "catch2",
         "cityhash",

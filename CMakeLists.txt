@@ -38,6 +38,9 @@ find_package(fmt CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(CLI11 CONFIG REQUIRED)
 #find_package(ryml CONFIG REQUIRED)
+# Hack to fix replxx
+find_package(Threads REQUIRED)
+
 find_package(replxx CONFIG REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
 find_package(cityhash CONFIG REQUIRED)
@@ -122,7 +125,7 @@ target_link_libraries(hustle
     fmt::fmt
     CLI11::CLI11
     HustleParser
-    REPLXX::replxx
+    replxx::replxx
     std::filesystem
 )
 install(

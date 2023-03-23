@@ -17,6 +17,6 @@ target_link_libraries(hdb
     fmt::fmt
     CLI11::CLI11
     HustleParser
-    REPLXX::replxx
+    replxx::replxx
     std::filesystem
 )
