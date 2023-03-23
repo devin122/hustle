@@ -10,19 +10,19 @@ parameters:
     type: object
     default:
       - name: linux
-        imageName: 'ubuntu-18.04'
+        imageName: 'ubuntu-22.04'
         options:
-          cmakeArgs: '-DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10'
+          cmakeArgs: '' # need to have some kind of options or our template breaks
       - name: mac
-        imageName: macos-10.15
+        imageName: macos-12
         options:
           cmakeArgs: '' # need to have some kind of options or our template breaks
       - name: windows
-        imageName: 'vs2017-win2016'
+        imageName: 'windows-2022'
         options:
-          cmakeArgs: '-G "Visual Studio 15 2017 Win64"'
+          cmakeArgs: '-G "Visual Studio 17 2022 Win64"'
       - name: coverage
-        imageName: 'ubuntu-18.04'
+        imageName: 'ubuntu-22.04'
         options:
           collectCoverage: true
           uploadCoverage: true
