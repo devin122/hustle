@@ -34,7 +34,7 @@ parameters:
       buildType: Release
 
 jobs:
-  - template: ci/build_jobs.yml
+  - template: build_jobs.yml
     parameters:
       builds: ${{ parameters.builds }}
       defaultOptions: ${{ parameters.defaults }}
