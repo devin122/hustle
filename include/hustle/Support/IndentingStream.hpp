@@ -8,7 +8,9 @@
 #define HUSTLE_SUPPORT_INDENTING_STREAM
 
 #include <fmt/core.h>
+
 #include <ostream>
+#include <utility>
 
 namespace hustle {
 
@@ -19,13 +21,13 @@ class IndentingStream {
 public:
   IndentingStream(std::ostream& os) : out_(os) {}
 
-  template <typename S, typename... Args>
-  IndentingStream& writeln(const S& format_str, Args&&... args) {
+  template <typename... Args>
+  IndentingStream& writeln(fmt::format_string<Args...> format_str, Args&&... args) {
     // TODO this is a hack
     for (unsigned i = 0; i < indent_level_; ++i) {
       out_ << "  ";
     }
-    out_ << fmt::format(format_str, std::forward<Args>(args)...) << "\n";
+    out_ << fmt::format(std::move(format_str), std::forward<Args>(args)...) << "\n";
     return *this;
   }
 
