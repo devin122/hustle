@@ -285,7 +285,6 @@ void VM::mark_roots(Heap::MarkFunction fn) {
 }
 
 void VM::load_kernel() {
-  using string_span = gsl::string_span<gsl::dynamic_extent>;
   auto kernel =
       std::make_unique<std::ifstream>(hustle::hustle_lib_dir() / "kernel.hsl");
   if (!kernel) {

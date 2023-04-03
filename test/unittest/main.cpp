@@ -15,12 +15,12 @@
 #include <CLI/App.hpp>
 #include <CLI/Config.hpp>
 #include <CLI/Formatter.hpp>
-#include <chrono>
-#include <exception>
 #include <fmt/chrono.h>
 #include <fmt/core.h>
+
+#include <chrono>
+#include <exception>
 #include <fstream>
-#include <gsl/string_span>
 #include <iostream>
 #include <iterator>
 #include <string>
@@ -29,7 +29,6 @@
 
 using namespace hustle;
 using namespace std::literals;
-using string_span = gsl::string_span<gsl::dynamic_extent>;
 
 static int tests_run = 0;
 static int tests_passed = 0;

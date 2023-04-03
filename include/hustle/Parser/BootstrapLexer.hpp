@@ -8,7 +8,7 @@
 
 #include <hustle/cell.hpp>
 
-#include <gsl/string_span>
+#include <string_view>
 #include <vector>
 
 namespace hustle {
@@ -16,8 +16,10 @@ struct VM;
 }
 
 namespace hustle::bootstrap {
-using string_span = gsl::string_span<gsl::dynamic_extent>;
-using Iterator = string_span::iterator;
+
+// TODO: get rid of this using once we port all code over
+using string_span = std::string_view;
+using Iterator = std::string_view::iterator;
 
 /// Given a pair of iterators, parse into a list of Cells using bootstrap
 /// parsing rules eg quotes use " ' "" character, and quotes and arrays handled

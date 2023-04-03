@@ -24,7 +24,6 @@
 #include <cctype>
 #include <fstream>
 #include <functional>
-#include <gsl/string_span>
 #include <inttypes.h>
 #include <iostream>
 #include <map>
@@ -51,8 +50,9 @@ VM* global_vm; // HACK
 extern DebuggerInterface dbg_interface;
 } // namespace hustle
 
-using string_span = gsl::string_span<gsl::dynamic_extent>;
-// using string_span = std::string_view;
+// TODO: remove this once code is ported
+// using string_span = gsl::string_span<gsl::dynamic_extent>;
+using string_span = std::string_view;
 
 using Iterator = string_span::iterator;
 

@@ -43,20 +43,18 @@
 #include <cctype>
 #include <fstream>
 #include <functional>
-#include <gsl/string_span>
 #include <inttypes.h>
 #include <iostream>
 #include <replxx.hxx>
 #include <sstream>
 #include <stdio.h>
 #include <string>
+#include <string_view>
 
 using namespace hustle;
 using namespace std::literals;
 
-using string_span = gsl::string_span<gsl::dynamic_extent>;
-
-using Iterator = string_span::iterator;
+using Iterator = std::string_view::iterator;
 
 const std::string HISTORY_FILE = "./hustle_history.txt"s;
 using replxx::Replxx;
@@ -73,7 +71,7 @@ void shitty_repl(VM& vm) {
     std::string line;
     std::getline(std::cin, line);
 
-    string_span tokenize_span(line);
+    std::string_view tokenize_span(line);
     try {
       auto it = tokenize_span.begin();
       auto tokens = bootstrap::tokenize(it, tokenize_span.end(), vm);

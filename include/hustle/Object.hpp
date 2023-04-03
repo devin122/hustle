@@ -191,7 +191,6 @@ struct String : public Object {
    */
   size_t length() const { return cast<intptr_t>(length_raw); }
 
-  gsl::string_span<gsl::dynamic_extent> to_span() { return {data(), length()}; }
   operator std::string_view() const { return {data(), length()}; }
 
   /// Current length of the string
