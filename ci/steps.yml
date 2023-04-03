@@ -80,8 +80,8 @@ steps:
     - script: |
         set -e
         ls profile-*.profraw
-        llvm-profdata-9 merge -sparse profile-*.profraw -o=test.profdata
-        llvm-cov-9 export -format=lcov -instr-profile=test.profdata ../bin/hustle-vm-test -object ../bin/hustle_serialize_test -object ../bin/hustle-gc-test -object ../bin/hustle-test  > merged.lcov
+        llvm-profdata merge -sparse profile-*.profraw -o=test.profdata
+        llvm-cov export -format=lcov -instr-profile=test.profdata ../bin/hustle-vm-test -object ../bin/hustle_serialize_test -object ../bin/hustle-gc-test -object ../bin/hustle-test  > merged.lcov
       workingDirectory: build/coverage
       displayName: Process coverage data
     - ${{ if eq(parameters.uploadCoverage, true ) }}:
