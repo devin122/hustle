@@ -79,9 +79,11 @@ steps:
   - ${{ if eq(parameters.collectCoverage, true) }}:
     - script: |
         set -e
+        clang_version=$(clang --version | head -n1 | grep -m 1 -Eo '[1-9][0-9]*' | head -n1)
+        echo "Detected clang $clang_version"
         ls profile-*.profraw
-        llvm-profdata-9 merge -sparse profile-*.profraw -o=test.profdata
-        llvm-cov-9 export -format=lcov -instr-profile=test.profdata ../bin/hustle-vm-test -object ../bin/hustle_serialize_test -object ../bin/hustle-gc-test -object ../bin/hustle-test  > merged.lcov
+        llvm-profdata-$clang_version merge -sparse profile-*.profraw -o=test.profdata
+        llvm-cov-$clang_version export -format=lcov -instr-profile=test.profdata ../bin/hustle-vm-test -object ../bin/hustle_serialize_test -object ../bin/hustle-gc-test -object ../bin/hustle-test  > merged.lcov
       workingDirectory: build/coverage
       displayName: Process coverage data
     - ${{ if eq(parameters.uploadCoverage, true ) }}:
