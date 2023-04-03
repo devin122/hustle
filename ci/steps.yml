@@ -79,6 +79,8 @@ steps:
   - ${{ if eq(parameters.collectCoverage, true) }}:
     - script: |
         set -e
+        ls /usr/bin
+        echo x
         ls profile-*.profraw
         llvm-profdata merge -sparse profile-*.profraw -o=test.profdata
         llvm-cov export -format=lcov -instr-profile=test.profdata ../bin/hustle-vm-test -object ../bin/hustle_serialize_test -object ../bin/hustle-gc-test -object ../bin/hustle-test  > merged.lcov
