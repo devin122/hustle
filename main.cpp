@@ -138,7 +138,6 @@ int main(int argc, char** argv) {
 
   bool no_kernel = false;
   bool old_repl = false;
-  bool bootstrap = false;
   app.add_flag("--no-kernel", no_kernel, "Do not include the kernel");
   app.add_flag("--old-repl", old_repl, "Start up with the old repl");
 
