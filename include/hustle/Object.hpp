@@ -49,7 +49,7 @@ struct Object {
   Object* next_object() const noexcept {
     uint8_t* raw = (uint8_t*)this;
     raw += size();
-    return (Object*)this;
+    return (Object*)raw;
   }
 
   bool is_forwarding() const noexcept { return get_bits<0, 0>(header); }
