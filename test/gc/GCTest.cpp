@@ -88,8 +88,8 @@ TEST_CASE("HandleTest", "[handle]") {
 }
 
 TEST_CASE("ObjectForwarding") {
-  Object o((cell_tag)0, sizeof(Object));
-  Object o2((cell_tag)0, sizeof(Object));
+  Object o((ObjectTag)0, sizeof(Object));
+  Object o2((ObjectTag)0, sizeof(Object));
   CHECK(!o.is_forwarding());
   o.forward_to(&o2);
   CHECK(o.is_forwarding());

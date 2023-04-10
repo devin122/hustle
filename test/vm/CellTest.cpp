@@ -6,7 +6,7 @@
 
 #include <catch2/catch.hpp>
 #include <hustle/Object.hpp>
-#include <hustle/cell.hpp>
+#include <hustle/VM/Cell.hpp>
 
 #include <iostream>
 #include <random>
@@ -56,13 +56,5 @@ TEST_CASE("Cell::operator==", "[Cell]") {
   CHECK_FALSE(ci1 != ci1_2);
   CHECK_FALSE(ci1 != ci1);
   CHECK(ci1 != ci2);
-
-  Cell s1 = Cell::from_raw(make_cell<String>(nullptr));
-  Cell a1 = Cell::from_raw(make_cell<Array>(nullptr));
-
-  CHECK(a1 != s1);
-  CHECK_FALSE(a1 == s1);
-  CHECK_FALSE(a1 == Cell::from_int(0));
-
   CHECK(ci1 == Cell::from_int(1));
 }

@@ -78,7 +78,7 @@ void Heap::swap_heaps() {
   auto copy_object = [&, current_heap = current_heap_,
                       backup_heap = backup_heap_](cell_t* handle) {
     if (is_a<Object>(*handle)) {
-      Object* obj = get_cell_pointer(*handle);
+      Object* obj = cell_helpers::get_cell_pointer(*handle);
       if (current_heap->contains(obj)) {
         if (obj->is_forwarding()) {
           Object* forwarded = obj->get_forwarding();
@@ -102,30 +102,30 @@ void Heap::swap_heaps() {
   while (!work_stack.empty()) {
     Object* o = work_stack.top();
     work_stack.pop();
-    cell_tag type = o->tag();
+    auto type = o->tag();
     switch (type) {
-    case CELL_ARRAY: {
+    case OBJ_TAG_ARRAY: {
       Array* array = (Array*)o;
       Cell* end = array->end();
       for (Cell* element = array->begin(); element < end; ++element) {
         copy_object((cell_t*)element); // TODO this is a hack
       }
     } break;
-    case CELL_STRING:
+    case OBJ_TAG_STRING:
       break;
-    case CELL_QUOTE: {
+    case OBJ_TAG_QUOTE: {
       Quotation* quote = (Quotation*)(o);
       if (quote->definition != nullptr) {
         copy_object((cell_t*)&quote->definition);
       }
       break;
     }
-    case CELL_WRAPPER: {
+    case OBJ_TAG_WRAPPER: {
       Wrapper* wrapper = (Wrapper*)(o);
       copy_object((cell_t*)&wrapper->wrapped);
     } break;
 
-    case CELL_WORD: {
+    case OBJ_TAG_WORD: {
       Word* word = (Word*)o;
       copy_object((cell_t*)&word->name);
       copy_object((cell_t*)&word->definition);

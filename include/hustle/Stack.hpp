@@ -7,7 +7,7 @@
 #define HUSTLE_STACK_HPP
 
 #include <hustle/Support/Error.hpp>
-#include <hustle/cell.hpp>
+#include <hustle/VM/Cell.hpp>
 
 namespace hustle {
 

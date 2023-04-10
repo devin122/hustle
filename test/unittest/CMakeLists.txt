@@ -20,6 +20,7 @@ target_link_libraries(hustle-test
     std::filesystem
     fmt::fmt
 )
+target_sources(hustle-test  PRIVATE ${CMAKE_SOURCE_DIR}/utils/hustle.natvis)
 
 function(hustle_unit_test name source)
     add_test(

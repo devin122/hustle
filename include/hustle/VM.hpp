@@ -12,7 +12,7 @@
 #include "hustle/Parser/Lexer.hpp"
 #include "hustle/Stack.hpp"
 #include "hustle/Support/Error.hpp"
-#include "hustle/cell.hpp"
+#include "hustle/VM/Cell.hpp"
 
 #include <map>
 #include <memory>

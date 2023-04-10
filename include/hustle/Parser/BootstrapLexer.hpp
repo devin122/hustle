@@ -6,7 +6,7 @@
 #ifndef HUSTLE_PARSER_BOOTSTRAP_LEXER_HPP
 #define HUSTLE_PARSER_BOOTSTRAP_LEXER_HPP
 
-#include <hustle/cell.hpp>
+#include <hustle/VM/Cell.hpp>
 
 #include <string_view>
 #include <vector>

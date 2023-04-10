@@ -45,7 +45,7 @@ static TypedCell<Word> make_symbol_no_register(VM& vm, const char* n) {
   Wrapper* wrapper = vm.allocate<Wrapper>();
   wrapper->wrapped = Cell::from_raw(make_cell(word));
   // TODO: this is gross
-  *(definition->begin()) = Cell::from_raw(make_cell(wrapper));
+  *(definition->begin()) = Cell::from_raw(cell_helpers::make_cell(wrapper));
 
   // TODO: should this conversion be done implicitly?
   return TypedCell<Word>(word);
@@ -92,14 +92,10 @@ VM::~VM() {
 }
 
 void VM::evaluate(Cell cell) {
-  switch (cell.tag()) {
-  case CELL_WRAPPER:
-  case CELL_WORD: {
+  if (cell.is_a<Wrapper>() || cell.is_a<Word>()) {
     return call(cell);
-  }
-  default:
+  } else {
     push(cell);
-    break;
   }
 }
 
@@ -111,20 +107,20 @@ void VM::call(Cell cell) {
   frame.offset = Cell::from_int(0);
   call_stack_.push(frame);
 
-  switch (cell.tag()) {
-  case CELL_WRAPPER: {
+  switch (cell.get_object()->tag()) {
+  case OBJ_TAG_WRAPPER: {
     // TODO should this be in call?
     Wrapper* wrapper = cast<Wrapper>(cell);
     HSTL_ASSERT(wrapper != nullptr);
     push(wrapper->wrapped);
     return;
   }
-  case CELL_WORD:
+  case OBJ_TAG_WORD:
     frame.word = cell;
     cell = cast<Word>(cell)->definition;
 
     // Fall through
-  case CELL_QUOTE: {
+  case OBJ_TAG_QUOTE: {
     frame.quote = cell;
     call_stack_.push(frame);
     interpreter_loop();
@@ -160,7 +156,7 @@ void VM::register_symbol(String* string_raw, Quotation* quote_raw,
 
 void VM::register_symbol(String* string, Word* word) {
   std::string sys_name(string->data(), string->data() + string->length());
-  symbol_table_[std::move(sys_name)] = make_cell(word);
+  symbol_table_[std::move(sys_name)] = cell_helpers::make_cell(word);
 }
 
 void VM::step_hook() {
@@ -208,11 +204,12 @@ void VM::interpreter_loop() {
     auto frame = call_stack_[0];
     intptr_t offset = frame.offset.cast<intptr_t>();
     HSTL_ASSERT(offset >= 0);
-    Quotation* quote = cast<Quotation>(frame.quote);
-    if (quote == nullptr) {
+    if (frame.quote.get_object() == nullptr) {
       call_stack_.pop();
       return;
     }
+    Quotation* quote = cast<Quotation>(frame.quote);
+
     if (quote->entry != nullptr) {
       HSTL_ASSERT(offset == 0);
       quote->entry(this, nullptr);
@@ -226,9 +223,8 @@ void VM::interpreter_loop() {
     for (; (uintptr_t)offset < size; ++offset) {
       step_hook();
       auto cell = (*arr)[offset];
-      switch (cell.tag()) {
-      case CELL_WORD: {
-        // TODO need to do tail call recursion properly
+      if (cell.is_a<Word>()) {
+        // TODO: need to do tail call recursion properly
         call_stack_.update_offset(offset + 1);
         StackFrame frame;
         frame.offset = Cell::from_int(0);
@@ -236,14 +232,11 @@ void VM::interpreter_loop() {
         frame.quote = cast<Word>(cell)->definition;
         call_stack_.push(frame);
         goto loop_entry;
-      }
-      case CELL_WRAPPER:
+      } else if (cell.is_a<Wrapper>()) {
         push(cast<Wrapper>(cell)->wrapped);
-        break;
 
-      default:
+      } else {
         push(cell);
-        break;
       }
     }
     call_stack_.pop();
@@ -274,12 +267,8 @@ void VM::mark_roots(Heap::MarkFunction fn) {
     HSTL_ASSERT(p.second != old);
   }
   for (auto& frame : call_stack_) {
-    auto old_word = frame.word;
-    auto old_quote = frame.quote;
     fn((cell_t*)&frame.word);
     fn((cell_t*)&frame.quote);
-    HSTL_ASSERT(old_word == nullptr || old_word != frame.word);
-    HSTL_ASSERT(old_quote == nullptr || old_quote != frame.quote);
   }
   handle_manager_.mark_handles(fn);
 }

@@ -15,7 +15,7 @@ static void parse_class(Class& clazz, const YAML::Node& value) {
   if (value["tag_name"]) {
     clazz.enum_tag_name = value["tag_name"].as<string>();
   } else {
-    clazz.enum_tag_name = "CELL_" + clazz.name;
+    clazz.enum_tag_name = "OBJ_TAG_" + clazz.name;
     for (auto& c : clazz.enum_tag_name) {
       c = toupper((unsigned char)c);
     }
@@ -52,14 +52,14 @@ static void with_classes(F func, IndentingStream& stream,
 /* #region  Tag_file */
 /// Generate the cell_tag enum
 static void output_class_tags(IndentingStream& out, const ClassList& classes) {
-  out.writeln("enum cell_tag {{");
+  out.writeln("enum ObjectTag {{");
   out.indent();
-  out.writeln("CELL_INT = 0,");
+  // out.writeln("CELL_INT = 0,");
   for (auto& cl : classes) {
     std::string enum_name = cl.name;
     out.writeln("{},", cl.enum_tag_name);
   }
-  out.writeln("CELL_TAG_MAX");
+  out.writeln("OBJ_TAG_MAX");
   out.outdent();
   out.writeln("}};");
 }
@@ -72,7 +72,7 @@ static void output_tag_to_string(IndentingStream& out,
 
   out.writeln("switch(c){{");
   out.indent();
-  out.writeln("case CELL_INT: return \"int\";");
+  // out.writeln("case CELL_INT: return \"int\";");
 
   for (auto& cl : classes) {
     out.writeln("case {}: return \"{}\";", cl.enum_tag_name, cl.name);
@@ -116,7 +116,7 @@ static void print_class_defs(IndentingStream& out, const ClassList& classes) {
       continue;
     }
     out.writeln("struct {} : public Object {{", cl.name).indent();
-    out.writeln("static constexpr cell_tag TAG_VALUE = {};", cl.enum_tag_name);
+    out.writeln("static constexpr ObjectTag TAG_VALUE = {};", cl.enum_tag_name);
     out.writeln("~{}() = delete;", cl.name);
 
     for (auto& member : cl.members) {
@@ -142,12 +142,13 @@ static void output_dispatch(IndentingStream& out, const ClassList& classes) {
   out.writeln("}}");
 }
 
+/*
 static void output_cell_dispatch(IndentingStream& out,
                                  const ClassList& classes) {
   out.writeln("template<typename T>");
   out.writeln("auto dispatch_cell(cell_t cell, T fn){{").indent();
   out.writeln("switch(get_cell_type(cell)){{").indent();
-  out.writeln("case CELL_INT: return fn(get_cell_int(cell));");
+  // out.writeln("case CELL_INT: return fn(get_cell_int(cell));");
   for (auto& cl : classes) {
     out.writeln("case {}: return fn(({}*)get_cell_pointer(cell));",
                 cl.enum_tag_name, cl.name);
@@ -155,7 +156,7 @@ static void output_cell_dispatch(IndentingStream& out,
   out.writeln("default: abort(); //TODO better error handling").outdent();
   out.writeln("}}").outdent();
   out.writeln("}}");
-}
+}*/
 
 static void write_class_defs_impl(IndentingStream& out,
                                   const ClassList& classes) {
@@ -176,7 +177,7 @@ static void write_class_defs_impl(IndentingStream& out,
   }
   output_dispatch(out, classes);
   out.nl();
-  output_cell_dispatch(out, classes);
+  // output_cell_dispatch(out, classes);
 }
 
 void write_class_defs(IndentingStream& out, const std::string& input_file) {

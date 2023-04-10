@@ -8,7 +8,8 @@
 #define HUSTLE_OBJECT_HPP
 
 #include "Core.hpp"
-#include "cell.hpp"
+#include "hustle/Support/Assert.hpp"
+#include "hustle/VM/Cell.hpp"
 #include <algorithm>
 #include <assert.h>
 #include <atomic>
@@ -25,25 +26,27 @@ static_assert(is_power_of_2(OBJECT_RESOLUTION),
               "Object resolution needs to be power of 2");
 static_assert((1 << CELL_TAG_BITS) <= OBJECT_RESOLUTION,
               "Not enough bits for pointer resolution with given tag bits");
+
 struct Object {
   // 0: forwarding bits;
   // 63:1 - forwarding ptr (if forwarding bit set)
-  // TAG_BITS+1:1 - tag
-  // 63:TAG_BITS+2 - size;
-  Object(cell_tag tag, size_t size) noexcept {
-    uintptr_t tmp_header = set_bits<CELL_TAG_BITS + 1, 1>(tag);
-    header = set_bits<63, CELL_TAG_BITS + 2>(size, tmp_header);
+  // 9:1 - tag
+  // 63:10 - size;
+  Object(ObjectTag tag, size_t size) noexcept {
+    uintptr_t tmp_header = set_bits<OBJECT_TAG_BITS + 1, 1>(tag);
+    header = set_bits<63, 10>(size, tmp_header);
   }
   // constexpr Object(uint32_t head = 0, uint32_t sz = sizeof(Object)) noexcept:
   // header(head), size_(sz) {}
   template <typename T>
   constexpr Object(T* dummy, size_t extra = 0) noexcept
-      : Object(T::TAG_VALUE, sizeof(T) + extra) {}
+      : Object(TagHelper<T>::object_tag, sizeof(T) + extra) {}
   constexpr uint32_t size() const {
-    return gsl::narrow_cast<uint32_t>(get_bits<63, CELL_TAG_BITS + 2>(header));
+    return gsl::narrow_cast<uint32_t>(
+        get_bits<63, OBJECT_TAG_BITS + 2>(header));
   }
-  constexpr cell_tag tag() const noexcept {
-    return (cell_tag)get_bits<CELL_TAG_BITS + 1, 1>(header);
+  constexpr ObjectTag tag() const noexcept {
+    return (ObjectTag)get_bits<OBJECT_TAG_BITS + 1, 1>(header);
   }
 
   Object* next_object() const noexcept {
@@ -66,14 +69,13 @@ struct Object {
 
   Cell get_cell() const {
     HSTL_ASSERT(!is_forwarding());
-    uintptr_t raw_ptr = (uintptr_t)this;
-    HSTL_ASSERT((raw_ptr & CELL_TAG_MASK) == 0);
-    return Cell::from_raw(raw_ptr | (CELL_TAG_MASK & tag()));
+    // TODO: we need to handle the case of some objects having a tag
+    // HSTL_ASSERT((raw_ptr & OBJECT_TAG_MASK) == 0);
+    return Cell(const_cast<Object*>(this));
   }
 
 private:
   uintptr_t header = 0;
-
   // constexpr bool is_marked() const noexcept { return header.marked; }
   // constexpr void mark(bool m = true) noexcept { header.marked = m ? 1: 0;}
 } HUSTLE_HEAP_ALLOCATED;
@@ -82,6 +84,17 @@ private:
 template <typename T>
 inline size_t object_allocation_size(T*) {
   return sizeof(T);
+}
+
+// todo: doesnt really belong here
+inline const char* get_type_name(Cell cell) {
+  if (cell.is_int()) {
+    return "int";
+  } else {
+    Object* obj = cell.get_object();
+    HSTL_ASSERT(obj != nullptr);
+    return get_object_name(obj->tag());
+  }
 }
 
 /**
@@ -93,7 +106,7 @@ inline size_t object_allocation_size(T*) {
  *
  */
 struct Wrapper : public Object {
-  static constexpr cell_tag TAG_VALUE = CELL_WRAPPER;
+  static constexpr ObjectTag TAG_VALUE = OBJ_TAG_WRAPPER;
 
   Wrapper() : Object(this) {}
   ~Wrapper() = delete;
@@ -108,7 +121,7 @@ struct Wrapper : public Object {
  * resolution is the same as the Cell size
  */
 struct Array : public Object {
-  static constexpr cell_tag TAG_VALUE = CELL_ARRAY;
+  static constexpr ObjectTag TAG_VALUE = OBJ_TAG_ARRAY;
 
   Array(std::initializer_list<Cell> init) noexcept
       : Object(this, init.size() * sizeof(Cell)) {
@@ -157,7 +170,7 @@ inline size_t object_allocation_size(Array*,
  * allocation size, and remains constant through the strings life.
  */
 struct String : public Object {
-  static constexpr cell_tag TAG_VALUE = CELL_STRING;
+  static constexpr ObjectTag TAG_VALUE = OBJ_TAG_STRING;
   ~String() = delete;
   String(size_t len) : Object(this, len), length_raw(Cell::from_int(0)) {}
   String(const char* c_str, size_t len) noexcept
@@ -189,7 +202,7 @@ struct String : public Object {
   /**
    * Get the current length of the stored string
    */
-  size_t length() const { return cast<intptr_t>(length_raw); }
+  size_t length() const { return length_raw.get_int(); }
 
   operator std::string_view() const { return {data(), length()}; }
 
@@ -217,7 +230,7 @@ inline size_t object_allocation_size(String*, const char*, size_t sz) {
  * A Quotation is essentially a lambda.
  */
 struct Quotation : public Object {
-  static constexpr cell_tag TAG_VALUE = CELL_QUOTE;
+  static constexpr ObjectTag TAG_VALUE = OBJ_TAG_QUOTE;
   ~Quotation() = delete;
   using FuncType = void (*)(VM*, Quotation*);
   Quotation() : Object(this){};
@@ -254,7 +267,7 @@ inline size_t object_allocation_size(Quotation*, Quotation::FuncType) {
 }
 
 struct Record : public Object {
-  static constexpr cell_tag TAG_VALUE = CELL_RECORD;
+  static constexpr ObjectTag TAG_VALUE = OBJ_TAG_RECORD;
   ~Record() = delete;
   Record(size_t count) noexcept : Object(this, sizeof(cell_t) * count) {
     // TODO initialize slots?
@@ -267,7 +280,7 @@ struct Record : public Object {
  * A Word is a named Quotation.
  */
 struct Word : public Object {
-  static constexpr cell_tag TAG_VALUE = CELL_WORD;
+  static constexpr ObjectTag TAG_VALUE = OBJ_TAG_WORD;
   ~Word() = delete;
   Word() : Object(this){};
   TypedCell<String> name;
@@ -284,7 +297,7 @@ struct Word : public Object {
   bool is_parse_word = false;
 } HUSTLE_HEAP_ALLOCATED;
 
-#include "classes.def"
+//#include "classes.def"
 
 static_assert(sizeof(Object) == sizeof(uintptr_t),
               "Object size should be size of header");

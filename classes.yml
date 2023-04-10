@@ -4,7 +4,7 @@ classes:
   Array:
   String:
   Quotation:
-    tag_name: CELL_QUOTE
+    tag_name: OBJ_TAG_QUOTE
   Record:
   Word:
   Wrapper:

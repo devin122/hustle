@@ -13,7 +13,7 @@
 
 #include <hustle/Core.hpp>
 #include <hustle/Support/Assert.hpp>
-#include <hustle/cell.hpp>
+#include <hustle/VM/Cell.hpp>
 
 namespace hustle {
 
@@ -142,7 +142,7 @@ public:
 
 template <typename T>
 inline cell_t make_cell(Handle<T>& handle) {
-  return make_cell<T>((T*)handle);
+  return cell_helpers::make_cell((T*)handle);
 }
 
 class HandleManager {

@@ -4,9 +4,10 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include <hustle/Support/Utility.hpp>
+
 #include <cassert>
 #include <filesystem>
-#include <hustle/Support/Utility.hpp>
 
 #ifdef _WIN32
 #include <Windows.h>

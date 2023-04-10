@@ -8,7 +8,7 @@
 #include <hustle/Object.hpp>
 #include <hustle/Support/IndentingStream.hpp>
 #include <hustle/VM.hpp>
-#include <hustle/cell.hpp>
+#include <hustle/VM/cell.hpp>
 #include <iostream>
 #include <sstream>
 #include <stdint.h>
@@ -21,7 +21,7 @@ static constexpr size_t MAX_RECURSION = 8;
 static std::string terse(intptr_t i) { return fmt::format("{}", i); }
 template <typename T>
 static std::string terse(T* ptr) {
-  return fmt::format("{}<{}>", get_type_name(T::TAG_VALUE), (void*)ptr);
+  return fmt::format("{}<{}>", get_object_name(T::TAG_VALUE), (void*)ptr);
 }
 static std::string terse(String* s) {
   return fmt::format("\"{}\"", std::string_view(s->data(), s->length()));
@@ -44,7 +44,7 @@ static std::string terse_cell(cell_t cell) {
   return dispatch_cell(cell, [](auto x) { return terse(x); });
 }
 
-static void print_cell(IndentingStream& out, cell_t cell, std::string pfx = ""s,
+static void print_cell(IndentingStream& out, Cell cell, std::string pfx = ""s,
                        bool recurse = false);
 static const std::string describe_cell(intptr_t val, bool) {
   return fmt::format("{}", val);
@@ -84,11 +84,11 @@ static void visit_children(IndentingStream& out, Array* a) {
   // unsigned i = 0;
   size_t arr_size = a->count();
   for (size_t i = 0; i < arr_size; ++i) {
-    print_cell(out, (*a)[i].raw(), fmt::format("[{}] - ", i), true);
+    print_cell(out, (*a)[i], fmt::format("[{}] - ", i), true);
   }
 }
 static void visit_children(IndentingStream& out, Quotation* quote) {
-  print_cell(out, quote->definition.raw(), "definition: ", true);
+  print_cell(out, quote->definition, "definition: ", true);
   out.writeln("entry: {}", (void*)quote->entry);
 }
 static void visit_children(IndentingStream& out, Word* word) {
@@ -96,28 +96,28 @@ static void visit_children(IndentingStream& out, Word* word) {
   // TypedCell<Quotation> definition;
   if (word == nullptr)
     return;
-  print_cell(out, word->name.raw(), "Name: "s, true);
-  print_cell(out, word->definition.raw(), "Definition: "s, true);
+  print_cell(out, word->name, "Name: "s, true);
+  print_cell(out, word->definition, "Definition: "s, true);
 }
 
 static void visit_children(IndentingStream& out, Wrapper* wrapper) {
   if (wrapper == nullptr)
     return;
-  print_cell(out, wrapper->wrapped.raw(), "Wrapped: "s, true);
+  print_cell(out, wrapper->wrapped, "Wrapped: "s, true);
 }
 
-static void print_cell(IndentingStream& out, cell_t cell, std::string pfx,
+static void print_cell(IndentingStream& out, Cell cell, std::string pfx,
                        bool recurse) {
-  out.writeln(
-      "{}({}) - {}", pfx, get_type_name(get_cell_type(cell)),
-      dispatch_cell(cell, [=](auto x) { return describe_cell(x, recurse); }));
+  out.writeln("{}({}) - {}", pfx, get_type_name(cell),
+              dispatch_cell(cell.raw(),
+                            [=](auto x) { return describe_cell(x, recurse); }));
   if (recurse) {
     if (out.depth() > MAX_RECURSION) {
       out.writeln("...");
       return;
     }
     out.indent();
-    dispatch_cell(cell, [&](auto x) { visit_children(out, x); });
+    dispatch_cell(cell.raw(), [&](auto x) { visit_children(out, x); });
     out.outdent();
   }
 }
@@ -136,7 +136,7 @@ void hustle::dump_stack(const VM& vm, bool recurse) {
   for (const Cell* ptr = vm.stack_.cend() - 1; ptr >= sp; --ptr) {
     ptrdiff_t idx = ptr - sp;
     // printf("<SP-%d> ", (int)idx - 1);
-    print_cell(out, ptr->raw(), fmt::format("<SP-{}> ", idx - 1), recurse);
+    print_cell(out, *ptr, fmt::format("<SP-{}> ", idx - 1), recurse);
   }
 }
 

@@ -39,8 +39,9 @@ TEST_CASE("Stack::operator[]", "[Stack]") {
   Stack stk(4);
   Cell c1 = Cell::from_int(1);
   Cell c2 = Cell::from_int(2);
-  Cell c3 = Cell::from_raw(make_cell<String>(nullptr));
-  Cell c4 = Cell::from_raw(make_cell<Word>(nullptr));
+
+  Cell c3((Object*)1);
+  Cell c4((Object*)2);
 
   CHECK_THROWS(stk[0]);
   CHECK_THROWS(stk[1]);
@@ -70,8 +71,9 @@ TEST_CASE("const Stack::operator[]", "[Stack]") {
   Stack mutable_stack(4);
   Cell c1 = Cell::from_int(1);
   Cell c2 = Cell::from_int(2);
-  Cell c3 = Cell::from_raw(make_cell<String>(nullptr));
-  Cell c4 = Cell::from_raw(make_cell<Word>(nullptr));
+
+  Cell c3((Object*)1);
+  Cell c4((Object*)2);
 
   {
     const Stack& stk = mutable_stack;

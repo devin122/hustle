@@ -61,20 +61,16 @@ static void prim_lookup(VM* vm, Quotation*) {
 
 static void prim_hash(VM* vm, Quotation*) {
   auto a = vm->pop();
-  switch (get_cell_type(a.raw())) {
-  case CELL_STRING: {
+  if (a.is_a<String>()) {
     String* s = cast<String>(a);
     uint64_t hash = CityHash64(s->data(), s->length());
     vm->push(Cell::from_int(hash));
     return;
-  }
-  case CELL_INT: {
+  } else if (a.is_a<intptr_t>()) {
     vm->push(a);
     return;
   }
-  default:
-    HSTL_ASSERT(false);
-  }
+  HSTL_ASSERT(false);
 }
 
 static void prim_make_record(VM* vm, Quotation*) {
@@ -92,16 +88,25 @@ static void prim_empty_array(VM* vm, Quotation*) {
 static void prim_length(VM* vm, Quotation*) {
   auto obj_cell = vm->pop();
   switch (obj_cell.tag()) {
-  case CELL_INT:
+  case CELL_TAG_INT:
     vm->push(Cell::from_int(1));
     break;
-  case CELL_STRING: {
-    vm->push(cast<String>(obj_cell)->length_raw);
-    break;
-  }
-  case CELL_ARRAY: {
-    // TODO: this is gross
-    vm->push(Cell::from_int(cast<Array>(obj_cell)->count()));
+  case CELL_TAG_OBJ: {
+    Object* obj = obj_cell.get_object();
+    HSTL_ASSERT(obj != nullptr);
+    switch (obj->tag()) {
+    case OBJ_TAG_STRING: {
+      vm->push(cast<String>(obj_cell)->length_raw);
+      break;
+    }
+    case OBJ_TAG_ARRAY: {
+      // TODO: this is gross
+      vm->push(Cell::from_int(cast<Array>(obj_cell)->count()));
+      break;
+    }
+    default:
+      vm->push(Cell::from_int(-1));
+    }
     break;
   }
   default:
@@ -132,8 +137,8 @@ static void prim_make_sym(VM* vm, Quotation*) {
   Wrapper* wrapper = vm->allocate<Wrapper>();
   // TODO: gross
   wrapper->wrapped = Cell::from_raw(make_cell(word));
-  *(definition->begin()) =
-      Cell::from_raw(make_cell(wrapper)); // TODO: this is really gross
+  *(definition->begin()) = Cell::from_raw(
+      cell_helpers::make_cell(wrapper)); // TODO: this is really gross
   vm->register_symbol(name, word);
 }
 
@@ -456,7 +461,7 @@ static std::vector<Cell> tokenize(std::string& str, VM& vm) {
       }
     }
     cell_t word = vm.lookup_symbol(tok);
-    if (is_a<Word>(word) && get_cell_pointer(word) == nullptr) {
+    if (is_a<Word>(word) && cell_helpers::get_cell_pointer(word) == nullptr) {
       std::cerr << "Unkown word " << tok << "\n";
       HSTL_ASSERT(false); // TODO need better error signaling
       continue;

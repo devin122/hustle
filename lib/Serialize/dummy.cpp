@@ -5,7 +5,7 @@
  */
 
 #include "BinaryStream.hpp"
-#include "hustle/cell.hpp"
+#include "hustle/VM/Cell.hpp"
 using namespace hustle;
 struct Context {};
 
