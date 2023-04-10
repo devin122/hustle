@@ -6,15 +6,20 @@
 
 #ifndef HUSTLE_SUPPORT_MEMORY_HPP
 #define HUSTLE_SUPPORT_MEMORY_HPP
+#include "hustle/Support/Error.hpp"
 #include "hustle/Support/Utility.hpp"
 namespace hustle {
 class MemorySegment;
 
+/**
+ *  Used as a namespace for various memory functions.
+ *  Implemented as a class so that it can be friends with MemorySegment.
+ */
 class Memory {
 public:
   enum Flags { MEM_READ = 1, MEM_WRITE = 2, MEM_EXEC = 4 };
 
-  static MemorySegment allocate(size_t size, unsigned flags);
+  static Expected<MemorySegment> allocate(size_t size, unsigned flags);
 
   // TODO: do we want to be able to change protections on a subsection?
   static void protect(MemorySegment& segment, unsigned flags);
@@ -26,6 +31,9 @@ public:
   static void release(MemorySegment& segment);
 };
 
+/**
+ * Acts as a handle to contigous memory, and implements RAII.
+ */
 class MemorySegment {
 public:
   MemorySegment(const MemorySegment&) = delete;

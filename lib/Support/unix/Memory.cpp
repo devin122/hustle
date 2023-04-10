@@ -55,11 +55,14 @@ static int native_protection_flags(unsigned flags) {
   return prot;
 }
 
-MemorySegment Memory::allocate(size_t size, unsigned flags) {
+Expected<MemorySegment> Memory::allocate(size_t size, unsigned flags) {
   const int prot = native_protection_flags(flags);
 
   // TODO round up to a page size;
   void* addr = mmap(nullptr, size, prot, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+  if (addr == (void*)-1) {
+    return -1; // TODO propper errorz
+  }
   HSTL_ASSERT(addr != (void*)-1);
   return MemorySegment(addr, size);
 }

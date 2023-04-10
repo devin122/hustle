@@ -68,13 +68,15 @@ static DWORD native_flags(unsigned flags) {
   return protection;
 }
 
-MemorySegment Memory::allocate(size_t size, unsigned flags) {
+Expected<MemorySegment> Memory::allocate(size_t size, unsigned flags) {
 
   DWORD protection = native_flags(flags);
   // TODO round up to page size;
   void* memory =
       VirtualAlloc(nullptr, size, MEM_COMMIT | MEM_RESERVE, protection);
-  HSTL_ASSERT(memory != nullptr);
+  if (memory == (void*)-1) {
+    return -1; // TODO need real error
+  }
   return MemorySegment(memory, size);
   // return {nullptr, 0};
 }

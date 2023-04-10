@@ -79,7 +79,8 @@ void seg_protect(MemorySegment& segment, T body) {
 
 TEST_CASE("Basic allocation test", "[memory]") {
   constexpr size_t ALLOCATION_SIZE = 10 * 4 * 1024;
-  auto segment = Memory::allocate(ALLOCATION_SIZE, Memory::MEM_READ);
+  MemorySegment segment =
+      std::move(Memory::allocate(ALLOCATION_SIZE, Memory::MEM_READ).get());
   CHECK(segment.base() != nullptr);
   // CHECK(segment.base() != (void*) -1);
   CHECK(segment.size() >= ALLOCATION_SIZE);
