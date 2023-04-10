@@ -6,7 +6,7 @@
 
 #include "hustle/GC.hpp"
 #include "hustle/VM.hpp"
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <iterator>
 
 using namespace hustle;

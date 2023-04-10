@@ -6,7 +6,8 @@
 
 #include "hustle/VM/Cell.hpp"
 #include "hustle/Object.hpp"
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators_all.hpp>
 #include <iostream>
 #include <random>
 

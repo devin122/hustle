@@ -5,7 +5,7 @@
  */
 
 #include "hustle/Support/Memory.hpp"
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <signal.h>
 #include <stdio.h>
 #ifdef _WIN32
