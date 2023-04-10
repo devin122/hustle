@@ -9,12 +9,12 @@
 
 #include "Core.hpp"
 #include "hustle/Support/Assert.hpp"
+#include "hustle/Support/Utility.hpp"
 #include "hustle/VM/Cell.hpp"
 #include <algorithm>
 #include <assert.h>
 #include <atomic>
 #include <gsl/gsl>
-#include <hustle/Support/Utility.hpp>
 #include <initializer_list>
 
 namespace hustle {

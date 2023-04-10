@@ -26,7 +26,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#include <hustle/Support/Assert.hpp>
+#include "hustle/Support/Assert.hpp"
 #include <stdlib.h>
 
 using namespace hustle;

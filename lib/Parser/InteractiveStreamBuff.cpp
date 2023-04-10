@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include "hustle/Parser/Lexer.hpp"
 #include <cctype>
-#include <hustle/Parser/Lexer.hpp>
 #include <iostream>
 #include <replxx.hxx>
 using namespace hustle;

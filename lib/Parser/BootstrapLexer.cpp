@@ -3,12 +3,10 @@
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
-#include <hustle/Object.hpp>
-#include <hustle/Parser/Lexer.hpp>
-
-#include <hustle/Parser/BootstrapLexer.hpp>
-#include <hustle/VM.hpp>
-
+#include "hustle/Parser/BootstrapLexer.hpp"
+#include "hustle/Object.hpp"
+#include "hustle/Parser/Lexer.hpp"
+#include "hustle/VM.hpp"
 #include <cctype>
 #include <iostream>
 using namespace hustle::bootstrap;

@@ -6,8 +6,10 @@
 
 #ifndef HUSTLE_SUPPORT_MEMORY_HPP
 #define HUSTLE_SUPPORT_MEMORY_HPP
+
 #include "hustle/Support/Error.hpp"
 #include "hustle/Support/Utility.hpp"
+
 namespace hustle {
 class MemorySegment;
 

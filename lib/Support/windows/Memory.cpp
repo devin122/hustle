@@ -28,10 +28,8 @@
 
 #include "hustle/Support/Memory.hpp"
 #include "hustle/Support/Assert.hpp"
-
-#include <stdio.h>
-
 #include <Windows.h>
+#include <stdio.h>
 
 using namespace hustle;
 /*

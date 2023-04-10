@@ -6,20 +6,17 @@
 
 #include "Command.hpp"
 #include "CommandManager.hpp"
-
-#include <hustle/Object.hpp>
-#include <hustle/Parser/BootstrapLexer.hpp>
-#include <hustle/Parser/Lexer.hpp>
-#include <hustle/Support/Assert.hpp>
-#include <hustle/Support/IndentingStream.hpp>
-#include <hustle/Support/Utility.hpp>
-#include <hustle/VM.hpp>
-#include <hustle/config.h>
-
-#include "CLI/App.hpp"
-#include "CLI/Config.hpp"
-#include "CLI/Formatter.hpp"
-
+#include "hustle/Object.hpp"
+#include "hustle/Parser/BootstrapLexer.hpp"
+#include "hustle/Parser/Lexer.hpp"
+#include "hustle/Support/Assert.hpp"
+#include "hustle/Support/IndentingStream.hpp"
+#include "hustle/Support/Utility.hpp"
+#include "hustle/VM.hpp"
+#include "hustle/config.h"
+#include <CLI/App.hpp>
+#include <CLI/Config.hpp>
+#include <CLI/Formatter.hpp>
 #include <algorithm>
 #include <cctype>
 #include <fstream>

@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include "hustle/Object.hpp"
+#include "hustle/Support/IndentingStream.hpp"
+#include "hustle/VM.hpp"
+#include "hustle/VM/Cell.hpp"
 #include <fmt/core.h>
-#include <hustle/Object.hpp>
-#include <hustle/Support/IndentingStream.hpp>
-#include <hustle/VM.hpp>
-#include <hustle/VM/cell.hpp>
 #include <iostream>
 #include <sstream>
 #include <stdint.h>

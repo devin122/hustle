@@ -5,9 +5,9 @@
  */
 
 #include "hustle/VM.hpp"
-#include "city.h"
 #include "hustle/Object.hpp"
 #include "hustle/Parser/BootstrapLexer.hpp"
+#include <city.h>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>

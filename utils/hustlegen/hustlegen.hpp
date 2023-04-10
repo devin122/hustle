@@ -7,7 +7,7 @@
 #ifndef HUSTLEGEN_HPP
 #define HUSTLEGEN_HPP
 
-#include <hustle/Support/IndentingStream.hpp>
+#include "hustle/Support/IndentingStream.hpp"
 #include <utility>
 #include <yaml-cpp/yaml.h>
 

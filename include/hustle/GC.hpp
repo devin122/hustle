@@ -7,13 +7,12 @@
 #ifndef HUSTLE_GC_HPP
 #define HUSTLE_GC_HPP
 
+#include "hustle/Core.hpp"
+#include "hustle/Support/Assert.hpp"
+#include "hustle/VM/Cell.hpp"
 #include <functional>
 #include <stddef.h>
 #include <stdint.h>
-
-#include <hustle/Core.hpp>
-#include <hustle/Support/Assert.hpp>
-#include <hustle/VM/Cell.hpp>
 
 namespace hustle {
 

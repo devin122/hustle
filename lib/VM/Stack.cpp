@@ -6,7 +6,6 @@
 
 #include "hustle/Support/Error.hpp"
 #include "hustle/VM.hpp"
-
 #include <algorithm>
 #include <new>
 using namespace hustle;

@@ -6,8 +6,8 @@
 #ifndef HUSTLE_STACK_HPP
 #define HUSTLE_STACK_HPP
 
-#include <hustle/Support/Error.hpp>
-#include <hustle/VM/Cell.hpp>
+#include "hustle/Support/Error.hpp"
+#include "hustle/VM/Cell.hpp"
 
 namespace hustle {
 

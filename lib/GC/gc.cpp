@@ -7,7 +7,6 @@
 #include "hustle/GC.hpp"
 #include "hustle/Object.hpp"
 #include "hustle/VM.hpp"
-
 #include <assert.h>
 #include <stack>
 #include <stdio.h>

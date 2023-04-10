@@ -4,22 +4,20 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#include <hustle/Object.hpp>
-#include <hustle/Parser/BootstrapLexer.hpp>
-#include <hustle/Support/Assert.hpp>
-#include <hustle/Support/IndentingStream.hpp>
-#include <hustle/Support/Utility.hpp>
-#include <hustle/VM.hpp>
-#include <hustle/config.h>
-
+#include "hustle/Object.hpp"
+#include "hustle/Parser/BootstrapLexer.hpp"
+#include "hustle/Support/Assert.hpp"
+#include "hustle/Support/IndentingStream.hpp"
+#include "hustle/Support/Utility.hpp"
+#include "hustle/VM.hpp"
+#include "hustle/config.h"
 #include <CLI/App.hpp>
 #include <CLI/Config.hpp>
 #include <CLI/Formatter.hpp>
-#include <fmt/chrono.h>
-#include <fmt/core.h>
-
 #include <chrono>
 #include <exception>
+#include <fmt/chrono.h>
+#include <fmt/core.h>
 #include <fstream>
 #include <iostream>
 #include <iterator>

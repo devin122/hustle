@@ -4,10 +4,9 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include "hustle/VM/Cell.hpp"
+#include "hustle/Object.hpp"
 #include <catch2/catch.hpp>
-#include <hustle/Object.hpp>
-#include <hustle/VM/Cell.hpp>
-
 #include <iostream>
 #include <random>
 

@@ -6,7 +6,6 @@
 
 #include "hustle/Object.hpp"
 #include "hustle/VM.hpp"
-
 #include <catch2/catch.hpp>
 
 using namespace hustle;

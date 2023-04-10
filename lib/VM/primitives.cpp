@@ -5,18 +5,18 @@
  */
 
 #include "hustle/Object.hpp"
+#include "hustle/Support/Utility.hpp"
 #include "hustle/VM.hpp"
-#include <hustle/Support/Utility.hpp>
-#include <utility>
-
 #include <city.h>
 #include <fmt/core.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <utility>
 #include <vector>
 using namespace hustle;
 using namespace std::literals;
+
 #include "primitives.def"
 
 // TODO move to a header

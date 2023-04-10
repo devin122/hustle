@@ -26,6 +26,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include "hustle/config.h"
 #include "hustlegen.hpp"
 #include <CLI/App.hpp>
 #include <CLI/Config.hpp>
@@ -34,7 +35,6 @@
 #include <filesystem>
 #include <fmt/core.h>
 #include <fstream>
-#include <hustle/config.h>
 #include <iostream>
 #include <list>
 #include <nlohmann/json.hpp>

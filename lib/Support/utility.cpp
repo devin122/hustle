@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#include <hustle/Support/Utility.hpp>
-
+#include "hustle/Support/Utility.hpp"
 #include <cassert>
 #include <filesystem>
 
