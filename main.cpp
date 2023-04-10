@@ -111,7 +111,7 @@ void repl(VM& vm) {
       } else if (std::holds_alternative<std::string>(tok)) {
         std::string& str = std::get<std::string>(tok);
         auto result = vm.lookup_symbol(str);
-        vm.evaluate(Cell::from_raw(result));
+        vm.evaluate(result);
       } else {
         // Occurs if we hit an end of stream
         // Kinda clunky, but just continue

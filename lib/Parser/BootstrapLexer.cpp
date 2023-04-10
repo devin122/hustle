@@ -36,7 +36,7 @@ std::vector<Cell> hustle::bootstrap::tokenize(Iterator& it, const Iterator& end,
       std::copy(it, str_end, vm_str->data());
       vm_str->data()[str_end - it] = 0;
       vm_str->length_raw = Cell::from_int(str_end - it);
-      result.push_back(Cell::from_raw(cell_helpers::make_cell(vm_str)));
+      result.push_back(vm_str);
       it = str_end + 1;
     } else if (*it == '#') {
       // Line comment, we are done
@@ -73,7 +73,7 @@ std::vector<Cell> hustle::bootstrap::tokenize(Iterator& it, const Iterator& end,
         size_t size = 0;
         long long ll = std::stoll(token_name, &size, 0);
         if (size == token_name.length()) {
-          result.push_back(Cell::from_raw(cell_helpers::make_cell(ll)));
+          result.push_back(Cell::from_int(ll));
           continue;
         }
       }
@@ -83,7 +83,7 @@ std::vector<Cell> hustle::bootstrap::tokenize(Iterator& it, const Iterator& end,
         result.push_back(vm.globals.True);
       } else {
         try {
-          result.push_back(Cell::from_raw(vm.lookup_symbol(token_name)));
+          result.push_back(vm.lookup_symbol(token_name));
         } catch (std::runtime_error& e) {
           std::cerr << "Unknown symbol " << token_name << std::endl;
           throw;

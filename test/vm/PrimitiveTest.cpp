@@ -14,8 +14,9 @@ using namespace std::literals;
 // Helper function for calling hustle functions
 static void call(VM& vm, const std::string& name) {
   auto sym = vm.lookup_symbol(name);
-  REQUIRE(sym != 0);
-  vm.call(Cell::from_raw(sym));
+  REQUIRE(sym.is_object());
+  REQUIRE(sym.get_object() != nullptr);
+  vm.call(sym);
 }
 
 TEST_CASE("Primitives are registered", "[Primitive]") {
@@ -26,9 +27,10 @@ TEST_CASE("Primitives are registered", "[Primitive]") {
   for (const auto& name : prim_names) {
     DYNAMIC_SECTION("Primitive " << name) {
       auto prim = vm.lookup_symbol(name);
-      REQUIRE(prim != 0);
-      REQUIRE(is_a<Word>(prim));
-      auto word = cast<Word>(prim);
+      REQUIRE(prim.is_object());
+      REQUIRE(prim.get_object() != nullptr);
+      REQUIRE(prim.is_a<Word>());
+      auto word = prim.cast<Word>();
       REQUIRE(word != nullptr);
       // TODO exit is not implemented?
       if (name != "exit"s) {

@@ -68,7 +68,7 @@ struct VM {
                        bool parseword = false) HUSTLE_MAY_ALLOCATE;
   void register_symbol(String* string, Word* word);
 
-  cell_t lookup_symbol(const std::string& name);
+  Cell lookup_symbol(const std::string& name);
   // private:
   // TODO do these really need to be functions?
 

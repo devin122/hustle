@@ -56,7 +56,7 @@ static void prim_lookup(VM* vm, Quotation*) {
   String* vm_str = cast<String>(c);
   // auto span = cast<String>(vm->pop())->to_span();
   std::string str(vm_str->data(), vm_str->length());
-  vm->push(Cell::from_raw(vm->lookup_symbol(str)));
+  vm->push(vm->lookup_symbol(str));
 }
 
 static void prim_hash(VM* vm, Quotation*) {
@@ -137,8 +137,7 @@ static void prim_make_sym(VM* vm, Quotation*) {
   Wrapper* wrapper = vm->allocate<Wrapper>();
   // TODO: gross
   wrapper->wrapped = Cell::from_raw(make_cell(word));
-  *(definition->begin()) = Cell::from_raw(
-      cell_helpers::make_cell(wrapper)); // TODO: this is really gross
+  *(definition->begin()) = Cell(wrapper);
   vm->register_symbol(name, word);
 }
 
@@ -456,17 +455,17 @@ static std::vector<Cell> tokenize(std::string& str, VM& vm) {
       size_t size = 0;
       long long ll = std::stoll(tok, &size, 0);
       if (size == tok.length()) {
-        cells.push_back(Cell::from_raw(ll));
+        cells.push_back(Cell::from_int(ll));
         continue;
       }
     }
-    cell_t word = vm.lookup_symbol(tok);
-    if (is_a<Word>(word) && cell_helpers::get_cell_pointer(word) == nullptr) {
+    Cell word = vm.lookup_symbol(tok);
+    if (word.is_a<Word>() && word.get_object() == nullptr) {
       std::cerr << "Unkown word " << tok << "\n";
       HSTL_ASSERT(false); // TODO need better error signaling
       continue;
     }
-    cells.push_back(Cell::from_raw(word));
+    cells.push_back(word);
   }
   return cells;
 }

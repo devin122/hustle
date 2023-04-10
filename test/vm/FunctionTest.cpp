@@ -20,35 +20,36 @@ static String* allocate_string(VM& vm, std::string_view sv) {
 TEST_CASE("Can define function", "[function]") {
   VM vm;
 
+  // TODO: some of these should be handles since we could technically allocate
   auto def_func = vm.lookup_symbol("def");
-  REQUIRE(def_func != 0);
+  REQUIRE(def_func != Cell());
 
   vm.push(allocate_string(vm, "add3"sv));
 
   auto mark_func = vm.lookup_symbol("mark-stack");
-  REQUIRE(mark_func != 0);
-  vm.call(Cell::from_raw(mark_func));
+  REQUIRE(mark_func != Cell());
+  vm.call(mark_func);
 
   auto add_func = vm.lookup_symbol("+");
-  REQUIRE(add_func != 0);
+  REQUIRE(add_func != Cell());
   vm.push(Cell::from_int(3));
-  vm.push(Cell::from_raw(add_func));
+  vm.push(add_func);
 
   auto mark2arr_func = vm.lookup_symbol("mark>array");
-  REQUIRE(mark2arr_func != 0);
-  vm.call(Cell::from_raw(mark2arr_func));
+  REQUIRE(mark2arr_func != Cell());
+  vm.call(mark2arr_func);
 
   auto arr2quote_func = vm.lookup_symbol("array>quote");
-  REQUIRE(arr2quote_func != 0);
-  vm.call(Cell::from_raw(arr2quote_func));
+  REQUIRE(arr2quote_func != Cell());
+  vm.call(arr2quote_func);
 
-  vm.call(Cell::from_raw(def_func));
+  vm.call(def_func);
 
   REQUIRE(vm.stack_.begin() == vm.stack_.end());
   auto add3_func = vm.lookup_symbol("add3");
-  REQUIRE(add3_func != 0);
+  REQUIRE(add3_func != Cell());
 
   vm.push(Cell::from_int(5));
-  vm.call(Cell::from_raw(add3_func));
+  vm.call(add3_func);
   REQUIRE(vm.pop() == Cell::from_int(8));
 }

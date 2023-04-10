@@ -45,7 +45,7 @@ static TypedCell<Word> make_symbol_no_register(VM& vm, const char* n) {
   Wrapper* wrapper = vm.allocate<Wrapper>();
   wrapper->wrapped = Cell::from_raw(make_cell(word));
   // TODO: this is gross
-  *(definition->begin()) = Cell::from_raw(cell_helpers::make_cell(wrapper));
+  *(definition->begin()) = wrapper;
 
   // TODO: should this conversion be done implicitly?
   return TypedCell<Word>(word);
@@ -132,14 +132,14 @@ void VM::call(Cell cell) {
 }
 
 // TODO we need some way of signaling lookup failure
-cell_t VM::lookup_symbol(const std::string& name) {
+Cell VM::lookup_symbol(const std::string& name) {
   auto it = symbol_table_.find(name);
   if (it == symbol_table_.end()) {
     // return make_cell<Word>(nullptr);
     std::cerr << "Symbol not found: '" << name << "'\n";
     throw std::runtime_error("symbol not found");
   } else {
-    return it->second;
+    return Cell::from_raw(it->second);
   }
 }
 
@@ -295,8 +295,7 @@ void VM::run() {
       push(Cell::from_int(std::get<intptr_t>(tok)));
     } else if (std::holds_alternative<std::string>(tok)) {
       std::string& str = std::get<std::string>(tok);
-      auto result = lookup_symbol(str);
-      evaluate(Cell::from_raw(result));
+      evaluate(lookup_symbol(str));
     } else {
       // Occurs if we hit an end of stream
       // Kinda clunky, but just continue

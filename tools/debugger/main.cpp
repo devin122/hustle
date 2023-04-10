@@ -99,7 +99,7 @@ static void run_test(VM& vm) {
     } else if (std::holds_alternative<std::string>(tok)) {
       std::string& str = std::get<std::string>(tok);
       auto result = vm.lookup_symbol(str);
-      vm.evaluate(Cell::from_raw(result));
+      vm.evaluate(result);
     } else {
       // Shouldnt be possible
       if (vm.lexer_.current_stream() == nullptr) {
